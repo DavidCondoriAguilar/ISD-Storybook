@@ -1,0 +1,18 @@
+/* Global App Container */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Base styles for future expansion */
+main {
+  flex: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .app-container {
+    padding-bottom: 20px;
+  }
+}

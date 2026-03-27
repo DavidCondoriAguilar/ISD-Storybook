@@ -1,0 +1,50 @@
+{
+  "exportVersion": "1.0",
+  "exportDate": "2026-03-27T10:00:00-05:00",
+  "worker": {
+    "id": 5,
+    "name": "Juan Pérez"
+  },
+  "records": [
+    {
+      "tempId": "rec-101",
+      "productId": 10,
+      "stageId": 1,
+      "quantity": 450,
+      "timeMinutes": 100,
+      "timestamp": "2026-03-27T07:15:00-05:00"
+    },
+    {
+      "tempId": "rec-102",
+      "productId": 11,
+      "stageId": 2,
+      "quantity": 300,
+      "timeMinutes": 80,
+      "timestamp": "2026-03-27T09:00:00-05:00"
+    },
+    {
+      "tempId": "rec-103",
+      "productId": 10,
+      "stageId": 3,
+      "quantity": 520,
+      "timeMinutes": 120,
+      "timestamp": "2026-03-27T11:45:00-05:00"
+    },
+    {
+      "tempId": "rec-104",
+      "productId": 12,
+      "stageId": 1,
+      "quantity": 150,
+      "timeMinutes": 45,
+      "timestamp": "2026-03-26T14:20:00-05:00"
+    },
+    {
+      "tempId": "rec-105",
+      "productId": 11,
+      "stageId": 2,
+      "quantity": 280,
+      "timeMinutes": 70,
+      "timestamp": "2026-03-26T15:40:00-05:00"
+    }
+  ]
+}
