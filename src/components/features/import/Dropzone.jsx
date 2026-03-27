@@ -45,7 +45,6 @@ export function Dropzone({ onFileSelect }) {
       onDragOver={handleDrag}
       onDrop={handleDrop}
       onClick={onButtonClick}
-      whileHover={{ scale: 1.01, borderColor: 'var(--primary)' }}
       whileTap={{ scale: 0.99 }}
       transition={{ duration: 0.2 }}
       style={{ padding: '64px 32px' }}

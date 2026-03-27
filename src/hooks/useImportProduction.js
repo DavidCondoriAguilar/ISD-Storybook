@@ -69,50 +69,74 @@ export function useImportProduction() {
   }, [])
 
   const startImport = useCallback(async () => {
+    if (!file || !file.raw) return
+    
     setStep(STEPS.PROCESSING)
     setProgress(0)
     setProcessingSteps([])
     setProcessingStatus(ProcessingStatus.VALIDATING)
     setResult(null)
 
-    const statusConfig = [
-      { status: ProcessingStatus.VALIDATING, text: 'Validando archivo', icon: '✅', delay: 800 },
-      { status: ProcessingStatus.REGISTERING, text: 'Registrando producción', icon: '🔄', delay: 1500 },
-      { status: ProcessingStatus.SAVING, text: 'Guardando registros', icon: '⏳', delay: 2000 }
-    ]
+    try {
+      // 1. Read and Parse JSON
+      const fileContent = await new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = (e) => resolve(e.target.result)
+        reader.onerror = (e) => reject(new Error('Error al leer el archivo'))
+        reader.readAsText(file.raw)
+      })
 
-    for (let i = 0; i < statusConfig.length; i++) {
-      const config = statusConfig[i]
-      await new Promise(resolve => setTimeout(resolve, config.delay - (i > 0 ? statusConfig[i-1].delay : 0)))
-      setProcessingStatus(config.status)
-      addProcessingStep({ id: config.status, text: config.text, icon: config.icon, done: true })
-      setProgress((i + 1) * 33)
-    }
+      const data = JSON.parse(fileContent)
+      
+      // Validation: Ensure records is an array to avoid crashes
+      if (!Array.isArray(data.records)) {
+        throw new Error('El archivo no contiene la lista de registros "records" esperada.')
+      }
 
-    const importResult = await processImport(file.raw, validateBeforeImport)
-    setProcessingStatus(ProcessingStatus.COMPLETED)
-    setProgress(100)
-    await new Promise(resolve => setTimeout(resolve, 500))
+      const statusConfig = [
+        { status: ProcessingStatus.VALIDATING, text: 'Auditando estructura JSON', icon: '✅', delay: 1000 },
+        { status: ProcessingStatus.REGISTERING, text: `Modulando ${data.records.length} estaciones`, icon: '🔄', delay: 1800 },
+        { status: ProcessingStatus.SAVING, text: 'Indexando en Bitácora Final', icon: '⏳', delay: 2500 }
+      ]
 
-    const finalSummary = {
-      success: importResult.success,
-      failed: importResult.failed,
-      total: importResult.total,
-      units: importResult.units,
-      errors: importResult.errors
-    }
+      for (let i = 0; i < statusConfig.length; i++) {
+        const config = statusConfig[i]
+        await new Promise(res => setTimeout(res, config.delay - (i > 0 ? statusConfig[i-1].delay : 0)))
+        setProcessingStatus(config.status)
+        addProcessingStep({ id: config.status, text: config.text, icon: config.icon, done: true })
+        setProgress((i + 1) * 33)
+      }
 
-    // storageService.save removed from here as it is handled by Layout.onImportComplete
-    setSummary(finalSummary)
-    
-    if (importResult.result === ImportResult.SUCCESS) {
+      // 2. Extract Final Summary from JSON
+      const totalUnits = data.summary?.totalQuantity || data.records.reduce((s, r) => s + (r.quantity || 0), 0)
+      const totalRejected = data.summary?.totalRejected || data.records.reduce((s, r) => s + (r.quantityRejected || 0), 0)
+
+      const finalSummary = {
+        success: totalUnits - totalRejected,
+        failed: totalRejected,
+        total: data.records.length,
+        units: totalUnits,
+        worker: data.worker?.name || 'Sistema',
+        shift: data.shift?.type || 'N/A',
+        errors: [],
+        rawRecords: data.records // Store detailed records
+      }
+
+      setProcessingStatus(ProcessingStatus.COMPLETED)
+      setProgress(100)
+      await new Promise(resolve => setTimeout(resolve, 800))
+      
+      setSummary(finalSummary)
       setResult(ImportResult.SUCCESS)
       setStep(STEPS.SUCCESS)
-    } else {
-      setResult(ImportResult.PARTIAL)
+
+    } catch (err) {
+      console.error('Import Error:', err)
+      setResult(ImportResult.FAILED)
       setStep(STEPS.ERROR)
+      setSummary({ ...initialSummary, errors: [{ message: 'El archivo JSON no es válido o está corrupto.' }] })
     }
-  }, [file, validateBeforeImport, addProcessingStep])
+  }, [file, addProcessingStep])
 
   const retry = useCallback(() => startImport(), [startImport])
 

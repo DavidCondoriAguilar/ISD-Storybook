@@ -1,0 +1,40 @@
+{
+  "exportVersion": "1.0",
+  "exportDate": "2026-03-26T06:00:00-05:00",
+  "worker": {
+    "id": 12,
+    "name": "Pedro Morales"
+  },
+  "shift": {
+    "date": "2026-03-25",
+    "type": "NIGHT"
+  },
+  "records": [
+    {
+      "tempId": "rec-501",
+      "orderNumber": "ORD-2026-005",
+      "productName": "Colchón Kids Confort",
+      "stageName": "Embalado",
+      "machineName": "Empacadora Automática #1",
+      "quantity": 300,
+      "quantityRejected": 0,
+      "timestamp": "2026-03-26T01:30:00-05:00"
+    },
+    {
+      "tempId": "rec-502",
+      "orderNumber": "ORD-2026-005",
+      "productName": "Colchón Kids Confort",
+      "stageName": "Calidad",
+      "machineName": "Estación Revisión Interna #2",
+      "quantity": 298,
+      "quantityRejected": 2,
+      "timestamp": "2026-03-26T04:45:00-05:00",
+      "notes": "2 unidades rechazadas por mancha en la tela"
+    }
+  ],
+  "summary": {
+    "totalRecords": 2,
+    "totalQuantity": 598,
+    "totalRejected": 2
+  }
+}

@@ -34,18 +34,32 @@ export const storageService = {
     
     const totalImports = history.length
     const totalUnits = history.reduce((sum, r) => sum + (r.units || 0), 0)
+    // Use the 'success' and 'failed' properties from the stored record
     const totalSuccess = history.reduce((sum, r) => sum + (r.success || 0), 0)
     const totalFailed = history.reduce((sum, r) => sum + (r.failed || 0), 0)
     
     // Derived Metrics
     const avgUnitsPerImport = Math.round(totalUnits / totalImports)
-    const globalEfficiency = totalSuccess + totalFailed > 0 ? (totalSuccess / (totalSuccess + totalFailed)) * 100 : 0
+    // Efficiency is based on Units: (Good Units / Total Units)
+    const globalEfficiency = totalUnits > 0 ? (totalSuccess / totalUnits) * 100 : 0
     
     // Aggregations
     const workers = {}
+    const areas = {}
+    
     history.forEach(r => {
-      const w = r.worker || 'Sin asignar'
-      workers[w] = (workers[w] || 0) + (r.units || 0)
+      // Record-level granularity if rawRecords exists
+      const innerRecs = r.rawRecords || [r]
+      innerRecs.forEach(raw => {
+        const w = r.worker || 'Sin asignar'
+        const area = raw.stageName || 'Otros'
+        
+        workers[w] = (workers[w] || 0) + (raw.quantity || 0)
+        
+        if (!areas[area]) areas[area] = { name: area, units: 0, rejected: 0 }
+        areas[area].units += (raw.quantity || 0)
+        areas[area].rejected += (raw.quantityRejected || 0)
+      })
     })
     
     const topWorker = Object.entries(workers).sort((a,b) => b[1] - a[1])[0]?.[0] || 'N/A'
@@ -58,7 +72,8 @@ export const storageService = {
       avgUnitsPerImport,
       totalFailed,
       lastImport,
-      topWorker
+      topWorker,
+      areaBreakdown: Object.values(areas).sort((a,b) => b.units - a.units)
     }
   },
 

@@ -1,0 +1,23 @@
+{
+  "exportVersion": "2.1",
+  "exportDate": "2026-03-27T16:00:00-05:00",
+  "factory": "Planta Central - Lima",
+  "shift": { "date": "2026-03-27", "type": "FULL_DAY" },
+  "records": [
+    { "tempId": "F-001", "orderNumber": "ORD-101", "productName": "Colchón Premium XL", "stageName": "Resortes", "machineName": "RES-01", "workerName": "Carlos Mendoza", "quantity": 800, "quantityRejected": 0, "timestamp": "2026-03-27T08:00:00-05:00" },
+    { "tempId": "F-002", "orderNumber": "ORD-101", "productName": "Colchón Premium XL", "stageName": "Espuma", "machineName": "ESP-02", "workerName": "Ana Silva", "quantity": 750, "quantityRejected": 50, "timestamp": "2026-03-27T10:00:00-05:00", "notes": "Falla en densidad de espuma" },
+    { "tempId": "F-003", "orderNumber": "ORD-102", "productName": "Colchón Eco-Sostenible", "stageName": "Corte", "machineName": "COR-01", "workerName": "Roberto Gómez", "quantity": 1200, "quantityRejected": 5, "timestamp": "2026-03-27T09:30:00-05:00" },
+    { "tempId": "F-004", "orderNumber": "ORD-102", "productName": "Colchón Eco-Sostenible", "stageName": "Costura", "machineName": "COS-03", "workerName": "Lucía Torres", "quantity": 1150, "quantityRejected": 20, "timestamp": "2026-03-27T12:00:00-05:00", "notes": "Hilos sueltos en bordado" },
+    { "tempId": "F-005", "orderNumber": "ORD-103", "productName": "Colchón Ortopédico Max", "stageName": "Resortes", "machineName": "RES-02", "workerName": "Carlos Mendoza", "quantity": 500, "quantityRejected": 0, "timestamp": "2026-03-27T14:00:00-05:00" },
+    { "tempId": "F-006", "orderNumber": "ORD-103", "productName": "Colchón Ortopédico Max", "stageName": "Embalado", "machineName": "EMB-01", "workerName": "Luis Pardo", "quantity": 498, "quantityRejected": 2, "timestamp": "2026-03-27T16:00:00-05:00" },
+    { "tempId": "F-007", "orderNumber": "ORD-104", "productName": "Almohada Visco-Gel", "stageName": "Inyección", "machineName": "INJ-01", "workerName": "Marta Rivas", "quantity": 2500, "quantityRejected": 150, "timestamp": "2026-03-27T11:00:00-05:00", "notes": "Burbujas de aire detectadas" },
+    { "tempId": "F-008", "orderNumber": "ORD-104", "productName": "Almohada Visco-Gel", "stageName": "Calidad", "machineName": "CAL-02", "workerName": "Javier Solís", "quantity": 2350, "quantityRejected": 0, "timestamp": "2026-03-27T15:00:00-05:00" }
+  ],
+  "summary": {
+    "totalRecords": 8,
+    "totalQuantity": 9748,
+    "totalRejected": 227,
+    "totalOrders": 4,
+    "efficiency": 97.7
+  }
+}

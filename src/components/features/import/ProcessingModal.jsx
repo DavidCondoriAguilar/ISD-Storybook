@@ -6,100 +6,108 @@ import {
   RotateCw, 
   Database,
   Search,
-  CloudUpload
+  CloudUpload,
+  Zap,
+  Layers,
+  Cpu
 } from 'lucide-react'
 import './ProcessingModal.css'
 
 export function ProcessingModal({ progress, steps, onCancel }) {
   const getStepIcon = (step, index) => {
-    if (step.status === 'completed') return <CheckCircle2 size={16} />
-    if (step.status === 'active') return <RotateCw size={16} className="spinning" />
+    if (step.status === 'completed') return <CheckCircle2 size={24} color="var(--success)" />
     
-    // Default icons by index
-    if (index === 0) return <Search size={16} />
-    if (index === 1) return <Database size={16} />
-    if (index === 2) return <CloudUpload size={16} />
-    return <Settings size={16} />
+    // Active / Pending icons with specific colors
+    const iconProps = { 
+      size: 24, 
+      className: step.status === 'active' ? 'pulse-icon' : '' 
+    }
+
+    if (index === 0) return <Search {...iconProps} color="#3b82f6" /> // Blue
+    if (index === 1) return <Cpu {...iconProps} color="#a855f7" /> // Purple
+    if (index === 2) return <Database {...iconProps} color="#f59e0b" /> // Amber
+    return <CloudUpload {...iconProps} color="#10b981" /> // Emerald
   }
 
   return (
     <motion.div 
       className="processing-modal"
-      initial={{ opacity: 0, scale: 0.95, y: 30 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
-      transition={{ type: 'spring', damping: 25, stiffness: 120 }}
-      style={{ padding: '64px 48px', maxWidth: '600px', margin: '0 auto' }}
+      initial={{ opacity: 0, scale: 0.8, rotate: -2 }}
+      animate={{ opacity: 1, scale: 1, rotate: 0 }}
+      exit={{ opacity: 0, scale: 1.1, filter: 'blur(20px)' }}
+      style={{ padding: '64px 48px', maxWidth: '700px', margin: '0 auto', background: 'white', borderRadius: '40px', border: '1px solid var(--border)', boxShadow: '0 40px 100px -20px rgba(0,0,0,0.2)' }}
     >
-      <div className="processing-header">
-        <motion.div 
-          className="processing-top-icon" 
-          animate={{ rotate: 360 }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-          style={{ width: '64px', height: '64px', margin: '0 auto 24px', background: 'var(--primary-light)', borderRadius: 'var(--radius-xl)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}
-        >
-          <Settings size={32} />
-        </motion.div>
+      <div className="processing-header" style={{ marginBottom: '56px', textAlign: 'center' }}>
+        <div style={{ position: 'relative', width: '100px', height: '100px', margin: '0 auto 32px' }}>
+          <motion.div 
+            animate={{ scale: [1, 1.4, 1], rotate: [0, 90, 180, 270, 360] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ position: 'absolute', inset: -15, borderRadius: '35%', background: 'linear-gradient(135deg, var(--primary-glow) 0%, var(--secondary-glow) 100%)', opacity: 0.4 }}
+          />
+          <motion.div 
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)', borderRadius: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 20px 40px var(--primary-glow)', zIndex: 1, position: 'relative' }}
+          >
+            <Zap size={44} fill="currentColor" />
+          </motion.div>
+        </div>
+        
         <motion.h2
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
+          style={{ fontSize: '2.2rem', fontWeight: 900, letterSpacing: '-0.04em', background: 'linear-gradient(90deg, var(--text-main), var(--primary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
         >
-          Procesando Registros de Producción
+          Sincronizando Manufactura
         </motion.h2>
-        <p style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.95rem' }}>
-          Por favor mantén la ventana abierta hasta completar la sincronización
+        <p style={{ color: 'var(--text-muted)', fontWeight: 700, fontSize: '1.1rem', marginTop: '12px' }}>
+          Procesando módulos y validando órdenes de producción...
         </p>
       </div>
 
-      <div className="processing-progress" style={{ height: '16px', borderRadius: 'var(--radius-full)' }}>
-        <motion.div 
-          className="progress-bar-fill" 
-          initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-          style={{ background: 'linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%)' }}
-        />
-        <div className="progress-percentage" style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '0.75rem', fontWeight: 800, color: progress > 50 ? 'white' : 'var(--text-muted)' }}>
-          {progress}%
+      <div className="progress-section" style={{ marginBottom: '48px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', alignItems: 'flex-end' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 850, fontSize: '0.9rem' }}>
+             <Layers size={18} /> PROGRESO TOTAL
+          </div>
+          <span style={{ fontSize: '1.5rem', fontWeight: 900, fontFamily: 'var(--font-outfit)' }}>{Math.round(progress)}%</span>
+        </div>
+        <div className="master-progress-track" style={{ height: '14px', background: 'var(--bg-app)', borderRadius: '20px', padding: '3px' }}>
+          <motion.div 
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.6 }}
+            style={{ height: '100%', borderRadius: '20px', background: 'linear-gradient(90deg, #3b82f6, #a855f7, #ec4899)', boxShadow: '0 0 20px rgba(59, 130, 246, 0.4)' }}
+          />
         </div>
       </div>
 
-      <div className="processing-steps" style={{ gap: '20px' }}>
+      <div className="animated-steps" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
         <AnimatePresence>
           {steps.map((step, index) => (
             <motion.div 
-              key={step.id} 
-              className={`step-item ${step.status}`}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              style={{ display: 'flex', alignItems: 'center', gap: '16px' }}
+              key={step.id || index} 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ delay: index * 0.15 }}
+              style={{ padding: '24px', borderRadius: '24px', background: step.status === 'active' ? 'var(--primary-light)' : 'var(--bg-app)', border: step.status === 'active' ? '2px solid var(--primary)' : '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', position: 'relative' }}
             >
               <div 
-                className="step-status-icon-wrapper" 
                 style={{ 
-                  width: '32px', 
-                  height: '32px', 
-                  background: step.status === 'completed' ? 'rgba(16, 185, 129, 0.1)' : step.status === 'active' ? 'var(--primary-light)' : 'var(--bg-app)', 
-                  color: step.status === 'completed' ? 'var(--success)' : step.status === 'active' ? 'var(--primary)' : 'var(--text-muted)',
-                  borderRadius: 'var(--radius-md)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'all 0.3s ease'
+                  width: '56px', height: '56px', borderRadius: '16px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)', transition: 'transform 0.3s'
                 }}
               >
                 {getStepIcon(step, index)}
               </div>
-              <span className="step-label" style={{ fontWeight: step.status === 'active' ? 800 : 600, fontSize: '1rem', color: step.status === 'active' ? 'var(--text-main)' : 'var(--text-muted)' }}>
-                {step.label}
+              <span style={{ fontWeight: 800, fontSize: '0.9rem', textAlign: 'center', color: step.status === 'pending' ? 'var(--text-muted)' : 'var(--text-main)' }}>
+                {step.text}
               </span>
               {step.status === 'active' && (
                 <motion.div 
-                  className="active-indicator"
-                  animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  style={{ width: '8px', height: '8px', background: 'var(--primary)', borderRadius: '50%', marginLeft: 'auto' }}
+                   layoutId="active-particle"
+                   style={{ position: 'absolute', top: -5, right: -5, width: '12px', height: '12px', borderRadius: '50%', background: 'var(--primary)', boxShadow: '0 0 10px var(--primary-glow)' }}
+                   animate={{ scale: [1, 1.5, 1] }}
+                   transition={{ duration: 1, repeat: Infinity }}
                 />
               )}
             </motion.div>
@@ -108,23 +116,17 @@ export function ProcessingModal({ progress, steps, onCancel }) {
       </div>
 
       <motion.button 
-        className="btn-processing-cancel" 
+        className="btn-abort-action" 
         onClick={onCancel}
-        whileHover={{ x: -2, background: '#fecaca', color: '#991b1b' }}
-        whileTap={{ scale: 0.98 }}
-        style={{ marginTop: '24px', padding: '16px', borderRadius: 'var(--radius-md)', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: '1px solid var(--border)' }}
+        whileHover={{ x: [0, -2, 2, 0] }}
+        style={{ width: '100%', marginTop: '48px', padding: '20px', borderRadius: '20px', fontWeight: 850, border: 'none', background: 'var(--bg-app)', color: 'var(--danger)', fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}
       >
-        <XSquare size={18} /> Detener Proceso
+        <XSquare size={20} /> DETENER SINCRONIZACIÓN
       </motion.button>
       
       <style>{`
-        .spinning {
-          animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
+        .pulse-icon { animation: pulseIcon 2s infinite ease-in-out; }
+        @keyframes pulseIcon { 0%, 100% { transform: scale(1) rotate(0); } 50% { transform: scale(1.15) rotate(5deg); } }
       `}</style>
     </motion.div>
   )

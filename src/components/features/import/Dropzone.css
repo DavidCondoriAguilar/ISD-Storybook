@@ -1,51 +1,71 @@
 .dropzone {
   width: 100%;
-  border: 2px dashed var(--border);
-  border-radius: var(--radius-md);
-  background: var(--bg-app);
-  padding: 40px 24px;
+  border: 4px dashed var(--primary);
+  border-radius: var(--radius-xl);
+  background: white;
+  padding: 80px 32px;
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   cursor: pointer;
-  transition: var(--transition-bounce);
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  opacity: 0.85;
+}
+
+/* Solo efecto hover/active cuando se arrastra un archivo encima */
+.dropzone.active {
+  border-color: var(--secondary);
+  border-style: solid;
+  background: var(--primary-light);
+  transform: scale(1.02);
+  border-width: 5px;
+  box-shadow: 0 24px 48px -12px var(--primary-glow);
+  opacity: 1;
 }
 
 .dropzone::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--primary-glow), transparent 60%);
+  background: radial-gradient(circle at 50% 50%, var(--primary-light), transparent 80%);
   opacity: 0;
-  transition: opacity 0.3s;
+  pointer-events: none;
 }
 
-.dropzone:hover::before {
-  opacity: 1;
-}
-
-.dropzone.active {
-  border-color: var(--primary);
-  background: var(--primary-light);
-  transform: scale(1.02);
+.dropzone.active::before {
+  opacity: 0.8;
 }
 
 .dropzone-icon {
-  font-size: 3rem;
-  margin-bottom: 16px;
-  display: block;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  color: var(--primary);
+}
+
+.dropzone.active .dropzone-icon {
+  transform: translateY(-8px) scale(1.1);
+  color: var(--secondary);
 }
 
 .dropzone-text {
-  font-weight: 700;
+  font-weight: 850;
   color: var(--text-main);
-  margin-bottom: 8px;
-  font-size: 1.1rem;
+  margin-bottom: 12px;
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
 }
 
 .dropzone-hint {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: var(--bg-app);
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
 }

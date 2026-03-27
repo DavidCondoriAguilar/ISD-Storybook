@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { FileUp, ShieldCheck, XCircle, CheckCircle } from 'lucide-react'
+import { motion as m, AnimatePresence as AP } from 'framer-motion'
+import { FileUp, ShieldCheck, XCircle, CheckCircle, Upload, ArrowRight } from 'lucide-react'
 import { useImportProduction } from '../../../hooks/useImportProduction'
 import { STEPS } from '../../../types'
 import { Dropzone } from './Dropzone'
@@ -9,23 +9,19 @@ import { ProcessingModal } from './ProcessingModal'
 import { ResultModal } from './ResultModal'
 import './ImportProduction.css'
 
-const stepVariants = {
-  initial: { opacity: 0, scale: 0.98, y: 15 },
+const pageVariants = {
+  initial: { opacity: 0, scale: 0.94, y: 30, filter: 'blur(10px)' },
   animate: { 
-    opacity: 1, 
-    scale: 1, 
-    y: 0,
-    transition: { type: 'spring', duration: 0.5, bounce: 0.2 }
+    opacity: 1, scale: 1, y: 0, filter: 'blur(0px)',
+    transition: { type: 'spring', damping: 20, stiffness: 100 }
   },
   exit: { 
-    opacity: 0, 
-    scale: 1.02, 
-    y: -10,
-    transition: { duration: 0.3 }
+    opacity: 0, scale: 1.05, y: -20, filter: 'blur(10px)',
+    transition: { duration: 0.4, ease: 'easeInOut' }
   }
 }
 
-export function ImportProduction({ onImportComplete }) {
+export function ImportProduction({ onImportComplete, onNotify }) {
   const {
     step,
     file,
@@ -42,108 +38,121 @@ export function ImportProduction({ onImportComplete }) {
     reset
   } = useImportProduction()
 
+  const onFileLoadSuccess = (f) => {
+    handleFileSelect(f)
+    if (onNotify) onNotify(`¡Archivo "${f.name}" capturado correctamente! 📋`)
+  }
+
   useEffect(() => {
     if (step === STEPS.SUCCESS && onImportComplete) {
       onImportComplete(summary, { fileName: file.name, worker: file.worker })
     }
-  }, [step, summary, onImportComplete])
+  }, [step, summary, onImportComplete, file])
 
   const renderImportStep = () => (
-    <motion.div 
-      className="modal"
-      variants={stepVariants}
+    <m.div 
+      key="import-view"
+      className="import-view-container"
+      variants={pageVariants}
       initial="initial"
       animate="animate"
       exit="exit"
-      style={{ maxWidth: '600px', margin: '0 auto' }}
+      style={{ maxWidth: '700px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '40px' }}
     >
-      <div className="modal-header" style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <div className="icon-badge" style={{ display: 'inline-flex', padding: '16px', background: 'var(--primary-light)', color: 'var(--primary)', borderRadius: 'var(--radius-lg)', marginBottom: '24px' }}>
-          <FileUp size={32} />
-        </div>
-        <h2 className="modal-title" style={{ margin: 0 }}>Cargar Archivo de Producción</h2>
-        <p style={{ color: 'var(--text-muted)', marginTop: '8px', fontWeight: 500 }}>
-          Sube tu archivo JSON para procesar y sincronizar con el historial
+      <div className="import-hero">
+        <m.div 
+          className="hero-icon-bg"
+          whileHover={{ rotate: [0, -10, 10, 0] }}
+          style={{ width: '80px', height: '80px', background: 'var(--primary-light)', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', margin: '0 auto 32px' }}
+        >
+          <Upload size={36} />
+        </m.div>
+        <h2 style={{ fontSize: '2.5rem', fontWeight: 900, textAlign: 'center', letterSpacing: '-0.03em' }}>Portal de Carga</h2>
+        <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: 500, marginTop: '8px' }}>
+          Sincroniza tus registros de producción con el historial ejecutivo de la planta.
         </p>
       </div>
       
-      <Dropzone onFileSelect={handleFileSelect} />
+      <Dropzone onFileSelect={onFileLoadSuccess} />
 
-      <AnimatePresence mode="wait">
+      <AP mode="wait">
         {file && (
-          <motion.div
+          <m.div
             key={file.name}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+            initial={{ height: 0, scale: 0.8 }}
+            animate={{ height: 'auto', scale: 1 }}
+            exit={{ height: 0, scale: 0.8 }}
             style={{ marginBottom: '24px' }}
           >
             <FileCard file={file} onRemove={handleRemoveFile} />
-          </motion.div>
+          </m.div>
         )}
-      </AnimatePresence>
+      </AP>
 
-      <div className="import-options" style={{ padding: '24px', background: 'var(--bg-app)', borderRadius: 'var(--radius-md)', marginBottom: '40px' }}>
-        <label className="checkbox-label" style={{ margin: 0 }}>
-          <input 
+      <div className="import-options-card" style={{ padding: '32px', background: 'white', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+        <m.label className="checkbox-label" whileHover={{ x: 5 }} style={{ cursor: 'pointer', display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+          <m.input 
             type="checkbox" 
             checked={validateBeforeImport}
             onChange={(e) => setValidateBeforeImport(e.target.checked)}
+            style={{ width: '24px', height: '24px', borderRadius: '8px', border: '2px solid var(--primary)', accentColor: 'var(--primary)', flexShrink: 0 }}
           />
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontWeight: 700, color: 'var(--text-main)' }}>Validación de Integridad</span>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Comprobar esquemas y duplicados antes de guardar</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <span style={{ fontWeight: 850, fontSize: '1.1rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <ShieldCheck size={20} color="var(--success)" /> Validación de Integridad Estricta
+            </span>
+            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 500, lineHeight: 1.5 }}>
+              Comprueba duplicados, esquemas relacionales y formatos de operarios antes de la carga final al ERP.
+            </span>
           </div>
-        </label>
+        </m.label>
       </div>
 
-      <div className="actions">
-        <motion.button 
-          className="btn-cancel" 
+      <div className="import-actions" style={{ display: 'flex', gap: '20px' }}>
+        <m.button 
+          className="btn-cancel-large" 
           onClick={reset}
-          whileHover={{ x: -2 }}
+          whileHover={{ x: -2, background: '#f8fafc' }}
           whileTap={{ scale: 0.98 }}
+          style={{ flex: 1, padding: '20px', background: 'transparent', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-lg)', fontWeight: 800, color: 'var(--text-muted)', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}
         >
-          <XCircle size={18} /> Cancelar
-        </motion.button>
-        <motion.button 
-          className="btn-import" 
+          <XCircle size={20} /> Cancelar Trámite
+        </m.button>
+        <m.button 
+          className="btn-start-large" 
           onClick={startImport}
           disabled={!file}
-          whileHover={file ? { scale: 1.02 } : {}}
+          whileHover={file ? { scale: 1.02, background: 'var(--primary-dark)' } : {}}
           whileTap={file ? { scale: 0.98 } : {}}
+          style={{ 
+            flex: 2, padding: '20px', background: file ? 'var(--primary)' : 'var(--border)', 
+            color: 'white', borderRadius: 'var(--radius-lg)', fontWeight: 800, fontSize: '1.1rem', 
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', box_shadow: file ? '0 12px 24px var(--primary-glow)' : 'none', transition: 'all 0.3s ease' 
+          }}
         >
-          <CheckCircle size={18} /> Iniciar Importación
-        </motion.button>
+          <CheckCircle size={22} /> Iniciar Sincronización <ArrowRight size={20} />
+        </m.button>
       </div>
-    </motion.div>
+    </m.div>
   )
 
   return (
-    <div className="import-production" style={{ maxWidth: '100%' }}>
-      <AnimatePresence mode="wait">
+    <div className="import-production-wrapper" style={{ padding: '20px 0' }}>
+      <AP mode="wait">
         {step === STEPS.IMPORT && renderImportStep()}
         
         {step === STEPS.PROCESSING && (
-          <ProcessingModal 
-            key="processing"
-            progress={progress}
-            steps={processingSteps}
-            onCancel={reset}
-          />
+           <m.div key="proc-view" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+             <ProcessingModal progress={progress} steps={processingSteps} onCancel={reset} />
+           </m.div>
         )}
         
         {(step === STEPS.SUCCESS || step === STEPS.ERROR) && (
-          <ResultModal
-            key="result"
-            result={result}
-            summary={summary}
-            onClose={reset}
-            onRetry={step === STEPS.ERROR ? retry : undefined}
-            onDownload={() => {}}
-          />
+          <m.div key="res-view" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+            <ResultModal result={result} summary={summary} onClose={reset} onRetry={step === STEPS.ERROR ? retry : undefined} onDownload={() => {}} />
+          </m.div>
         )}
-      </AnimatePresence>
+      </AP>
     </div>
   )
 }

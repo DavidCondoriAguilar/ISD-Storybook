@@ -34,10 +34,11 @@ export function Layout() {
       fileName: meta?.fileName || 'production_import.json',
       worker: meta?.worker || 'Usuario',
       success: summary.success,
-      failed: summary.failed,
       total: summary.total,
       units: summary.units,
-      errors: summary.errors
+      failed: summary.rejected || 0, // We use REJECTED units for the "Failure" metric in history
+      errors: summary.errors,
+      rawRecords: summary.rawRecords
     })
     
     setNotification({ type: 'success', message: '¡Importación completada con éxito! 🚀' })
@@ -134,7 +135,13 @@ export function Layout() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
             >
-              <ImportProduction onImportComplete={handleImportComplete} />
+              <ImportProduction 
+                onImportComplete={handleImportComplete} 
+                onNotify={(msg) => {
+                  setNotification({ type: 'success', message: msg })
+                  setTimeout(() => setNotification(null), 3000)
+                }}
+              />
             </motion.div>
           ) : (
             <motion.div
