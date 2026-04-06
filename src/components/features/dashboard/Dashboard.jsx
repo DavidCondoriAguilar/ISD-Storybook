@@ -85,23 +85,31 @@ export function Dashboard() {
           </div>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px', maxHeight: '450px', overflowY: 'auto', paddingRight: '12px' }}>
-          {data.stats.lastImport?.rawRecords?.map((rec, i) => (
-            <motion.div key={i} whileHover={{ translateY: -4 }} style={{ background: 'var(--bg-app)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: 'var(--shadow-sm)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
-                   <span style={{ fontWeight: 900, color: 'var(--primary)', fontSize: '1rem', textTransform: 'uppercase' }}>{rec.stageName}</span>
-                   <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>{rec.orderNumber || 'SIN ORDEN'}</span>
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', fontWeight: 700, color: 'var(--secondary)' }}>
-                      <User size={12} /> {rec.workerName || 'Sin asignar'}
-                   </div>
+          {data.stats.lastImport?.rawRecords?.map((rec, i) => {
+            const quantity = Number(rec.cantidad ?? rec.quantity ?? 0);
+            const quantityRejected = Number(rec.cantidadRechazada ?? rec.quantityRejected ?? 0);
+            const stage = rec.modulo ?? rec.stageName ?? 'Manufactura';
+            const order = rec.idLocal ?? rec.orderNumber ?? 'SIN ORDEN';
+            const worker = rec.trabajadorNombre ?? rec.workerName ?? 'Sin asignar';
+
+            return (
+              <motion.div key={i} whileHover={{ translateY: -4 }} style={{ background: 'var(--bg-app)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: 'var(--shadow-sm)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
+                     <span style={{ fontWeight: 900, color: 'var(--primary)', fontSize: '1rem', textTransform: 'uppercase' }}>{stage}</span>
+                     <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>{order}</span>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', fontWeight: 700, color: 'var(--secondary)' }}>
+                        <User size={12} /> {worker}
+                     </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '1.4rem', fontWeight: 950 }}>{quantity} <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>u.</span></div>
+                    {quantityRejected > 0 && <div style={{ fontSize: '0.8rem', color: 'var(--danger)', fontWeight: 900 }}>-{quantityRejected} RECHAZOS</div>}
+                  </div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 950 }}>{rec.quantity} <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>u.</span></div>
-                  {rec.quantityRejected > 0 && <div style={{ fontSize: '0.8rem', color: 'var(--danger)', fontWeight: 900 }}>-{rec.quantityRejected} RECHAZOS</div>}
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            )
+          })}
           {!data.stats.lastImport?.rawRecords && <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>No hay datos de auditoría disponibles.</div>}
         </div>
       </motion.div>

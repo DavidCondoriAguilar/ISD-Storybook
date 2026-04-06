@@ -52,13 +52,15 @@ export const storageService = {
       const innerRecs = r.rawRecords || [r]
       innerRecs.forEach(raw => {
         const w = r.worker || 'Sin asignar'
-        const area = raw.stageName || 'Otros'
+        const area = raw.modulo || raw.stageName || 'Otros'
+        const qty = Number(raw.cantidad ?? raw.quantity ?? 0)
+        const rejections = Number(raw.cantidadRechazada ?? raw.quantityRejected ?? 0)
         
-        workers[w] = (workers[w] || 0) + (raw.quantity || 0)
+        workers[w] = (workers[w] || 0) + qty
         
         if (!areas[area]) areas[area] = { name: area, units: 0, rejected: 0 }
-        areas[area].units += (raw.quantity || 0)
-        areas[area].rejected += (raw.quantityRejected || 0)
+        areas[area].units += qty
+        areas[area].rejected += rejections
       })
     })
     

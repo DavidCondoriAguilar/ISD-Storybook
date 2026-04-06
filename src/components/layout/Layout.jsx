@@ -36,7 +36,7 @@ export function Layout() {
       success: summary.success,
       total: summary.total,
       units: summary.units,
-      failed: summary.rejected || 0, // We use REJECTED units for the "Failure" metric in history
+      failed: summary.failed || 0, // We use FAILED units for the "Failure" metric in history
       errors: summary.errors,
       rawRecords: summary.rawRecords
     })

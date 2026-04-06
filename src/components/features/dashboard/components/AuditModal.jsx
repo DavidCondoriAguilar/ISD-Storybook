@@ -56,39 +56,49 @@ export function AuditModal({ selectedRecord, onClose }) {
                 </tr>
               </thead>
               <tbody>
-                {selectedRecord.rawRecords?.map((rec, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid var(--bg-app)', transition: 'background 0.2s' }}>
-                    <td style={{ padding: '24px', fontWeight: 900, fontSize: '0.85rem' }}>{rec.orderNumber}</td>
-                    <td style={{ padding: '24px', fontWeight: 700, opacity: 0.8, fontSize: '0.85rem' }}>{rec.productName}</td>
-                    <td style={{ padding: '24px' }}>
-                      <div style={{ fontWeight: 900, color: 'var(--primary)', fontSize: '0.9rem' }}>{rec.stageName}</div>
-                      <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', marginTop: '4px' }}>{rec.machineName}</div>
-                    </td>
-                    <td style={{ padding: '24px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: 800, color: 'var(--secondary)' }}>
-                        <div style={{ width: '24px', height: '24px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={12} /></div>
-                        {rec.workerName || selectedRecord.worker}
-                      </div>
-                    </td>
-                    <td style={{ padding: '24px', fontWeight: 950, fontSize: '1.2rem', textAlign: 'right' }}>
-                       {rec.quantity.toLocaleString()} <span style={{ fontSize: '0.75rem', opacity: 0.4 }}>unid.</span>
-                    </td>
-                    <td style={{ padding: '24px' }}>
-                      {rec.quantityRejected > 0 ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                          <span style={{ padding: '6px 12px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 900, width: 'fit-content', border: '1px solid rgba(239, 68, 68, 0.1)' }}>
-                            {rec.quantityRejected} RECHAZOS
-                          </span>
-                          {rec.notes && <span style={{ fontSize: '0.65rem', fontWeight: 600, fontStyle: 'italic', opacity: 0.6, maxWidth: '180px' }}>"{rec.notes}"</span>}
+                {selectedRecord.rawRecords?.map((rec, i) => {
+                  const quantity = Number(rec.cantidad ?? rec.quantity ?? 0);
+                  const quantityRejected = Number(rec.cantidadRechazada ?? rec.quantityRejected ?? 0);
+                  const order = rec.idLocal ?? rec.orderNumber ?? (i + 1);
+                  const product = rec.producto ?? rec.productName ?? 'S/N';
+                  const stage = rec.modulo ?? rec.stageName ?? 'N/A';
+                  const machine = rec.maquina ?? rec.machineName ?? 'Pest.';
+                  const worker = rec.trabajadorNombre ?? rec.workerName ?? selectedRecord.worker;
+
+                  return (
+                    <tr key={i} style={{ borderBottom: '1px solid var(--bg-app)', transition: 'background 0.2s' }}>
+                      <td style={{ padding: '24px', fontWeight: 900, fontSize: '0.85rem' }}>{order}</td>
+                      <td style={{ padding: '24px', fontWeight: 700, opacity: 0.8, fontSize: '0.85rem' }}>{product}</td>
+                      <td style={{ padding: '24px' }}>
+                        <div style={{ fontWeight: 900, color: 'var(--primary)', fontSize: '0.9rem' }}>{stage}</div>
+                        <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', marginTop: '4px' }}>{machine}</div>
+                      </td>
+                      <td style={{ padding: '24px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: 800, color: 'var(--secondary)' }}>
+                          <div style={{ width: '24px', height: '24px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={12} /></div>
+                          {worker}
                         </div>
-                      ) : (
-                         <span style={{ padding: '6px 12px', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 900, width: 'fit-content', border: '1px solid rgba(16, 185, 129, 0.1)' }}>
-                            ÓPTIMO
-                         </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td style={{ padding: '24px', fontWeight: 950, fontSize: '1.2rem', textAlign: 'right' }}>
+                         {quantity.toLocaleString()} <span style={{ fontSize: '0.75rem', opacity: 0.4 }}>unid.</span>
+                      </td>
+                      <td style={{ padding: '24px' }}>
+                        {quantityRejected > 0 ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                            <span style={{ padding: '6px 12px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 900, width: 'fit-content', border: '1px solid rgba(239, 68, 68, 0.1)' }}>
+                              {quantityRejected} RECHAZOS
+                            </span>
+                            {rec.notes && <span style={{ fontSize: '0.65rem', fontWeight: 600, fontStyle: 'italic', opacity: 0.6, maxWidth: '180px' }}>"{rec.notes}"</span>}
+                          </div>
+                        ) : (
+                           <span style={{ padding: '6px 12px', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 900, width: 'fit-content', border: '1px solid rgba(16, 185, 129, 0.1)' }}>
+                              ÓPTIMO
+                           </span>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
