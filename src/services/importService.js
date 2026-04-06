@@ -1,6 +1,6 @@
 import { ImportResult } from '../types'
 
-export function validateFile(file) {
+export async function validateFile(file) {
   if (!file) {
     return { valid: false, error: 'No se ha seleccionado un archivo' }
   }
@@ -9,7 +9,37 @@ export function validateFile(file) {
     return { valid: false, error: 'El archivo debe ser JSON' }
   }
 
-  return { valid: true, data: { records: 3, units: 1430 } }
+  try {
+    const content = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = (e) => reject(new Error('Error al leer el archivo'));
+      reader.readAsText(file);
+    });
+
+    const data = JSON.parse(content);
+    const records = Array.isArray(data) ? data : (data && Array.isArray(data.records) ? data.records : null);
+
+    if (!records) {
+      return { valid: false, error: 'El archivo no contiene una lista de registros válida.' };
+    }
+
+    const units = records.reduce((sum, r) => sum + (Number(r.cantidad ?? r.quantity ?? 0)), 0);
+    const worker = data.worker?.name || records[0]?.trabajadorNombre || 'Usuario';
+    const shift = data.shift?.type || records[0]?.turno || 'N/A';
+
+    return { 
+      valid: true, 
+      data: { 
+        records: records.length, 
+        units: units,
+        worker: worker,
+        shift: shift
+      } 
+    };
+  } catch (err) {
+    return { valid: false, error: 'El archivo JSON no es válido o está corrupto.' };
+  }
 }
 
 export async function processImport(file, validate) {

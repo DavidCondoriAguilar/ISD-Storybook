@@ -3,14 +3,7 @@ import { STEPS, FileStatus, ProcessingStatus, ImportResult } from '../types'
 import { validateFile, processImport } from '../services/importService'
 import { storageService } from '../services/storageService'
 
-const initialFile = {
-  name: 'production_2026-03-25_w5.json',
-  size: '2.3 KB',
-  worker: 'Juan Pérez',
-  records: 3,
-  units: 1430,
-  raw: null
-}
+const initialFile = null
 
 const initialSummary = {
   success: 0,
@@ -39,7 +32,7 @@ export function useImportProduction() {
 
   const handleFileSelect = useCallback(async (fileData) => {
     setFileStatus(FileStatus.VALIDATING)
-    const validation = validateFile(fileData)
+    const validation = await validateFile(fileData)
     
     if (!validation.valid) {
       setSummary({
@@ -53,8 +46,8 @@ export function useImportProduction() {
 
     setFile({
       name: fileData.name,
-      size: (fileData.size / 1024).toFixed(1) + ' KB',
-      worker: 'Usuario',
+      size: fileData.size,
+      worker: validation.data?.worker || 'Usuario',
       records: validation.data?.records || 0,
       units: validation.data?.units || 0,
       raw: fileData
@@ -88,14 +81,16 @@ export function useImportProduction() {
 
       const data = JSON.parse(fileContent)
       
-      // Validation: Ensure records is an array to avoid crashes
-      if (!Array.isArray(data.records)) {
-        throw new Error('El archivo no contiene la lista de registros "records" esperada.')
+      // Flexible record extraction: Handle both array directly and { records: [] }
+      const records = Array.isArray(data) ? data : (data && Array.isArray(data.records) ? data.records : null)
+
+      if (!records) {
+        throw new Error('El archivo no contiene una lista de registros válida ("records").')
       }
 
       const statusConfig = [
         { status: ProcessingStatus.VALIDATING, text: 'Auditando estructura JSON', icon: '✅', delay: 1000 },
-        { status: ProcessingStatus.REGISTERING, text: `Modulando ${data.records.length} estaciones`, icon: '🔄', delay: 1800 },
+        { status: ProcessingStatus.REGISTERING, text: `Modulando ${records.length} estaciones`, icon: '🔄', delay: 1800 },
         { status: ProcessingStatus.SAVING, text: 'Indexando en Bitácora Final', icon: '⏳', delay: 2500 }
       ]
 
@@ -107,19 +102,19 @@ export function useImportProduction() {
         setProgress((i + 1) * 33)
       }
 
-      // 2. Extract Final Summary from JSON
-      const totalUnits = data.summary?.totalQuantity || data.records.reduce((s, r) => s + (r.quantity || 0), 0)
-      const totalRejected = data.summary?.totalRejected || data.records.reduce((s, r) => s + (r.quantityRejected || 0), 0)
+      // 2. Extract Final Summary from JSON using flexible field mapping
+      const totalUnits = data.summary?.totalQuantity || records.reduce((s, r) => s + (Number(r.cantidad ?? r.quantity ?? 0)), 0)
+      const totalRejected = data.summary?.totalRejected || records.reduce((s, r) => s + (Number(r.cantidadRechazada ?? r.quantityRejected ?? 0)), 0)
 
       const finalSummary = {
         success: totalUnits - totalRejected,
         failed: totalRejected,
-        total: data.records.length,
+        total: records.length,
         units: totalUnits,
-        worker: data.worker?.name || 'Sistema',
-        shift: data.shift?.type || 'N/A',
+        worker: data.worker?.name || records[0]?.trabajadorNombre || 'Sistema',
+        shift: data.shift?.type || records[0]?.turno || 'N/A',
         errors: [],
-        rawRecords: data.records // Store detailed records
+        rawRecords: records // Store detailed records
       }
 
       setProcessingStatus(ProcessingStatus.COMPLETED)
