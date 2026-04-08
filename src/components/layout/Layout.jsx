@@ -10,24 +10,25 @@ import {
   History,
   Info
 } from 'lucide-react'
-import { ImportProduction } from '../features/import/ImportProduction'
-import { Dashboard } from '../features/dashboard/Dashboard'
+import { ImportProduction } from '../../features/import'
+import { Dashboard } from '../../features/dashboard'
 import { storageService } from '../../services/storageService'
+import { useNotification } from '../../context/NotificationContext'
+import { Notification } from '../ui/Notification/Notification'
 import './Layout.css'
 
 export function Layout() {
   const [activeTab, setActiveTab] = useState('dashboard')
-  const [notification, setNotification] = useState(null)
+  const { notify } = useNotification()
 
   useEffect(() => {
     const handleStorageChange = () => {
-      setNotification({ type: 'info', message: 'Nueva importación detectada ✨' })
-      setTimeout(() => setNotification(null), 5000)
+      notify('Nueva importación detectada ✨', 'info')
     }
     
     window.addEventListener('storage', handleStorageChange)
     return () => window.removeEventListener('storage', handleStorageChange)
-  }, [])
+  }, [notify])
 
   const handleImportComplete = (summary, meta) => {
     storageService.save({
@@ -41,8 +42,7 @@ export function Layout() {
       rawRecords: summary.rawRecords
     })
     
-    setNotification({ type: 'success', message: '¡Importación completada con éxito! 🚀' })
-    setTimeout(() => setNotification(null), 5000)
+    notify('¡Importación completada con éxito! 🚀', 'success')
     setActiveTab('dashboard')
   }
 
@@ -137,10 +137,6 @@ export function Layout() {
             >
               <ImportProduction 
                 onImportComplete={handleImportComplete} 
-                onNotify={(msg) => {
-                  setNotification({ type: 'success', message: msg })
-                  setTimeout(() => setNotification(null), 3000)
-                }}
               />
             </motion.div>
           ) : (
@@ -157,20 +153,7 @@ export function Layout() {
         </AnimatePresence>
       </main>
 
-      {/* Modern Notifications */}
-      <AnimatePresence>
-        {notification && (
-          <motion.div 
-            initial={{ opacity: 0, x: 100, scale: 0.8 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 50, scale: 0.8 }}
-            className="notification"
-          >
-            <Info size={20} />
-            {notification.message}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Notification />
     </div>
   )
 }

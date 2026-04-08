@@ -1,4 +1,4 @@
-import { ImportResult } from '../types'
+import { ImportResult } from '../types/importTypes'
 
 export async function validateFile(file) {
   if (!file) {

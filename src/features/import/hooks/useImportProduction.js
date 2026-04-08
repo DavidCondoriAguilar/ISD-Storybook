@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
-import { STEPS, FileStatus, ProcessingStatus, ImportResult } from '../types'
-import { validateFile, processImport } from '../services/importService'
-import { storageService } from '../services/storageService'
+import { STEPS, FileStatus, ProcessingStatus, ImportResult } from '../types/importTypes'
+import { validateFile } from '../services/importService'
+import { storageService } from '../../../services/storageService'
 
 const initialFile = null
 

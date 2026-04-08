@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
 import { motion as m, AnimatePresence as AP } from 'framer-motion'
 import { FileUp, ShieldCheck, XCircle, CheckCircle, Upload, ArrowRight } from 'lucide-react'
-import { useImportProduction } from '../../../hooks/useImportProduction'
-import { STEPS } from '../../../types'
-import { Dropzone } from './Dropzone'
-import { FileCard } from './FileCard'
-import { ProcessingModal } from './ProcessingModal'
-import { ResultModal } from './ResultModal'
+import { useImportProduction } from './hooks/useImportProduction'
+import { STEPS } from './types/importTypes'
+import { Dropzone } from './components/Dropzone'
+import { FileCard } from './components/FileCard'
+import { ProcessingModal } from './components/ProcessingModal'
+import { ResultModal } from './components/ResultModal'
 import './ImportProduction.css'
 
 const pageVariants = {
@@ -21,7 +21,10 @@ const pageVariants = {
   }
 }
 
-export function ImportProduction({ onImportComplete, onNotify }) {
+import { useNotification } from '../../context/NotificationContext'
+
+export function ImportProduction({ onImportComplete }) {
+  const { notify } = useNotification()
   const {
     step,
     file,
@@ -40,7 +43,7 @@ export function ImportProduction({ onImportComplete, onNotify }) {
 
   const onFileLoadSuccess = (f) => {
     handleFileSelect(f)
-    if (onNotify) onNotify(`¡Archivo "${f.name}" capturado correctamente! 📋`)
+    notify(`¡Archivo "${f.name}" capturado correctamente! 📋`, 'success')
   }
 
   useEffect(() => {

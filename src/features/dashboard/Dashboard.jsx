@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { Layers, History, Search, User, FileCheck2, AlertCircle } from 'lucide-react'
-import { storageService } from '../../../services/storageService'
+import { storageService } from '../../services/storageService'
 
 // Sub-components
 import { StatCards } from './components/StatCards'
