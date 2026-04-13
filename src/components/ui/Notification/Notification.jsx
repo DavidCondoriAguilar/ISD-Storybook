@@ -15,28 +15,35 @@ export function Notification() {
     <AnimatePresence>
       {notification && (
         <motion.div 
-          initial={{ opacity: 0, x: 100, scale: 0.8 }}
-          animate={{ opacity: 1, x: 0, scale: 1 }}
-          exit={{ opacity: 0, x: 50, scale: 0.8 }}
+          initial={{ opacity: 0, y: 50, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
           className={`notification ${notification.type}`}
           style={{
             position: 'fixed',
-            bottom: '40px',
-            right: '40px',
+            bottom: '24px',
+            right: '24px',
             zIndex: 9999,
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
-            padding: '16px 24px',
-            background: notification.type === 'success' ? 'var(--success)' : (notification.type === 'error' ? 'var(--danger)' : 'var(--text-main)'),
+            gap: '10px',
+            padding: '10px 16px',
+            maxWidth: '280px',
+            background: 'rgba(15, 23, 42, 0.9)',
+            backdropFilter: 'blur(10px)',
             color: 'white',
-            borderRadius: '20px',
-            fontWeight: 700,
-            boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+            borderRadius: '12px',
+            fontSize: '0.75rem',
+            fontWeight: 850,
+            boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            lineHeight: 1.3
           }}
         >
-          {getIcon(notification.type)}
-          {notification.message}
+          <div style={{ color: notification.type === 'success' ? '#10b981' : (notification.type === 'warning' ? '#f59e0b' : '#3b82f6'), display: 'flex' }}>
+            {getIcon(notification.type)}
+          </div>
+          <span>{notification.message}</span>
         </motion.div>
       )}
     </AnimatePresence>

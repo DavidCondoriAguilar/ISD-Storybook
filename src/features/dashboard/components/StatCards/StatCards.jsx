@@ -1,41 +1,96 @@
 import { motion } from 'framer-motion'
-import { Package, Activity, AlertCircle, User, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { PieChart, Pie, Cell, ResponsiveContainer, Label } from 'recharts'
+import { AlertCircle, Target, Zap, TrendingUp } from 'lucide-react'
+
+const Gauge = ({ value, color, label, status }) => {
+  const data = [
+    { value: value },
+    { value: 100 - value }
+  ]
+  
+  const statusColors = {
+    danger: '#ef4444',
+    warning: '#f59e0b',
+    success: '#10b981'
+  }
+
+  return (
+    <div style={{ height: '140px', width: '100%', position: 'relative' }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="100%"
+            startAngle={180}
+            endAngle={0}
+            innerRadius={50}
+            outerRadius={75}
+            paddingAngle={0}
+            dataKey="value"
+            stroke="none"
+          >
+            <Cell fill={color} />
+            <Cell fill="var(--bg-app)" />
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
+      <div style={{ 
+        position: 'absolute', 
+        bottom: '10px', 
+        left: '50%', 
+        transform: 'translateX(-50%)', 
+        textAlign: 'center' 
+      }}>
+         <div style={{ fontSize: '1.8rem', fontWeight: 950, color: 'var(--text-main)', lineHeight: 1 }}>
+           {value}%
+         </div>
+         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center', marginTop: '4px' }}>
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: statusColors[status] }}></div>
+            <span style={{ fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--text-muted)' }}>{status}</span>
+         </div>
+      </div>
+    </div>
+  )
+}
 
 export function StatCards({ stats, variants }) {
+  const oee = parseFloat(stats.successRate) || 0;
+  const yield_pct = oee; // Now using real data instead of mock
+  const scrap_rate = stats.totalUnits > 0 ? Number(((stats.totalFailed / stats.totalUnits) * 100).toFixed(1)) : 0;
+
   const cards = [
     { 
-      label: 'Producción Total 2026', 
-      value: stats.totalUnits.toLocaleString(), 
-      icon: Package, 
-      color: 'var(--primary)', 
-      trend: '+12.5%',
-      trendIcon: ArrowUpRight,
-      bg: 'linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(37, 99, 235, 0) 100%)'
+      label: 'Disponibilidad / OEE', 
+      value: oee, 
+      icon: Target, 
+      color: oee > 90 ? '#10b981' : oee > 75 ? '#f59e0b' : '#ef4444',
+      status: oee > 90 ? 'success' : oee > 75 ? 'warning' : 'danger',
+      type: 'gauge'
     },
     { 
-      label: 'Eficiencia de Planta', 
-      value: `${stats.successRate}%`, 
-      icon: Activity, 
-      color: 'var(--secondary)', 
-      trend: stats.successRate > 90 ? 'Óptimo' : 'Revisión',
-      trendIcon: stats.successRate > 90 ? ArrowUpRight : ArrowDownRight,
-      bg: 'linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0) 100%)'
+      label: 'Rendimiento de Planta', 
+      value: yield_pct, 
+      icon: Zap, 
+      color: '#0284c7',
+      status: 'success',
+      type: 'gauge'
     },
     { 
-      label: 'Mermas / Rechazos', 
-      value: stats.totalFailed.toLocaleString(), 
+      label: 'Tasa de Mermas', 
+      value: scrap_rate, 
       icon: AlertCircle, 
-      color: 'var(--danger)', 
-      isDanger: true,
-      trend: stats.totalFailed > 0 ? `-${stats.totalFailed}` : '0',
-      bg: 'linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(239, 68, 68, 0) 100%)'
+      color: '#ef4444',
+      status: scrap_rate < 2 ? 'success' : 'danger',
+      type: 'gauge'
     },
     { 
-      label: 'Máximo Operario', 
-      value: stats.topWorker, 
-      icon: User, 
-      color: 'var(--warning)',
-      bg: 'linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(245, 158, 11, 0) 100%)'
+      label: 'Producción Total', 
+      value: stats.totalUnits.toLocaleString(), 
+      icon: TrendingUp, 
+      color: 'var(--primary)',
+      status: 'success',
+      type: 'value'
     }
   ]
 
@@ -45,46 +100,38 @@ export function StatCards({ stats, variants }) {
         <motion.div 
           key={i} 
           variants={variants} 
-          className="stat-card"
-          whileHover={{ translateY: -5, boxShadow: 'var(--shadow-md)' }}
+          whileHover={{ translateY: -6 }}
           style={{ 
             background: 'white', 
             padding: '24px', 
-            borderRadius: '24px', 
+            borderRadius: '32px', 
             border: '1px solid var(--border)',
-            position: 'relative',
-            overflow: 'hidden'
+            boxShadow: 'var(--shadow-sm)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px'
           }}
         >
-          <div style={{ position: 'absolute', top: 0, right: 0, width: '100px', height: '100px', background: card.bg, borderRadius: '0 0 0 100%' }}></div>
-          
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', position: 'relative' }}>
-            <div style={{ width: '48px', height: '48px', background: 'var(--bg-app)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-               <card.icon size={24} color={card.color} />
-            </div>
-            {card.trend && (
-              <div style={{ 
-                display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '10px', 
-                background: card.isDanger ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                color: card.isDanger ? 'var(--danger)' : 'var(--success)',
-                fontSize: '0.75rem', fontWeight: 900
-              }}>
-                {card.trendIcon && <card.trendIcon size={12} />}
-                {card.trend}
-              </div>
-            )}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+             <span style={{ fontSize: '0.75rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{card.label}</span>
+             <card.icon size={18} color={card.color} strokeWidth={2.5} />
           </div>
 
-          <div style={{ position: 'relative' }}>
-            <span style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              {card.label}
-            </span>
-            <span style={{ fontSize: '2rem', fontWeight: 950, color: card.isDanger ? 'var(--danger)' : 'var(--text-main)', letterSpacing: '-0.02em' }}>
-              {card.value}
-            </span>
-          </div>
+          {card.type === 'gauge' ? (
+            <Gauge value={card.value} color={card.color} status={card.status} />
+          ) : (
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '140px' }}>
+                <span style={{ fontSize: '2.5rem', fontWeight: 950, color: 'var(--text-main)', letterSpacing: '-0.04em' }}>{card.value}</span>
+                {card.trend && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 12px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '10px', color: 'var(--success)', fontSize: '0.75rem', fontWeight: 900 }}>
+                    {card.trend} <TrendingUp size={12} />
+                  </div>
+                )}
+            </div>
+          )}
         </motion.div>
       ))}
     </div>
   )
 }
+

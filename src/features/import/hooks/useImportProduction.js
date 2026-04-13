@@ -104,7 +104,7 @@ export function useImportProduction() {
 
       // 2. Extract Final Summary from JSON using flexible field mapping
       const totalUnits = data.summary?.totalQuantity || records.reduce((s, r) => s + (Number(r.cantidad ?? r.quantity ?? 0)), 0)
-      const totalRejected = data.summary?.totalRejected || records.reduce((s, r) => s + (Number(r.cantidadRechazada ?? r.quantityRejected ?? 0)), 0)
+      const totalRejected = data.summary?.totalRejected || records.reduce((s, r) => s + (Number(r.cantidadRechazada ?? r.quantityRejected ?? 0)) , 0)
 
       const finalSummary = {
         success: totalUnits - totalRejected,
@@ -114,14 +114,27 @@ export function useImportProduction() {
         worker: data.worker?.name || records[0]?.trabajadorNombre || 'Sistema',
         shift: data.shift?.type || records[0]?.turno || 'N/A',
         errors: [],
-        rawRecords: records // Store detailed records
+        rawRecords: records 
       }
+
+      // Senior Action: Persist and Audit
+      const saveResult = storageService.save({
+        fileName: file.name,
+        worker: file.worker,
+        ...finalSummary
+      })
 
       setProcessingStatus(ProcessingStatus.COMPLETED)
       setProgress(100)
       await new Promise(resolve => setTimeout(resolve, 800))
       
-      setSummary(finalSummary)
+      setSummary({
+        ...finalSummary,
+        success: saveResult.success ?? finalSummary.success,
+        units: saveResult.units ?? finalSummary.units,
+        duplicatesDetected: saveResult.duplicatesDetected || saveResult.duplicates || 0,
+        isSkipped: saveResult.skipped || false
+      })
       setResult(ImportResult.SUCCESS)
       setStep(STEPS.SUCCESS)
 

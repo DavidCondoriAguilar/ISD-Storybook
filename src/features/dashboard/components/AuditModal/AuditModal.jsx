@@ -56,49 +56,68 @@ export function AuditModal({ selectedRecord, onClose }) {
                 </tr>
               </thead>
               <tbody>
-                {selectedRecord.rawRecords?.map((rec, i) => {
-                  const quantity = Number(rec.cantidad ?? rec.quantity ?? 0);
-                  const quantityRejected = Number(rec.cantidadRechazada ?? rec.quantityRejected ?? 0);
-                  const order = rec.idLocal ?? rec.orderNumber ?? (i + 1);
-                  const product = rec.producto ?? rec.productName ?? 'S/N';
-                  const stage = rec.modulo ?? rec.stageName ?? 'N/A';
-                  const machine = rec.maquina ?? rec.machineName ?? 'Pest.';
-                  const worker = rec.trabajadorNombre ?? rec.workerName ?? selectedRecord.worker;
+                 {selectedRecord.rawRecords?.map((rec, i) => {
+                   const quantity = Number(rec.cantidad ?? rec.quantity ?? 0);
+                   const quantityRejected = Number(rec.cantidadRechazada ?? rec.quantityRejected ?? 0);
+                   const efficiency = Number(rec.eficiencia || 0);
+                   const order = rec.idLocal ?? rec.orderNumber ?? (i + 1);
+                   
+                   // Robust fallback: Tipo -> Producto -> Modulo -> Default
+                   const product = rec.productoTipo 
+                     ? `${rec.productoTipo}${rec.productoTamano ? ` (${rec.productoTamano})` : ''}`
+                     : (rec.producto ?? rec.productName ?? rec.modulo ?? 'Resorte Estándar');
+                     
+                   const stage = rec.modulo ?? rec.stageName ?? 'N/A';
+                   const machine = rec.maquina ?? rec.machineName ?? `M-${rec.maquinaId || '?'}`;
+                   const worker = rec.trabajadorNombre ?? rec.workerName ?? selectedRecord.worker;
+                   const time = rec.tiempoMinutos || 0;
+                   const isOvertime = rec.esHoraExtra || false;
 
-                  return (
-                    <tr key={i} style={{ borderBottom: '1px solid var(--bg-app)', transition: 'background 0.2s' }}>
-                      <td style={{ padding: '24px', fontWeight: 900, fontSize: '0.85rem' }}>{order}</td>
-                      <td style={{ padding: '24px', fontWeight: 700, opacity: 0.8, fontSize: '0.85rem' }}>{product}</td>
-                      <td style={{ padding: '24px' }}>
-                        <div style={{ fontWeight: 900, color: 'var(--primary)', fontSize: '0.9rem' }}>{stage}</div>
-                        <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', marginTop: '4px' }}>{machine}</div>
-                      </td>
-                      <td style={{ padding: '24px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: 800, color: 'var(--secondary)' }}>
-                          <div style={{ width: '24px', height: '24px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={12} /></div>
-                          {worker}
-                        </div>
-                      </td>
-                      <td style={{ padding: '24px', fontWeight: 950, fontSize: '1.2rem', textAlign: 'right' }}>
-                         {quantity.toLocaleString()} <span style={{ fontSize: '0.75rem', opacity: 0.4 }}>unid.</span>
-                      </td>
-                      <td style={{ padding: '24px' }}>
-                        {quantityRejected > 0 ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                            <span style={{ padding: '6px 12px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 900, width: 'fit-content', border: '1px solid rgba(239, 68, 68, 0.1)' }}>
-                              {quantityRejected} RECHAZOS
-                            </span>
-                            {rec.notes && <span style={{ fontSize: '0.65rem', fontWeight: 600, fontStyle: 'italic', opacity: 0.6, maxWidth: '180px' }}>"{rec.notes}"</span>}
-                          </div>
-                        ) : (
-                           <span style={{ padding: '6px 12px', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 900, width: 'fit-content', border: '1px solid rgba(16, 185, 129, 0.1)' }}>
-                              ÓPTIMO
-                           </span>
-                        )}
-                      </td>
-                    </tr>
-                  )
-                })}
+                   return (
+                     <tr key={i} style={{ borderBottom: '1px solid var(--bg-app)', transition: 'background 0.2s' }}>
+                       <td style={{ padding: '24px', fontWeight: 900, fontSize: '0.85rem' }}>{order}</td>
+                       <td style={{ padding: '24px', fontWeight: 700, opacity: 0.8, fontSize: '0.85rem' }}>{product}</td>
+                       <td style={{ padding: '24px' }}>
+                         <div style={{ fontWeight: 900, color: 'var(--primary)', fontSize: '0.9rem' }}>{stage}</div>
+                         <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', marginTop: '4px' }}>{machine}</div>
+                       </td>
+                       <td style={{ padding: '24px' }}>
+                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: 800, color: 'var(--secondary)' }}>
+                           <div style={{ width: '24px', height: '24px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={12} /></div>
+                           {worker}
+                         </div>
+                         {rec.trabajadorDni && <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)', marginLeft: '32px' }}>DNI: {rec.trabajadorDni}</div>}
+                       </td>
+                       <td style={{ padding: '24px', fontWeight: 950, fontSize: '1.2rem', textAlign: 'right' }}>
+                          {quantity.toLocaleString()} <span style={{ fontSize: '0.75rem', opacity: 0.4 }}>{rec.unidad || 'unid.'}</span>
+                       </td>
+                       <td style={{ padding: '24px' }}>
+                         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                {quantityRejected > 0 ? (
+                                   <span style={{ padding: '4px 10px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 900, border: '1px solid rgba(239, 68, 68, 0.1)' }}>
+                                     RECHAZO
+                                   </span>
+                                ) : (
+                                   <span style={{ padding: '4px 10px', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 900, border: '1px solid rgba(16, 185, 129, 0.1)' }}>
+                                      ÓPTIMO
+                                   </span>
+                                )}
+                                {efficiency > 0 && (
+                                   <span style={{ padding: '4px 10px', background: 'rgba(37, 99, 235, 0.1)', color: 'var(--primary)', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 900 }}>
+                                      {efficiency}% EFI
+                                   </span>
+                                )}
+                            </div>
+                            <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', display: 'flex', gap: '8px', marginTop: '2px' }}>
+                               <span>⏱️ {time} min</span>
+                               {isOvertime && <span style={{ color: 'var(--warning)' }}>⚠️ EXTRA</span>}
+                            </div>
+                         </div>
+                       </td>
+                     </tr>
+                   )
+                 })}
               </tbody>
             </table>
           </div>

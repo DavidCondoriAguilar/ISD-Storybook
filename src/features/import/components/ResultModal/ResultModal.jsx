@@ -49,74 +49,89 @@ export function ResultModal({ result, summary, onClose, onRetry, onDownload }) {
       initial="hidden"
       animate="visible"
       exit="exit"
-      style={{ padding: '64px 48px', maxWidth: '700px', margin: '0 auto', background: 'var(--bg-card)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-lg)' }}
+      style={{ 
+        padding: '32px 32px 24px', 
+        maxWidth: '440px', 
+        margin: '0 auto', 
+        background: 'var(--bg-card)', 
+        borderRadius: '28px', 
+        border: '1px solid var(--border)', 
+        boxShadow: '0 30px 60px -12px rgba(0,0,0,0.15)' 
+      }}
     >
-      <div className="result-header">
+      <div className="result-header" style={{ textAlign: 'center' }}>
         <motion.div 
           className="result-icon-wrapper"
-          initial={{ scale: 0, rotate: -45 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: 'spring', damping: 12, stiffness: 200, delay: 0.3 }}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
           style={{ 
-            width: '100px', 
-            height: '100px', 
-            margin: '0 auto 24px', 
+            width: '60px', 
+            height: '60px', 
+            margin: '0 auto 16px', 
             background: isSuccess ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
             color: isSuccess ? 'var(--success)' : 'var(--danger)', 
-            borderRadius: '50%', 
+            borderRadius: '18px', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center' 
           }}
         >
-          {isSuccess ? <CheckCircle2 size={48} /> : <AlertTriangle size={48} />}
+          {isSuccess ? <CheckCircle2 size={32} /> : <AlertTriangle size={32} />}
         </motion.div>
-        <motion.h2 variants={itemVariants} style={{ fontSize: '2.5rem', fontWeight: 850 }}>
-          {isSuccess ? '¡Proceso Completado!' : 'Sincronización Interrumpida'}
-        </motion.h2>
-        <motion.p variants={itemVariants} style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: '1.1rem', marginTop: '12px' }}>
-          {isSuccess ? 'Los registros han sido validados e integrados al sistema' : 'Se encontraron inconsistencias en el origen de datos'}
-        </motion.p>
+        
+        <h2 style={{ fontSize: '1.3rem', fontWeight: 950, letterSpacing: '-0.02em', margin: 0 }}>
+          {isSuccess ? 'Sincronización Exitosa' : 'Reporte de Anomalías'}
+        </h2>
+        <p style={{ color: 'var(--text-muted)', fontWeight: 700, fontSize: '0.8rem', marginTop: '4px' }}>
+          {isSuccess ? 'Registros inyectados al Dashboard.' : 'Fallas críticas detectadas.'}
+        </p>
       </div>
 
       <motion.div 
         className="result-summary-grid"
         variants={itemVariants}
-        style={{ padding: '32px', background: 'var(--bg-app)', borderRadius: 'var(--radius-lg)', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', margin: '40px 0' }}
+        style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(3, 1fr)', 
+          gap: '12px', 
+          padding: '16px', 
+          background: 'var(--bg-app)', 
+          borderRadius: '20px', 
+          margin: '24px 0' 
+        }}
       >
-        <div className="summary-item" style={{ textAlign: 'center' }}>
-          <FileCheck size={20} color="var(--success)" style={{ margin: '0 auto 12px' }} />
-          <span className="summary-value" style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--success)' }}>{summary.success}</span>
-          <span className="summary-label" style={{ fontWeight: 800 }}>Validados</span>
+        <div style={{ textAlign: 'center' }}>
+          <span style={{ display: 'block', fontSize: '1.2rem', fontWeight: 950, color: 'var(--success)' }}>{summary.success}</span>
+          <span style={{ fontSize: '0.6rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Validados</span>
         </div>
-        <div className="summary-item" style={{ textAlign: 'center' }}>
-          <AlertCircle size={20} color="var(--danger)" style={{ margin: '0 auto 12px' }} />
-          <span className="summary-value" style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--danger)' }}>{summary.failed}</span>
-          <span className="summary-label" style={{ fontWeight: 800 }}>Fallidos</span>
+        <div style={{ textAlign: 'center', borderLeft: '1px solid var(--border)', borderRight: '1px solid var(--border)' }}>
+          <span style={{ display: 'block', fontSize: '1.2rem', fontWeight: 950, color: 'var(--danger)' }}>{summary.failed}</span>
+          <span style={{ fontSize: '0.6rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Fallidos</span>
         </div>
-        <div className="summary-item" style={{ textAlign: 'center' }}>
-          <Package size={20} color="var(--primary)" style={{ margin: '0 auto 12px' }} />
-          <span className="summary-value" style={{ fontSize: '2rem', fontWeight: 800 }}>{summary.units?.toLocaleString() || 0}</span>
-          <span className="summary-label" style={{ fontWeight: 800 }}>Unidades</span>
+        <div style={{ textAlign: 'center' }}>
+          <span style={{ display: 'block', fontSize: '1.2rem', fontWeight: 950 }}>{summary.units?.toLocaleString() || 0}</span>
+          <span style={{ fontSize: '0.6rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Unidades</span>
         </div>
       </motion.div>
 
+      {summary.duplicatesDetected > 0 && (
+         <div style={{ padding: '12px 20px', background: 'rgba(245, 158, 11, 0.05)', borderRadius: '16px', border: '1px solid rgba(245, 158, 11, 0.1)', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <AlertTriangle size={16} color="var(--warning)" />
+            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--warning-dark)' }}>
+               Se omitieron {summary.duplicatesDetected} registros que ya existían en la base de datos.
+            </span>
+         </div>
+      )}
+
       {summary.errors && summary.errors.length > 0 && (
         <motion.div 
-          className="error-list"
           variants={itemVariants}
-          style={{ background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: 'var(--radius-md)', padding: '24px', marginBottom: '32px' }}
+          style={{ background: '#fef2f2', borderRadius: '20px', padding: '20px', marginBottom: '24px' }}
         >
-          <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#991b1b', fontWeight: 800, fontSize: '1rem', marginBottom: '16px' }}>
-            <AlertCircle size={18} /> Detalle de Rechazos
-          </h3>
-          <div style={{ maxHeight: '180px', overflowY: 'auto', paddingRight: '12px' }}>
+          <div style={{ maxHeight: '120px', overflowY: 'auto', paddingRight: '8px' }}>
             {summary.errors.map((error, idx) => (
-              <div key={idx} className="error-item" style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px 0', borderBottom: '1px solid #fee2e2' }}>
-                <span style={{ minWidth: '80px', fontSize: '0.75rem', fontWeight: 800, color: 'white', background: '#dc2626', padding: '4px 8px', borderRadius: '4px', textAlign: 'center' }}>
-                  FILA {error.row || '?'}
-                </span>
-                <span className="error-text" style={{ fontSize: '0.9rem', fontWeight: 600, color: '#991b1b' }}>{error.message}</span>
+              <div key={idx} style={{ fontSize: '0.8rem', fontWeight: 700, color: '#991b1b', display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                <span style={{ opacity: 0.5 }}>•</span> {error.message}
               </div>
             ))}
           </div>
@@ -126,39 +141,26 @@ export function ResultModal({ result, summary, onClose, onRetry, onDownload }) {
       <motion.div 
         className="result-actions"
         variants={itemVariants}
-        style={{ display: 'flex', gap: '16px', marginTop: '16px' }}
+        style={{ display: 'flex', gap: '12px' }}
       >
-        {onRetry && (
-          <motion.button 
-            className="btn-retry" 
-            onClick={onRetry}
-            whileHover={{ scale: 1.05, y: -2, background: 'var(--warning-dark)' }}
-            whileTap={{ scale: 0.98 }}
-            style={{ flex: 1, padding: '16px', background: 'var(--warning)', color: 'white', borderRadius: 'var(--radius-md)', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-          >
-            <RotateCw size={18} /> Reintentar Carga
-          </motion.button>
-        )}
-        {onDownload && (
-          <motion.button 
-            className="btn-download" 
-            onClick={onDownload}
-            whileHover={{ scale: 1.05, y: -2, background: 'var(--bg-app)' }}
-            whileTap={{ scale: 0.98 }}
-            style={{ flex: 1, padding: '16px', background: 'white', border: '2px solid var(--border)', borderRadius: 'var(--radius-md)', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-          >
-            <Download size={18} /> Exportar Reporte
-          </motion.button>
-        )}
-        <motion.button 
-          className="btn-close" 
+        <button 
           onClick={onClose}
-          whileHover={{ scale: 1.05, y: -2, background: 'var(--text-main)' }}
-          whileTap={{ scale: 0.98 }}
-          style={{ flex: 1, padding: '16px', background: '#0f172a', color: 'white', borderRadius: 'var(--radius-md)', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+          style={{ 
+            flex: 1, padding: '14px', background: 'var(--text-main)', color: 'white', border: 'none', borderRadius: '16px', fontWeight: 900, fontSize: '0.85rem', cursor: 'pointer'
+          }}
         >
-          <X size={18} /> Salir al Dashboard
-        </motion.button>
+          Ir al Dashboard
+        </button>
+        {onDownload && (
+          <button 
+            onClick={onDownload}
+            style={{ 
+              padding: '14px', background: 'white', border: '1.5px solid var(--border)', borderRadius: '16px', color: 'var(--text-main)', cursor: 'pointer'
+            }}
+          >
+            <Download size={20} />
+          </button>
+        )}
       </motion.div>
     </motion.div>
   )

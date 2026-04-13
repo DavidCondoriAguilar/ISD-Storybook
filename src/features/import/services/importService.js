@@ -24,6 +24,7 @@ export async function validateFile(file) {
       return { valid: false, error: 'El archivo no contiene una lista de registros válida.' };
     }
 
+    // New format uses 'cantidad'
     const units = records.reduce((sum, r) => sum + (Number(r.cantidad ?? r.quantity ?? 0)), 0);
     const worker = data.worker?.name || records[0]?.trabajadorNombre || 'Usuario';
     const shift = data.shift?.type || records[0]?.turno || 'N/A';
@@ -34,7 +35,8 @@ export async function validateFile(file) {
         records: records.length, 
         units: units,
         worker: worker,
-        shift: shift
+        shift: shift,
+        dni: records[0]?.trabajadorDni || null
       } 
     };
   } catch (err) {

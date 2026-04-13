@@ -8,11 +8,38 @@ export const storageService = {
 
   save(importRecord) {
     const history = this.getAll()
+    
+    // Senior Logic: Global Duplicate Detection (Idempotency)
+    // We create a set of unique keys from all past records to avoid double-counting
+    const existingKeys = new Set()
+    history.forEach(h => {
+      (h.rawRecords || []).forEach(r => {
+        const key = `${r.idLocal || r.orderNumber}-${r.fecha || r.timestamp}`
+        existingKeys.add(key)
+      })
+    })
+
+    const newRawRecords = (importRecord.rawRecords || []).filter(r => {
+      const key = `${r.idLocal || r.orderNumber}-${r.fecha || r.timestamp}`
+      return !existingKeys.has(key)
+    })
+
+    const duplicatesFound = (importRecord.rawRecords || []).length - newRawRecords.length
+
+    if (newRawRecords.length === 0 && (importRecord.rawRecords || []).length > 0) {
+      return { skipped: true, duplicates: duplicatesFound }
+    }
+
     const newRecord = {
       id: Date.now().toString(),
       timestamp: new Date().toISOString(),
-      ...importRecord
+      ...importRecord,
+      success: newRawRecords.length, // Only count successfully added unique records
+      units: newRawRecords.reduce((s, r) => s + (Number(r.cantidad || 0)), 0),
+      rawRecords: newRawRecords,
+      duplicatesDetected: duplicatesFound
     }
+
     history.unshift(newRecord)
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history))
     return newRecord
@@ -55,17 +82,24 @@ export const storageService = {
         const area = raw.modulo || raw.stageName || 'Otros'
         const qty = Number(raw.cantidad ?? raw.quantity ?? 0)
         const rejections = Number(raw.cantidadRechazada ?? raw.quantityRejected ?? 0)
+        const efficiency = Number(raw.eficiencia || 0)
         
         workers[w] = (workers[w] || 0) + qty
         
-        if (!areas[area]) areas[area] = { name: area, units: 0, rejected: 0 }
+        if (!areas[area]) areas[area] = { name: area, units: 0, rejected: 0, efficiencies: [] }
         areas[area].units += qty
         areas[area].rejected += rejections
+        if (efficiency > 0) areas[area].efficiencies.push(efficiency)
       })
     })
     
     const topWorker = Object.entries(workers).sort((a,b) => b[1] - a[1])[0]?.[0] || 'N/A'
     const lastImport = history[0]
+
+    const areaBreakdown = Object.values(areas).map(a => ({
+      ...a,
+      avgEfficiency: a.efficiencies.length > 0 ? Math.round(a.efficiencies.reduce((s, e) => s + e, 0) / a.efficiencies.length) : 0
+    })).sort((a,b) => b.units - a.units)
 
     return {
       totalImports,
@@ -75,7 +109,7 @@ export const storageService = {
       totalFailed,
       lastImport,
       topWorker,
-      areaBreakdown: Object.values(areas).sort((a,b) => b.units - a.units)
+      areaBreakdown
     }
   },
 
@@ -87,9 +121,26 @@ export const storageService = {
     history.forEach(r => {
       const date = new Date(r.timestamp)
       const key = `${date.getFullYear()}-${date.getMonth()}`
-      if (!dataByMonth[key]) dataByMonth[key] = { name: months[date.getMonth()], units: 0, imports: 0, ts: date.getTime() }
+      if (!dataByMonth[key]) {
+        dataByMonth[key] = { 
+          name: months[date.getMonth()], 
+          units: 0, 
+          imports: 0, 
+          ts: date.getTime(),
+          breakdown: {} 
+        }
+      }
+      
       dataByMonth[key].units += (r.units || 0)
       dataByMonth[key].imports += 1
+      
+      // Categorical breakdown for trend insights
+      const records = r.rawRecords || []
+      records.forEach(rec => {
+        const cat = rec.modulo || rec.productoTipo || 'Otros'
+        const qty = Number(rec.cantidad || 0)
+        dataByMonth[key].breakdown[cat] = (dataByMonth[key].breakdown[cat] || 0) + qty
+      })
     })
     
     return Object.values(dataByMonth)
