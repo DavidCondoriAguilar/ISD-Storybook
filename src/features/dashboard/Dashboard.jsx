@@ -1,15 +1,17 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Layers, User, AlertTriangle, TrendingDown, DollarSign, CheckCircle2, Info, ChevronDown, ChevronUp, Trash2 } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Search, History, ChevronRight, ClipboardList } from 'lucide-react'
 import { storageService } from '../../services/storageService'
 import { useNotification } from '../../context/NotificationContext'
+import { getModuleName, setModuleMapCache, getProductName, setProductMapCache, formatDate, formatHours } from '../../utils/formatters'
+import { db } from '../../services/db'
 
 // Sub-components
 import { StatCards } from './components/StatCards'
 import { AnalyticsCharts } from './components/AnalyticsCharts'
-import { AuditModal } from './components/AuditModal'
-import { SyncHistoryLog } from './components/SyncHistoryLog'
-import { ConfirmModal } from '../../components/ui/ConfirmModal'
+import { OperationalInsights } from './components/OperationalInsights/OperationalInsights'
+import { StrategicVision } from './components/StrategicVision/StrategicVision'
+import { DailyPerformance } from './components/DailyPerformance/DailyPerformance'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -21,170 +23,151 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
 }
 
-export function Dashboard() {
+export function Dashboard({ forceHistory = false }) {
   const { notify } = useNotification()
   const [data, setData] = useState({
-    stats: { totalImports: 0, totalUnits: 0, successRate: 0, avgUnitsPerImport: 0, totalFailed: 0, lastImport: null, topWorker: 'N/A' },
+    stats: { totalImports: 0, totalUnits: 0, successRate: 0, avgUnitsPerImport: 0, totalFailed: 0, lastImport: null },
     records: [], monthly: []
   })
-  const [showAllAudit, setShowAllAudit] = useState(false)
-  const [selectedRecord, setSelectedRecord] = useState(null)
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+  const [showHistory, setShowHistory] = useState(forceHistory) 
+  const [filterText, setFilterText] = useState('')
+  const [filterModule, setFilterModule] = useState('all')
 
-  const refresh = useCallback(() => {
-    setData({
-      stats: storageService.getStats(),
-      records: storageService.getAll(),
-      monthly: storageService.getMonthlyData()
+  const refresh = useCallback(async () => {
+    const metadata = await db.metadata.toArray()
+    const modMap = {}
+    const prodMap = {}
+    metadata.forEach(m => {
+      if (m.id.startsWith('module_')) modMap[m.id.replace('module_', '')] = m.value
+      if (m.id.startsWith('product_')) prodMap[m.id.replace('product_', '')] = m.value
     })
+    setModuleMapCache(modMap)
+    setProductMapCache(prodMap)
+
+    const [stats, allRecords, monthly] = await Promise.all([
+      storageService.getStats(),
+      storageService.getAllRecords(),
+      storageService.getMonthlyData()
+    ])
+    
+    setData({ stats, records: allRecords, monthly })
   }, [])
 
-  const handleConfirmClear = () => {
-    storageService.clear()
-    refresh()
-    setIsConfirmOpen(false)
-    notify('Base de datos reiniciada correctamente 🧹', 'info')
-  }
+  useEffect(() => { 
+    refresh() 
+    const handleGlobalRefresh = () => refresh()
+    window.addEventListener('refresh_production_data', handleGlobalRefresh)
+    return () => window.removeEventListener('refresh_production_data', handleGlobalRefresh)
+  }, [refresh])
 
-  useEffect(() => { refresh() }, [refresh])
-
-  // Senior Logic: Exceptions & Financial Impact
-  const COST_PER_SCRAP = 3.50; // Mock cost per unit
-  const financialLost = useMemo(() => (data.stats.totalFailed * COST_PER_SCRAP).toLocaleString(), [data.stats.totalFailed])
-  
-  const auditRecords = data.stats.lastImport?.rawRecords || []
-  const auditExceptions = useMemo(() => auditRecords.filter(r => (r.cantidadRechazada || r.quantityRejected) > 0), [auditRecords])
-  const displayedAudit = showAllAudit ? auditRecords : auditExceptions
-
-  const insights = useMemo(() => {
-    const alerts = []
-    if (data.stats.successRate < 98) alerts.push({ text: `Eficiencia debajo del objetivo (98%). Impacto financiero: -$${financialLost}`, type: 'danger' })
-    if (auditExceptions.length > 0) alerts.push({ text: `Detectadas ${auditExceptions.length} fallas críticas en el último lote. Requiere revisión técnica.`, type: 'warning' })
-    if (data.stats.totalUnits > 2000) alerts.push({ text: "Rendimiento proyectado sobre la meta trimestral.", type: 'success' })
-    return alerts
-  }, [data.stats, auditExceptions, financialLost])
+  const displayedRecords = useMemo(() => {
+    let base = showHistory ? data.records : (data.stats.lastImport?.rawRecords || []);
+    return base.filter(r => {
+      const nameMatch = !filterText || 
+        r.trabajadorNombre?.toLowerCase().includes(filterText.toLowerCase()) ||
+        (r.productoNombre || getProductName(r.productoId)).toLowerCase().includes(filterText.toLowerCase());
+      const moduleMatch = filterModule === 'all' || getModuleName(r.moduloId) === filterModule;
+      return nameMatch && moduleMatch;
+    });
+  }, [showHistory, data.records, data.stats.lastImport, filterText, filterModule])
 
   return (
     <motion.div className="dashboard" variants={containerVariants} initial="hidden" animate="visible">
-      <AuditModal selectedRecord={selectedRecord} onClose={() => setSelectedRecord(null)} />
       
-      <ConfirmModal 
-        isOpen={isConfirmOpen} 
-        onConfirm={handleConfirmClear} 
-        onCancel={() => setIsConfirmOpen(false)} 
-        title="¿Expurgar Historial?"
-        message="Esta acción eliminará permanentemente todos los registros de producción y auditoría. No se puede revertir."
-      />
-
-      {/* Senior Header & Insights */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '32px', marginBottom: '40px' }}>
-        <motion.header variants={itemVariants}>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 950, letterSpacing: '-0.04em', color: 'var(--text-main)', marginBottom: '4px' }}>
-            Control <span style={{ color: 'var(--primary)' }}>Ejecutivo</span>
-          </h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--success)', boxShadow: '0 0 10px var(--success)' }}></div>
-                <span style={{ color: 'var(--text-muted)', fontWeight: 700 }}>Planta Central • 24/7 Monitoreo</span>
-             </div>
-             
-             <button 
-               onClick={() => setIsConfirmOpen(true)}
-               style={{ background: 'transparent', border: 'none', color: 'var(--danger)', opacity: 0.5, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', fontWeight: 800, transition: 'opacity 0.2s' }}
-               onMouseEnter={e => e.currentTarget.style.opacity = 1}
-               onMouseLeave={e => e.currentTarget.style.opacity = 0.5}
-             >
-                <Trash2 size={14} /> BORRAR TODO
-             </button>
-          </div>
-        </motion.header>
-
-        <motion.div variants={itemVariants} style={{ background: 'var(--bg-app)', padding: '20px', borderRadius: '24px', border: '1px solid var(--border-strong)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)', fontWeight: 900, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-             <TrendingDown size={16} /> Insights de Gestión Proactiva
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {insights.map((ins, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem', fontWeight: 750, color: ins.type === 'danger' ? 'var(--danger)' : ins.type === 'warning' ? 'var(--warning)' : 'var(--success)' }}>
-                 {ins.type === 'danger' ? <AlertTriangle size={14} /> : ins.type === 'warning' ? <Info size={14} /> : <CheckCircle2 size={14} />}
-                 {ins.text}
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      </div>
-
-      <StatCards stats={data.stats} variants={itemVariants} />
-      
-      <AnalyticsCharts monthly={data.monthly} areaBreakdown={data.stats.areaBreakdown} totalUnits={data.stats.totalUnits} variants={itemVariants} />
-
-      {/* Exception Management Panel */}
-      <motion.div variants={itemVariants} className="analysis-pane" style={{ marginBottom: '32px', padding: '40px', background: 'white', borderRadius: '40px', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+      {/* 1. Audit Table with Filter Bar (HEART OF THE OPERATION) */}
+      <motion.div variants={itemVariants} className="master-table-pane" style={{ marginBottom: '40px', padding: '32px', background: 'white', borderRadius: '32px', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div style={{ width: '48px', height: '48px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-               <AlertTriangle size={24} color="var(--danger)" />
-            </div>
-            <div>
-              <span style={{ display: 'block', fontSize: '1.4rem', fontWeight: 950, letterSpacing: '-0.02em' }}>Gestión de Excepciones</span>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 700 }}>{showAllAudit ? 'Vista Total' : `Mostrando ${auditExceptions.length} Irregularidades Críticas`}</span>
-            </div>
+             <div style={{ width: '48px', height: '48px', background: 'var(--primary-light)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ClipboardList size={22} color="var(--primary)" />
+             </div>
+             <div>
+                <span style={{ display: 'block', fontSize: '1.1rem', fontWeight: 950, letterSpacing: '-0.02em' }}>Auditoría de Planta</span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700 }}>{showHistory ? 'Historial Completo de Producción' : (data.stats.lastImport?.fileName || 'Esperando Datos')}</span>
+             </div>
           </div>
           
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-             <div style={{ textAlign: 'right', paddingRight: '16px', borderRight: '1px solid var(--border)' }}>
-                <span style={{ display: 'block', fontSize: '1.2rem', fontWeight: 950, color: 'var(--danger)' }}>-${financialLost}</span>
-                <span style={{ fontSize: '0.65rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Pérdida por Mermas</span>
-             </div>
-             <button onClick={() => setShowAllAudit(!showAllAudit)} style={{ padding: '10px 20px', background: 'var(--bg-app)', border: '1px solid var(--border-strong)', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {showAllAudit ? 'Solo Excepciones' : 'Ver Todos'} {showAllAudit ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-             </button>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ position: 'relative' }}>
+              <Search size={16} style={{ position: 'absolute', left: '16px', top: '14px', color: 'var(--text-muted)' }} />
+              <input 
+                  type="text" 
+                  placeholder="Buscar trabajador o producto..." 
+                  value={filterText}
+                  onChange={(e) => setFilterText(e.target.value)}
+                  style={{ padding: '12px 16px 12px 45px', borderRadius: '14px', border: '1px solid var(--border)', fontSize: '0.85rem', fontWeight: 700, minWidth: '320px', outline: 'none', background: 'var(--bg-app)' }}
+              />
+            </div>
+            <select 
+              value={filterModule}
+              onChange={(e) => setFilterModule(e.target.value)}
+              style={{ padding: '12px 20px', borderRadius: '14px', border: '1px solid var(--border)', fontSize: '0.85rem', fontWeight: 800, background: 'white', cursor: 'pointer', outline: 'none' }}
+            >
+              <option value="all">Todos los Módulos</option>
+              {data.stats.areaBreakdown?.map(area => (
+                <option key={area.name} value={area.name}>{area.name}</option>
+              ))}
+            </select>
+            <button 
+                onClick={() => setShowHistory(!showHistory)} 
+                style={{ padding: '12px 24px', background: showHistory ? 'var(--primary)' : 'white', color: showHistory ? 'white' : 'var(--text-main)', border: '1px solid var(--border-strong)', borderRadius: '14px', fontSize: '0.8rem', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+            >
+                {showHistory ? <ChevronRight size={16} /> : <History size={16} />}
+                {showHistory ? 'Lote Actual' : 'Ver Historial'}
+            </button>
           </div>
         </div>
 
-        <div style={{ maxHeight: '420px', overflowY: 'auto', paddingRight: '12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {displayedAudit.map((rec, i) => {
-            const quantity = Number(rec.cantidad ?? rec.quantity ?? 0);
-            const rejected = Number(rec.cantidadRechazada ?? rec.quantityRejected ?? 0);
-            const product = rec.productoTipo 
-                     ? `${rec.productoTipo}${rec.productoTamano ? ` (${rec.productoTamano})` : ''}`
-                     : (rec.producto ?? rec.productName ?? rec.modulo ?? 'Resorte Estándar');
-
-            return (
-              <motion.div key={i} whileHover={{ x: 6 }} style={{ padding: '20px 28px', borderRadius: '20px', border: '1px solid var(--border)', background: rejected > 0 ? 'rgba(239, 68, 68, 0.02)' : 'white', display: 'flex', alignItems: 'center', gap: '24px' }}>
-                <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 0.8fr', gap: '20px', alignItems: 'center' }}>
-                   <div>
-                      <span style={{ fontWeight: 900, fontSize: '1rem', color: 'var(--text-main)' }}>{rec.idLocal || 'EXT-ORD'}</span>
-                      <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 800 }}>{rec.modulo || rec.productName || 'Fase'}</span>
-                   </div>
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--bg-app)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={14} /></div>
-                      <div>
-                        <span style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800 }}>{rec.trabajadorNombre || 'Anónimo'}</span>
-                        {rec.trabajadorDni && <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)', fontWeight: 700 }}>DNI: {rec.trabajadorDni}</span>}
-                      </div>
-                   </div>
-                   <div style={{ textAlign: 'center' }}>
-                      <span style={{ fontSize: '1.2rem', fontWeight: 950 }}>{quantity}</span>
-                      <span style={{ fontSize: '0.65rem', display: 'block', fontWeight: 900, color: 'var(--success)' }}>{rec.unidad || 'EXITOSO'}</span>
-                   </div>
-                   <div style={{ textAlign: 'right' }}>
-                      {rejected > 0 ? (
-                        <div style={{ background: 'rgba(239, 68, 68, 0.1)', padding: '6px 12px', borderRadius: '10px' }}>
-                          <span style={{ fontSize: '1.1rem', fontWeight: 950, color: 'var(--danger)' }}>{rejected}</span>
-                          <span style={{ fontSize: '0.6rem', display: 'block', fontWeight: 950, color: 'var(--danger)' }}>RECHAZOS</span>
-                        </div>
-                      ) : <span style={{ color: 'var(--success)', fontWeight: 900, fontSize: '0.75rem' }}>{rec.esHoraExtra ? 'EXTRAS ✅' : 'SIN ALERTAS'}</span>}
-                   </div>
-                </div>
-              </motion.div>
-            )
-          })}
+        <div style={{ maxHeight: '500px', overflowY: 'auto', borderRadius: '16px', border: '1px solid var(--border-light)' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <thead style={{ position: 'sticky', top: 0, zIndex: 10, background: '#f8fafc', borderBottom: '2px solid var(--border)' }}>
+              <tr>
+                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>MÓDULO</th>
+                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>PRODUCTO</th>
+                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>TRABAJADOR</th>
+                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)', textAlign: 'center' }}>CANTIDAD</th>
+                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>UNIDAD</th>
+                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>FECHA</th>
+                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>HORAS</th>
+                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>TIPO</th>
+              </tr>
+            </thead>
+            <tbody>
+              {displayedRecords.length === 0 ? (
+                <tr><td colSpan="8" style={{ padding: '60px', textAlign: 'center', color: 'var(--text-muted)', fontWeight: 700 }}>No hay registros para mostrar en esta auditoría.</td></tr>
+              ) : displayedRecords.map((r, i) => (
+                <tr key={r.id || i} style={{ borderBottom: '1px solid var(--border-light)', background: i % 2 === 0 ? 'white' : '#fafafa' }}>
+                  <td style={{ padding: '14px 20px', fontSize: '0.8rem', fontWeight: 900, color: 'var(--primary)' }}>{getModuleName(r.moduloId)}</td>
+                  <td style={{ padding: '14px 20px', fontSize: '0.85rem', fontWeight: 850 }}>{r.productoNombre || getProductName(r.productoId)}</td>
+                  <td style={{ padding: '14px 20px', fontSize: '0.8rem', fontWeight: 800 }}>{r.trabajadorNombre}</td>
+                  <td style={{ padding: '14px 20px', fontSize: '1rem', fontWeight: 950, textAlign: 'center' }}>{r.cantidad}</td>
+                  <td style={{ padding: '14px 20px', fontSize: '0.65rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{r.unidad}</td>
+                  <td style={{ padding: '14px 20px', fontSize: '0.8rem', fontWeight: 700 }}>{formatDate(r.fechaTimestamp)}</td>
+                  <td style={{ padding: '14px 20px', fontSize: '0.8rem', fontWeight: 800 }}>{formatHours(r.jornadaTotalHoras)}</td>
+                  <td style={{ padding: '14px 20px' }}>
+                    <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '0.65rem', fontWeight: 900, background: r.tipoJornada === 'Estándar' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.05)', color: r.tipoJornada === 'Estándar' ? 'var(--success)' : 'var(--danger)' }}>{r.tipoJornada}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </motion.div>
 
-      <SyncHistoryLog records={data.records} onSelectRecord={setSelectedRecord} variants={itemVariants} />
+      {/* 2. Tactical Daily Closure (Daily results by Worker & Module) */}
+      <DailyPerformance stats={data.stats} variants={itemVariants} />
+
+      {/* 3. Strategic Vision (OEE & MERMA - Business Impact) */}
+      <StrategicVision stats={data.stats} variants={itemVariants} />
+
+      {/* 3. Macro Statistics (Summary) */}
+      <StatCards stats={data.stats} variants={itemVariants} />
+
+      {/* 4. Advanced Operational Intelligence (Machines & Overtime) */}
+      <OperationalInsights stats={data.stats} variants={itemVariants} />
+
+      {/* 5. Visual Analytics Section */}
+      <AnalyticsCharts monthly={data.monthly} areaBreakdown={data.stats.areaBreakdown} totalUnits={data.stats.totalUnits} variants={itemVariants} />
     </motion.div>
   )
 }
-

@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Target, AlertCircle, User, X, Box } from 'lucide-react'
+import { ClipboardCheck, User, History, X } from 'lucide-react'
+import { getModuleName, getProductName, formatDate, formatHours } from '../../../../utils/formatters'
 
 export function AuditModal({ selectedRecord, onClose }) {
   if (!selectedRecord) return null
@@ -12,129 +13,111 @@ export function AuditModal({ selectedRecord, onClose }) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(12px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px' }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(12px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
       >
         <motion.div 
           className="detail-modal"
-          initial={{ scale: 0.9, y: 30, opacity: 0 }}
+          initial={{ scale: 0.95, y: 20, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}
-          exit={{ scale: 0.9, y: 30, opacity: 0 }}
+          exit={{ scale: 0.95, y: 20, opacity: 0 }}
           onClick={e => e.stopPropagation()}
-          style={{ background: 'white', width: '100%', maxWidth: '960px', borderRadius: '32px', overflow: 'hidden', boxShadow: '0 50px 100px -20px rgba(0,0,0,0.3)', border: '1px solid var(--border)' }}
+          style={{ background: 'white', width: '100%', maxWidth: '1100px', borderRadius: '32px', overflow: 'hidden', boxShadow: 'var(--shadow-xl)', border: '1px solid var(--border)' }}
         >
-          <div className="modal-header" style={{ padding: '40px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(90deg, var(--bg-app), white)' }}>
+          {/* Header */}
+          <div className="modal-header" style={{ padding: '32px 40px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-app)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-              <div style={{ width: '56px', height: '56px', background: 'var(--primary)', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 20px -5px rgba(37, 99, 235, 0.3)' }}>
-                 <Target size={28} color="white" />
+              <div style={{ width: '56px', height: '56px', background: 'var(--primary)', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                 <ClipboardCheck size={28} color="white" />
               </div>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 900, textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.1em' }}>
-                   Auditoría de Planta
-                </div>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 950, margin: '4px 0', letterSpacing: '-0.02em' }}>{selectedRecord.fileName}</h2>
-                <div style={{ display: 'flex', gap: '20px', fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 700 }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><User size={14} /> Operario: {selectedRecord.worker}</span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Box size={14} /> Lote: {selectedRecord.shift}</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 900, color: 'var(--primary)', textTransform: 'uppercase' }}>Auditoría para Gerencia de Planta</span>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 950, margin: '4px 0' }}>{selectedRecord.fileName}</h2>
+                <div style={{ display: 'flex', gap: '24px', fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 700 }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><User size={14} /> Importado por: {selectedRecord.worker}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><History size={14} /> Ref: {selectedRecord.shift}</span>
                 </div>
               </div>
             </div>
-            <button onClick={onClose} style={{ background: 'var(--bg-app)', border: '1px solid var(--border)', width: '48px', height: '48px', borderRadius: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}>
+            <button onClick={onClose} style={{ background: 'white', border: '1px solid var(--border)', width: '44px', height: '44px', borderRadius: '12px', cursor: 'pointer' }}>
               <X size={20} />
             </button>
           </div>
 
+          {/* Table Body - Exact Manager Specs */}
           <div className="modal-body" style={{ padding: '0', maxHeight: '55vh', overflowY: 'auto' }}>
-            <table className="history-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: 'var(--bg-app)', textAlign: 'left', borderBottom: '1px solid var(--border)' }}>
-                  <th style={{ padding: '24px', fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--text-muted)' }}>ORDEN</th>
-                  <th style={{ padding: '24px', fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--text-muted)' }}>PRODUCTO</th>
-                  <th style={{ padding: '24px', fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--text-muted)' }}>MÓDULO / MÁQUINA</th>
-                  <th style={{ padding: '24px', fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--text-muted)' }}>RESPONSABLE</th>
-                  <th style={{ padding: '24px', fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--text-muted)', textAlign: 'right' }}>VOLUMEN</th>
-                  <th style={{ padding: '24px', fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--text-muted)' }}>ESTADO</th>
+                <tr style={{ background: '#f8fafc', textAlign: 'left', borderBottom: '2px solid var(--border)' }}>
+                  <th style={{ padding: '20px 24px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>MÓDULO</th>
+                  <th style={{ padding: '20px 24px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>PRODUCTO</th>
+                  <th style={{ padding: '20px 24px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>TRABAJADOR</th>
+                  <th style={{ padding: '20px 24px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)', textAlign: 'center' }}>CANTIDAD</th>
+                  <th style={{ padding: '20px 24px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>UNIDAD</th>
+                  <th style={{ padding: '20px 24px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>FECHA</th>
+                  <th style={{ padding: '20px 24px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>HORAS</th>
+                  <th style={{ padding: '20px 24px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>TIPO</th>
                 </tr>
               </thead>
               <tbody>
-                 {selectedRecord.rawRecords?.map((rec, i) => {
-                   const quantity = Number(rec.cantidad ?? rec.quantity ?? 0);
-                   const quantityRejected = Number(rec.cantidadRechazada ?? rec.quantityRejected ?? 0);
-                   const efficiency = Number(rec.eficiencia || 0);
-                   const order = rec.idLocal ?? rec.orderNumber ?? (i + 1);
-                   
-                   // Robust fallback: Tipo -> Producto -> Modulo -> Default
-                   const product = rec.productoTipo 
-                     ? `${rec.productoTipo}${rec.productoTamano ? ` (${rec.productoTamano})` : ''}`
-                     : (rec.producto ?? rec.productName ?? rec.modulo ?? 'Resorte Estándar');
-                     
-                   const stage = rec.modulo ?? rec.stageName ?? 'N/A';
-                   const machine = rec.maquina ?? rec.machineName ?? `M-${rec.maquinaId || '?'}`;
-                   const worker = rec.trabajadorNombre ?? rec.workerName ?? selectedRecord.worker;
-                   const time = rec.tiempoMinutos || 0;
-                   const isOvertime = rec.esHoraExtra || false;
-
-                   return (
-                     <tr key={i} style={{ borderBottom: '1px solid var(--bg-app)', transition: 'background 0.2s' }}>
-                       <td style={{ padding: '24px', fontWeight: 900, fontSize: '0.85rem' }}>{order}</td>
-                       <td style={{ padding: '24px', fontWeight: 700, opacity: 0.8, fontSize: '0.85rem' }}>{product}</td>
-                       <td style={{ padding: '24px' }}>
-                         <div style={{ fontWeight: 900, color: 'var(--primary)', fontSize: '0.9rem' }}>{stage}</div>
-                         <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', marginTop: '4px' }}>{machine}</div>
-                       </td>
-                       <td style={{ padding: '24px' }}>
-                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: 800, color: 'var(--secondary)' }}>
-                           <div style={{ width: '24px', height: '24px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={12} /></div>
-                           {worker}
-                         </div>
-                         {rec.trabajadorDni && <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)', marginLeft: '32px' }}>DNI: {rec.trabajadorDni}</div>}
-                       </td>
-                       <td style={{ padding: '24px', fontWeight: 950, fontSize: '1.2rem', textAlign: 'right' }}>
-                          {quantity.toLocaleString()} <span style={{ fontSize: '0.75rem', opacity: 0.4 }}>{rec.unidad || 'unid.'}</span>
-                       </td>
-                       <td style={{ padding: '24px' }}>
-                         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                                {quantityRejected > 0 ? (
-                                   <span style={{ padding: '4px 10px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 900, border: '1px solid rgba(239, 68, 68, 0.1)' }}>
-                                     RECHAZO
-                                   </span>
-                                ) : (
-                                   <span style={{ padding: '4px 10px', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 900, border: '1px solid rgba(16, 185, 129, 0.1)' }}>
-                                      ÓPTIMO
-                                   </span>
-                                )}
-                                {efficiency > 0 && (
-                                   <span style={{ padding: '4px 10px', background: 'rgba(37, 99, 235, 0.1)', color: 'var(--primary)', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 900 }}>
-                                      {efficiency}% EFI
-                                   </span>
-                                )}
-                            </div>
-                            <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', display: 'flex', gap: '8px', marginTop: '2px' }}>
-                               <span>⏱️ {time} min</span>
-                               {isOvertime && <span style={{ color: 'var(--warning)' }}>⚠️ EXTRA</span>}
-                            </div>
-                         </div>
-                       </td>
-                     </tr>
-                   )
-                 })}
+                 {selectedRecord.rawRecords?.map((rec, i) => (
+                   <tr key={i} style={{ borderBottom: '1px solid var(--border)', background: i % 2 === 0 ? 'white' : '#fafafa' }}>
+                     <td style={{ padding: '16px 24px' }}>
+                        <span style={{ fontWeight: 900, color: 'var(--primary)', fontSize: '0.85rem' }}>{getModuleName(rec.moduloId)}</span>
+                     </td>
+                     <td style={{ padding: '16px 24px' }}>
+                        <div style={{ fontWeight: 800, fontSize: '0.85rem', color: 'var(--text-main)' }}>
+                          {rec.productoNombre || getProductName(rec.productoId)}
+                        </div>
+                     </td>
+                     <td style={{ padding: '16px 24px' }}>
+                        <div style={{ fontWeight: 800, fontSize: '0.85rem' }}>{rec.trabajadorNombre}</div>
+                        <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', fontWeight: 700 }}>DNI: {rec.trabajadorDni}</div>
+                     </td>
+                     <td style={{ padding: '16px 24px', textAlign: 'center', fontWeight: 950, fontSize: '1rem' }}>
+                        {rec.cantidad}
+                     </td>
+                     <td style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                        {rec.unidad}
+                     </td>
+                     <td style={{ padding: '16px 24px', fontSize: '0.8rem', fontWeight: 700 }}>
+                        {formatDate(rec.fechaTimestamp)}
+                     </td>
+                     <td style={{ padding: '16px 24px', fontSize: '0.8rem', fontWeight: 800 }}>
+                        {formatHours(rec.jornadaTotalHoras)}
+                     </td>
+                     <td style={{ padding: '16px 24px' }}>
+                        <span style={{ 
+                          padding: '4px 10px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 900,
+                          background: rec.tipoJornada === 'Estándar' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                          color: rec.tipoJornada === 'Estándar' ? 'var(--success)' : '#d97706'
+                        }}>
+                          {rec.tipoJornada}
+                        </span>
+                     </td>
+                   </tr>
+                 ))}
               </tbody>
             </table>
           </div>
 
-          <div className="modal-footer" style={{ padding: '32px 40px', background: 'var(--bg-app)', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-             <div style={{ display: 'flex', gap: '48px' }}>
-                   <div><div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '4px' }}>PRODUCIDO</div><div style={{ fontSize: '1.5rem', fontWeight: 950 }}>{selectedRecord.units.toLocaleString()} <span style={{ fontSize: '0.85rem' }}>u.</span></div></div>
-                   <div><div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '4px' }}>FALLIDOS</div><div style={{ fontSize: '1.5rem', fontWeight: 950, color: selectedRecord.failed > 0 ? 'var(--danger)' : 'var(--success)' }}>{selectedRecord.failed || 0}</div></div>
+          {/* Footer Summary */}
+          <div className="modal-footer" style={{ padding: '32px 40px', background: 'var(--bg-app)', borderTop: '2px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+             <div style={{ display: 'flex', gap: '64px' }}>
+                   <div>
+                     <div style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>Producido Totales</div>
+                     <div style={{ fontSize: '1.6rem', fontWeight: 950 }}>{selectedRecord.units.toLocaleString()} <span style={{ fontSize: '0.9rem' }}>{selectedRecord.rawRecords?.[0]?.unidad || 'u.'}</span></div>
+                   </div>
+                   <div>
+                     <div style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>Integridad</div>
+                     <div style={{ fontSize: '1.6rem', fontWeight: 950, color: 'var(--success)' }}>100% Validado</div>
+                   </div>
              </div>
-             <motion.button 
-               whileHover={{ scale: 1.05 }}
-               whileTap={{ scale: 0.95 }}
+             <button 
                onClick={onClose} 
-               style={{ padding: '16px 32px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '16px', fontWeight: 900, cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(37, 99, 235, 0.4)' }}
+               style={{ padding: '16px 40px', background: 'var(--text-main)', color: 'white', border: 'none', borderRadius: '16px', fontWeight: 900, cursor: 'pointer' }}
              >
-               Finalizar Auditoría
-             </motion.button>
+               Cerrar Auditoría
+             </button>
           </div>
         </motion.div>
       </motion.div>

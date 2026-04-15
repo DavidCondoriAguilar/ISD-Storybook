@@ -8,7 +8,8 @@ import {
   Maximize2,
   Activity,
   Flame,
-  Info
+  Info,
+  Package
 } from 'lucide-react'
 import { 
   Bar, 
@@ -48,9 +49,11 @@ const ModuleHealthCard = ({ module, idx }) => {
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div>
-          <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 950, color: 'var(--text-main)' }}>{module.name}</h4>
-          <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Estado de Línea</span>
+        <div style={{ maxWidth: '70%' }}>
+          <h4 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 950, color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{module.name}</h4>
+          <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', display: 'block', marginTop: '4px' }}>
+            <Package size={10} style={{ marginRight: '4px' }} /> {module.topProduct}
+          </span>
         </div>
         <div style={{ padding: '6px 12px', background: `${healthColor}15`, color: healthColor, borderRadius: '10px', fontSize: '0.65rem', fontWeight: 900 }}>
           {efficiency > 85 ? 'ÓPTIMO' : efficiency > 60 ? 'ESTABLE' : 'CRÍTICO'}
@@ -196,8 +199,8 @@ export function AnalyticsCharts({ monthly, areaBreakdown, totalUnits, variants }
             </div>
           </div>
           
-          <div style={{ flex: 1, padding: '0 10px' }}>
-            <ResponsiveContainer width="100%" height="100%">
+          <div style={{ flex: 1, padding: '0 10px', minHeight: '320px' }}>
+            <ResponsiveContainer width="99%" aspect={2.5} debounce={50}>
               <AreaChart data={monthly.length > 0 ? monthly.slice(-6) : []}>
                 <defs>
                   <linearGradient id="colorTrend" x1="0" y1="0" x2="0" y2="1">
@@ -267,8 +270,8 @@ export function AnalyticsCharts({ monthly, areaBreakdown, totalUnits, variants }
             </div>
           </div>
           
-          <div style={{ flex: 1, position: 'relative' }}>
-            <ResponsiveContainer width="100%" height="100%">
+          <div style={{ flex: 1, position: 'relative', minHeight: '320px' }}>
+            <ResponsiveContainer width="99%" aspect={2.5} debounce={50}>
               <BarChart data={chartData} layout="vertical" margin={{ left: 20, right: 30 }}>
                 <defs>
                   <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">

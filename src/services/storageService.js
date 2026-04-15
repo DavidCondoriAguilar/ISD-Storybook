@@ -1,154 +1,236 @@
-const STORAGE_KEY = 'import_production_history'
+import { dbService, db } from './db';
+import { APP_CONFIG } from '../config/appConfig';
 
+/**
+ * Enhanced Storage Service
+ * Migrated from localStorage to IndexedDB (Scale & Persistence)
+ * Now returning Promises for all operations
+ */
 export const storageService = {
-  getAll() {
-    const data = localStorage.getItem(STORAGE_KEY)
-    return data ? JSON.parse(data) : []
+  /**
+   * Initialize and migrate legacy data if needed
+   */
+  async init() {
+    const legacyData = localStorage.getItem(APP_CONFIG.STORAGE.HISTORY_KEY);
+    if (legacyData) {
+      try {
+        const history = JSON.parse(legacyData);
+        for (const record of history) {
+          await dbService.saveImport(record);
+        }
+        localStorage.removeItem(APP_CONFIG.STORAGE.HISTORY_KEY);
+        console.log('Legacy data migrated to IndexedDB');
+      } catch (e) {
+        console.error('Migration failed', e);
+      }
+    }
   },
 
-  save(importRecord) {
-    const history = this.getAll()
-    
-    // Senior Logic: Global Duplicate Detection (Idempotency)
-    // We create a set of unique keys from all past records to avoid double-counting
-    const existingKeys = new Set()
-    history.forEach(h => {
-      (h.rawRecords || []).forEach(r => {
-        const key = `${r.idLocal || r.orderNumber}-${r.fecha || r.timestamp}`
-        existingKeys.add(key)
-      })
-    })
+  async getAll() {
+    return await dbService.getAllImports();
+  },
 
-    const newRawRecords = (importRecord.rawRecords || []).filter(r => {
-      const key = `${r.idLocal || r.orderNumber}-${r.fecha || r.timestamp}`
-      return !existingKeys.has(key)
-    })
+  async save(importRecord) {
+    // Senior Logic: Normalize Nested JSON to Flat Structure
+    const normalizedRecords = (importRecord.rawRecords || []).map(r => {
+      if (r.trabajador && r.ubicacion && r.producto) {
+        return {
+          idLocal: r.id || `ISD-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+          trabajadorDni: r.trabajador.dni,
+          trabajadorNombre: r.trabajador.nombre,
+          moduloId: r.ubicacion.modulo, // Name or ID
+          maquinaId: r.ubicacion.maquina,
+          productoId: r.producto.codigo,
+          productoNombre: r.producto.nombre,
+          cantidad: Number(r.produccion?.cantidad || 0),
+          unidad: r.produccion?.unidad || 'u.',
+          tiempoMinutos: r.tiempo?.minutos || 0,
+          fechaTimestamp: r.fecha,
+          esHoraExtra: (r.tiempo?.horasExtra || 0) > 0,
+          horasExtraCantidad: Number(r.tiempo?.horasExtra || 0),
+          jornadaTotalHoras: r.tiempo?.horasTotal || "8.00",
+          status: 'ok',
+          tipoJornada: r.tiempo?.tipo || 'Estándar'
+        }
+      }
+      return { 
+        ...r, 
+        idLocal: r.idLocal || r.id || `ISD-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+        fechaTimestamp: r.fechaTimestamp || r.fecha || Date.now()
+      };
+    });
 
-    const duplicatesFound = (importRecord.rawRecords || []).length - newRawRecords.length
+    const allExistingRecords = await dbService.getAllRecords();
+    const existingKeys = new Set(allExistingRecords.map(r => 
+      `${r.idLocal}-${r.fechaTimestamp}`
+    ));
+
+    const newRawRecords = normalizedRecords.filter(r => {
+      const key = `${r.idLocal}-${r.fechaTimestamp}`;
+      return !existingKeys.has(key);
+    });
+
+    const duplicatesFound = (importRecord.rawRecords || []).length - newRawRecords.length;
 
     if (newRawRecords.length === 0 && (importRecord.rawRecords || []).length > 0) {
-      return { skipped: true, duplicates: duplicatesFound }
+      return { skipped: true, duplicatesDetected: duplicatesFound };
     }
 
     const newRecord = {
-      id: Date.now().toString(),
       timestamp: new Date().toISOString(),
       ...importRecord,
-      success: newRawRecords.length, // Only count successfully added unique records
+      success: newRawRecords.length,
       units: newRawRecords.reduce((s, r) => s + (Number(r.cantidad || 0)), 0),
       rawRecords: newRawRecords,
       duplicatesDetected: duplicatesFound
-    }
+    };
 
-    history.unshift(newRecord)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(history))
-    return newRecord
-  },
-
-  getStats() {
-    const history = this.getAll()
-    if (history.length === 0) {
-      return {
-        totalImports: 0, 
-        totalUnits: 0, 
-        successRate: 0, 
-        avgUnitsPerImport: 0,
-        totalFailed: 0,
-        lastImport: null,
-        topWorker: 'N/A'
+    // Senior Logic: Auto-discover modules & products
+    const uniqueModulesInImport = [...new Set(newRawRecords.map(r => r.moduloId))];
+    const uniqueProductsInImport = [...new Set(newRawRecords.map(r => r.productoId).filter(id => id !== null))];
+    
+    for (const modId of uniqueModulesInImport) {
+      const existing = await db.metadata.get(`module_${modId}`);
+      if (!existing) {
+        await db.metadata.put({ id: `module_${modId}`, value: `Línea de Producción ${modId}` });
       }
     }
-    
-    const totalImports = history.length
-    const totalUnits = history.reduce((sum, r) => sum + (r.units || 0), 0)
-    // Use the 'success' and 'failed' properties from the stored record
-    const totalSuccess = history.reduce((sum, r) => sum + (r.success || 0), 0)
-    const totalFailed = history.reduce((sum, r) => sum + (r.failed || 0), 0)
-    
-    // Derived Metrics
-    const avgUnitsPerImport = Math.round(totalUnits / totalImports)
-    // Efficiency is based on Units: (Good Units / Total Units)
-    const globalEfficiency = totalUnits > 0 ? (totalSuccess / totalUnits) * 100 : 0
-    
-    // Aggregations
-    const workers = {}
-    const areas = {}
-    
-    history.forEach(r => {
-      // Record-level granularity if rawRecords exists
-      const innerRecs = r.rawRecords || [r]
-      innerRecs.forEach(raw => {
-        const w = r.worker || 'Sin asignar'
-        const area = raw.modulo || raw.stageName || 'Otros'
-        const qty = Number(raw.cantidad ?? raw.quantity ?? 0)
-        const rejections = Number(raw.cantidadRechazada ?? raw.quantityRejected ?? 0)
-        const efficiency = Number(raw.eficiencia || 0)
-        
-        workers[w] = (workers[w] || 0) + qty
-        
-        if (!areas[area]) areas[area] = { name: area, units: 0, rejected: 0, efficiencies: [] }
-        areas[area].units += qty
-        areas[area].rejected += rejections
-        if (efficiency > 0) areas[area].efficiencies.push(efficiency)
-      })
-    })
-    
-    const topWorker = Object.entries(workers).sort((a,b) => b[1] - a[1])[0]?.[0] || 'N/A'
-    const lastImport = history[0]
 
-    const areaBreakdown = Object.values(areas).map(a => ({
-      ...a,
-      avgEfficiency: a.efficiencies.length > 0 ? Math.round(a.efficiencies.reduce((s, e) => s + e, 0) / a.efficiencies.length) : 0
-    })).sort((a,b) => b.units - a.units)
-
-    return {
-      totalImports,
-      totalUnits,
-      successRate: Math.round(globalEfficiency),
-      avgUnitsPerImport,
-      totalFailed,
-      lastImport,
-      topWorker,
-      areaBreakdown
+    for (const prodId of uniqueProductsInImport) {
+      const existing = await db.metadata.get(`product_${prodId}`);
+      if (!existing) {
+        await db.metadata.put({ id: `product_${prodId}`, value: `Producto REF-${prodId}` });
+      }
     }
+
+    await dbService.saveImport(newRecord);
+    return newRecord;
   },
 
-  getMonthlyData() {
-    const history = this.getAll()
-    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
-    const dataByMonth = {}
+  async getStats() {
+    const [history, allRecords] = await Promise.all([
+      dbService.getAllImports(),
+      dbService.getAllRecords()
+    ]);
+
+    if (history.length === 0) {
+      return {
+        totalImports: 0, totalUnits: 0, successRate: 0, avgUnitsPerImport: 0,
+        totalFailed: 0, lastImport: null, topWorker: 'N/A', areaBreakdown: []
+      };
+    }
+    
+    const totalImports = history.length;
+    const totalUnits = allRecords.reduce((sum, r) => sum + (Number(r.cantidad || 0)), 0);
+    const totalFailed = allRecords.reduce((sum, r) => sum + (Number(r.cantidadRechazada || 0)), 0);
+    const totalSuccess = totalUnits - totalFailed;
+    
+    const avgUnitsPerImport = Math.round(totalUnits / totalImports);
+    const globalEfficiency = totalUnits > 0 ? (totalSuccess / totalUnits) * 100 : 0;
+    
+    const workers = {};
+    const areas = {};
+    const machines = {};
+    const dailyStats = {}; // New: { 'YYYY-MM-DD': { total: 0, workers: {}, modules: {} } }
+    let totalOvertimeHours = 0;
+    
+    // Aggregate by records
+    allRecords.forEach(raw => {
+      const w = raw.trabajadorNombre || 'Sin asignar';
+      const area = raw.moduloId || raw.modulo || 'Otros';
+      const machine = raw.maquinaId || 'Sin Máquina';
+      const prodName = raw.productoNombre || 'Producto General';
+      const qty = Number(raw.cantidad ?? 0);
+      const rejections = Number(raw.cantidadRechazada ?? 0);
+      const efficiency = Number(raw.eficiencia || 0);
+      const overtime = Number(raw.horasExtraCantidad || 0);
+      
+      // Daily Tracking
+      const dayKey = new Date(raw.fechaTimestamp || raw.fecha).toISOString().split('T')[0];
+      if (!dailyStats[dayKey]) {
+        dailyStats[dayKey] = { total: 0, workers: {}, modules: {} };
+      }
+      dailyStats[dayKey].total += qty;
+      dailyStats[dayKey].workers[w] = (dailyStats[dayKey].workers[w] || 0) + qty;
+      dailyStats[dayKey].modules[area] = (dailyStats[dayKey].modules[area] || 0) + qty;
+
+      workers[w] = (workers[w] || 0) + qty;
+      totalOvertimeHours += overtime;
+      
+      // Area Breakdown
+      if (!areas[area]) {
+        areas[area] = { name: area, units: 0, rejected: 0, efficiencies: [], products: {} };
+      }
+      areas[area].units += qty;
+      areas[area].rejected += rejections;
+      if (efficiency > 0) areas[area].efficiencies.push(efficiency);
+      areas[area].products[prodName] = (areas[area].products[prodName] || 0) + qty;
+
+      // Machine Breakdown
+      if (!machines[machine]) {
+        machines[machine] = { name: machine, units: 0, area: area };
+      }
+      machines[machine].units += qty;
+    });
+
+    const topWorker = Object.entries(workers).sort((a,b) => b[1] - a[1])[0]?.[0] || 'N/A';
+    let lastImport = history[0];
+
+    if (lastImport && lastImport.id) {
+      lastImport.rawRecords = await db.records.where('importId').equals(lastImport.id).toArray();
+    }
+
+    const areaBreakdown = Object.values(areas).map(a => {
+      const topProd = Object.entries(a.products).sort((x, y) => y[1] - x[1])[0];
+      return {
+        ...a,
+        topProduct: topProd ? `${topProd[0]} (${topProd[1]} u.)` : 'N/A',
+        avgEfficiency: a.efficiencies.length > 0 ? Math.round(a.efficiencies.reduce((s, e) => s + e, 0) / a.efficiencies.length) : 0
+      }
+    }).sort((a,b) => b.units - a.units);
+
+    return {
+      totalImports, totalUnits, successRate: Math.round(globalEfficiency),
+      avgUnitsPerImport, totalFailed, lastImport, topWorker, areaBreakdown,
+      totalOvertimeHours, dailyStats,
+      machineStats: Object.values(machines).sort((a,b) => b.units - a.units)
+    };
+  },
+
+  async getMonthlyData() {
+    const history = await this.getAll();
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const dataByMonth = {};
     
     history.forEach(r => {
-      const date = new Date(r.timestamp)
-      const key = `${date.getFullYear()}-${date.getMonth()}`
+      const date = new Date(r.timestamp);
+      const key = `${date.getFullYear()}-${date.getMonth()}`;
       if (!dataByMonth[key]) {
         dataByMonth[key] = { 
           name: months[date.getMonth()], 
-          units: 0, 
-          imports: 0, 
-          ts: date.getTime(),
-          breakdown: {} 
-        }
+          units: 0, imports: 0, ts: date.getTime(), breakdown: {} 
+        };
       }
       
-      dataByMonth[key].units += (r.units || 0)
-      dataByMonth[key].imports += 1
+      dataByMonth[key].units += (r.units || 0);
+      dataByMonth[key].imports += 1;
       
-      // Categorical breakdown for trend insights
-      const records = r.rawRecords || []
+      const records = r.rawRecords || [];
       records.forEach(rec => {
-        const cat = rec.modulo || rec.productoTipo || 'Otros'
-        const qty = Number(rec.cantidad || 0)
-        dataByMonth[key].breakdown[cat] = (dataByMonth[key].breakdown[cat] || 0) + qty
-      })
-    })
+        const cat = rec.modulo || rec.productoTipo || 'Otros';
+        const qty = Number(rec.cantidad || 0);
+        dataByMonth[key].breakdown[cat] = (dataByMonth[key].breakdown[cat] || 0) + qty;
+      });
+    });
     
-    return Object.values(dataByMonth)
-      .sort((a, b) => a.ts - b.ts)
-      .slice(-6)
+    return Object.values(dataByMonth).sort((a, b) => a.ts - b.ts).slice(-6);
   },
 
-  clear() {
-    localStorage.removeItem(STORAGE_KEY)
+  async getAllRecords() {
+    return await dbService.getAllRecords();
+  },
+
+  async clear() {
+    await dbService.clearAll();
   }
-}
+};

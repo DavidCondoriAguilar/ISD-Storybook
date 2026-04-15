@@ -50,7 +50,7 @@ export function useImportProduction() {
       worker: validation.data?.worker || 'Usuario',
       records: validation.data?.records || 0,
       units: validation.data?.units || 0,
-      raw: fileData
+      raw: validation.data?.raw || []
     })
     setFileStatus(FileStatus.READY)
   }, [])
@@ -71,27 +71,13 @@ export function useImportProduction() {
     setResult(null)
 
     try {
-      // 1. Read and Parse JSON
-      const fileContent = await new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = (e) => resolve(e.target.result)
-        reader.onerror = (e) => reject(new Error('Error al leer el archivo'))
-        reader.readAsText(file.raw)
-      })
-
-      const data = JSON.parse(fileContent)
-      
-      // Flexible record extraction: Handle both array directly and { records: [] }
-      const records = Array.isArray(data) ? data : (data && Array.isArray(data.records) ? data.records : null)
-
-      if (!records) {
-        throw new Error('El archivo no contiene una lista de registros válida ("records").')
-      }
+      // 1. Process Data (Instant, already parsed during selection)
+      const records = file.raw; 
 
       const statusConfig = [
-        { status: ProcessingStatus.VALIDATING, text: 'Auditando estructura JSON', icon: '✅', delay: 1000 },
-        { status: ProcessingStatus.REGISTERING, text: `Modulando ${records.length} estaciones`, icon: '🔄', delay: 1800 },
-        { status: ProcessingStatus.SAVING, text: 'Indexando en Bitácora Final', icon: '⏳', delay: 2500 }
+        { status: ProcessingStatus.VALIDATING, text: 'Auditando estructura ISD', icon: '✅', delay: 800 },
+        { status: ProcessingStatus.REGISTERING, text: `Modulando ${records.length} registros`, icon: '🔄', delay: 1500 },
+        { status: ProcessingStatus.SAVING, text: 'Sincronizando con Bitácora', icon: '⏳', delay: 2200 }
       ]
 
       for (let i = 0; i < statusConfig.length; i++) {
@@ -102,25 +88,29 @@ export function useImportProduction() {
         setProgress((i + 1) * 33)
       }
 
-      // 2. Extract Final Summary from JSON using flexible field mapping
-      const totalUnits = data.summary?.totalQuantity || records.reduce((s, r) => s + (Number(r.cantidad ?? r.quantity ?? 0)), 0)
-      const totalRejected = data.summary?.totalRejected || records.reduce((s, r) => s + (Number(r.cantidadRechazada ?? r.quantityRejected ?? 0)) , 0)
+      // 2. Extract Final Summary using DYNAMIC field mapping
+      const totalUnits = records.reduce((s, r) => {
+        const qty = r.produccion ? r.produccion.cantidad : r.cantidad;
+        return s + (Number(qty || 0));
+      }, 0);
 
+      const firstRec = records[0];
       const finalSummary = {
-        success: totalUnits - totalRejected,
-        failed: totalRejected,
+        success: totalUnits,
+        failed: 0,
         total: records.length,
         units: totalUnits,
-        worker: data.worker?.name || records[0]?.trabajadorNombre || 'Sistema',
-        shift: data.shift?.type || records[0]?.turno || 'N/A',
+        worker: firstRec.trabajador?.nombre || firstRec.trabajadorNombre || 'Usuario',
+        shift: firstRec.tiempo?.tipo || firstRec.tipoJornada || 'Estándar',
         errors: [],
         rawRecords: records 
       }
 
       // Senior Action: Persist and Audit
-      const saveResult = storageService.save({
+      const saveResult = await storageService.save({
         fileName: file.name,
         worker: file.worker,
+        shift: finalSummary.shift,
         ...finalSummary
       })
 

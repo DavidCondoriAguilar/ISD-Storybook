@@ -43,7 +43,7 @@ export function ImportProduction({ onImportComplete }) {
 
   const onFileLoadSuccess = (f) => {
     handleFileSelect(f)
-    notify(`¡Archivo "${f.name}" capturado correctamente! 📋`, 'success')
+    notify(`JSON Capturado correctamente 📋`, 'success')
   }
 
   useEffect(() => {

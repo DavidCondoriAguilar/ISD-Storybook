@@ -6,9 +6,9 @@ export function Notification() {
   const { notification } = useNotification()
 
   const getIcon = (type) => {
-    if (type === 'success') return <CheckCircle2 size={20} />
-    if (type === 'error') return <AlertCircle size={20} />
-    return <Info size={20} />
+    if (type === 'success') return <CheckCircle2 size={14} />
+    if (type === 'error') return <AlertCircle size={14} />
+    return <Info size={14} />
   }
 
   return (
@@ -26,18 +26,18 @@ export function Notification() {
             zIndex: 9999,
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
-            padding: '10px 16px',
-            maxWidth: '280px',
-            background: 'rgba(15, 23, 42, 0.9)',
-            backdropFilter: 'blur(10px)',
+            gap: '8px',
+            padding: '6px 12px',
+            maxWidth: '220px',
+            background: 'rgba(15, 23, 42, 0.95)',
+            backdropFilter: 'blur(8px)',
             color: 'white',
-            borderRadius: '12px',
-            fontSize: '0.75rem',
-            fontWeight: 850,
-            boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            lineHeight: 1.3
+            borderRadius: '10px',
+            fontSize: '0.68rem',
+            fontWeight: 800,
+            boxShadow: '0 8px 24px -10px rgba(0,0,0,0.6)',
+            border: '1px solid rgba(255,255,255,0.05)',
+            lineHeight: 1.1
           }}
         >
           <div style={{ color: notification.type === 'success' ? '#10b981' : (notification.type === 'warning' ? '#f59e0b' : '#3b82f6'), display: 'flex' }}>

@@ -3,18 +3,17 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { 
   LayoutDashboard, 
   FileUp, 
-  Bell, 
   Settings, 
-  LogOut, 
   Package, 
   History,
   ChevronLeft,
   ChevronRight,
-  Menu
+  LogOut,
+  Bell
 } from 'lucide-react'
 import { ImportProduction } from '../../features/import'
 import { Dashboard } from '../../features/dashboard'
-import { storageService } from '../../services/storageService'
+import { DashboardSettingsView } from '../../features/dashboard/components/SettingsModal/DashboardSettingsView'
 import { useNotification } from '../../context/NotificationContext'
 import { Notification } from '../ui/Notification/Notification'
 import './Layout.css'
@@ -24,182 +23,90 @@ export function Layout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const { notify } = useNotification()
 
-  useEffect(() => {
-    const handleStorageChange = () => {
-      notify('Nueva importación detectada ✨', 'info')
-    }
-    
-    window.addEventListener('storage', handleStorageChange)
-    return () => window.removeEventListener('storage', handleStorageChange)
-  }, [notify])
-
   const handleImportComplete = (summary) => {
-    if (summary.isSkipped) {
-      notify(`Omitidos ${summary.duplicatesDetected} registros duplicados 🛡️`, 'warning')
-    } else {
-      notify(`Importación completada (+${summary.success} registros) 🚀`, 'success')
-      setActiveTab('dashboard')
-    }
+    notify(`Importación completada (+${summary.success} registros) 🚀`, 'success')
+    setActiveTab('dashboard')
   }
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'import', label: 'Importar', icon: FileUp },
-    { id: 'history', label: 'Historial', icon: History, disabled: true },
-    { id: 'settings', label: 'Configuración', icon: Settings, disabled: true }
+    { id: 'dashboard', label: 'Monitor Planta', icon: LayoutDashboard },
+    { id: 'import', label: 'Sincronizar', icon: FileUp }
   ]
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'import':
+        return <ImportProduction onImportComplete={handleImportComplete} />
+      default:
+        return <Dashboard />
+    }
+  }
 
   return (
     <div className={`layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-      {/* Sidebar Navigation */}
+      {/* Sidebar Navigation (Lux-Tech) */}
       <motion.aside 
         initial={false}
-        animate={{ 
-          width: isSidebarCollapsed ? '80px' : 'var(--sidebar-w)',
-          transition: { type: 'spring', stiffness: 300, damping: 30 }
-        }}
-        className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}
+        animate={{ width: isSidebarCollapsed ? '80px' : 'var(--sidebar-w)' }}
+        className="sidebar"
       >
-        <div className="sidebar-header">
-          <motion.div 
-            className="brand-icon-wrapper"
-            whileHover={{ scale: 1.05, rotate: 5 }}
-            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            style={{ cursor: 'pointer' }}
-          >
-            <Package size={24} />
-          </motion.div>
-          <AnimatePresence>
-            {!isSidebarCollapsed && (
-              <motion.span 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className="brand-text"
-              >
-                ProductionHub
-              </motion.span>
-            )}
-          </AnimatePresence>
-          
-          <button 
-            className="toggle-sidebar-btn"
-            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          >
-            {isSidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-          </button>
+        <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '30px 24px' }}>
+          <div style={{ width: '40px', height: '40px', background: 'var(--primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+            <Package size={22} />
+          </div>
+          {!isSidebarCollapsed && (
+            <span style={{ fontSize: '1.2rem', fontWeight: 950, letterSpacing: '-0.04em' }}>ProductionHub</span>
+          )}
         </div>
 
-        <nav className="sidebar-nav">
+        <nav className="sidebar-nav" style={{ padding: '0 12px' }}>
           {navItems.map((item) => (
             <button 
               key={item.id}
-              className={`nav-tab ${activeTab === item.id ? 'active' : ''} ${item.disabled ? 'disabled' : ''}`}
-              onClick={() => !item.disabled && setActiveTab(item.id)}
-              disabled={item.disabled}
-              title={isSidebarCollapsed ? item.label : ''}
+              className={`nav-tab ${activeTab === item.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(item.id)}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', borderRadius: '12px', border: 'none', background: activeTab === item.id ? 'var(--primary-light)' : 'transparent', color: activeTab === item.id ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', marginBottom: '4px', fontWeight: 800, transition: 'all 0.2s' }}
             >
-              <item.icon size={22} strokeWidth={activeTab === item.id ? 2.5 : 2} />
-              <AnimatePresence>
-                {!isSidebarCollapsed && (
-                  <motion.span 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    className="nav-label"
-                  >
-                    {item.label}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-              {activeTab === item.id && (
-                <motion.div 
-                  layoutId="indicator"
-                  className="nav-indicator"
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                />
+              <item.icon size={20} strokeWidth={activeTab === item.id ? 2.5 : 2} />
+              {!isSidebarCollapsed && <span>{item.label}</span>}
+              {activeTab === item.id && !isSidebarCollapsed && (
+                <motion.div layoutId="indicator" style={{ marginLeft: 'auto', width: '6px', height: '6px', background: 'var(--primary)', borderRadius: '50%' }} />
               )}
             </button>
           ))}
         </nav>
 
-        <div className="sidebar-footer">
-          <div className="user-profile">
-            <div className="user-avatar">AD</div>
-            {!isSidebarCollapsed && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="user-info"
-              >
-                <span className="user-name">Administrador</span>
-                <span className="user-role">Super Admin</span>
-              </motion.div>
-            )}
-            <button className="btn-logout" style={{ marginLeft: isSidebarCollapsed ? '0' : 'auto', background: 'transparent', color: 'var(--text-muted)' }}>
-              <LogOut size={18} />
-            </button>
-          </div>
+        <div className="sidebar-footer" style={{ marginTop: 'auto', padding: '24px', opacity: 0.3 }}>
+          {/* Profile removed as per request */}
         </div>
       </motion.aside>
 
-      {/* Main Content Area */}
-      <main className="main-wrapper">
-        <div className="main-content">
-          <header className="top-bar">
-            <div className="breadcrumb">
-              {isSidebarCollapsed && (
-                <button 
-                  onClick={() => setIsSidebarCollapsed(false)}
-                  style={{ marginRight: '16px', color: 'var(--primary)', background: 'transparent' }}
-                >
-                  <Menu size={20} />
-                </button>
-              )}
-              <span className="breadcrumb-main">{activeTab === 'dashboard' ? 'Planta Central' : 'Sincronización'}</span>
-              <span className="breadcrumb-divider">/</span>
-              <span className="breadcrumb-current">{activeTab === 'dashboard' ? 'Dashboard' : 'Carga de Datos'}</span>
-            </div>
-            <div className="header-actions" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-              <motion.button 
-                whileHover={{ color: 'var(--primary)', scale: 1.1 }}
-                style={{ background: 'transparent', color: 'var(--text-muted)', display: 'flex' }}
-              >
-                <Bell size={20} />
-              </motion.button>
-              <div className="header-divider" style={{ width: '1px', height: '20px', background: 'var(--border-strong)' }} />
-              <div className="date-pill">
-                <span className="date-display">
-                  {new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
-                </span>
-              </div>
-            </div>
-          </header>
+      <main className="main-wrapper" style={{ flex: 1, background: 'var(--bg-app)', minHeight: '100vh', overflowY: 'auto' }}>
+        <header className="top-bar" style={{ padding: '20px 40px', background: 'white', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)' }}>Planta Central</span>
+            <ChevronRight size={14} color="var(--border-strong)" />
+            <span style={{ fontSize: '0.85rem', fontWeight: 950, color: 'var(--text-main)' }}>{activeTab === 'dashboard' ? 'Monitor' : 'Sincronización'}</span>
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '8px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+               {isSidebarCollapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
+            </button>
+          </div>
+        </header>
 
+        <div style={{ padding: '40px' }}>
           <AnimatePresence mode="wait">
-            {activeTab === 'import' ? (
-              <motion.div
-                key="import"
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ImportProduction 
-                  onImportComplete={handleImportComplete} 
-                />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="dashboard"
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Dashboard />
-              </motion.div>
-            )}
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, scale: 0.99 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.99 }}
+              transition={{ duration: 0.2 }}
+            >
+              {renderContent()}
+            </motion.div>
           </AnimatePresence>
         </div>
       </main>
@@ -208,4 +115,3 @@ export function Layout() {
     </div>
   )
 }
-

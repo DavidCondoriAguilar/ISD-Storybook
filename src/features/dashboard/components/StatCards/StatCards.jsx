@@ -61,11 +61,11 @@ export function StatCards({ stats, variants }) {
 
   const cards = [
     { 
-      label: 'Disponibilidad / OEE', 
+      label: 'Eficiencia de Calidad', 
       value: oee, 
       icon: Target, 
       color: oee > 90 ? '#10b981' : oee > 75 ? '#f59e0b' : '#ef4444',
-      status: oee > 90 ? 'success' : oee > 75 ? 'warning' : 'danger',
+      status: oee > 90 ? 'ÓPTIMO' : oee > 75 ? 'ALERTA' : 'CRÍTICO',
       type: 'gauge'
     },
     { 
@@ -73,7 +73,7 @@ export function StatCards({ stats, variants }) {
       value: yield_pct, 
       icon: Zap, 
       color: '#0284c7',
-      status: 'success',
+      status: 'ESTABLE',
       type: 'gauge'
     },
     { 
@@ -81,15 +81,16 @@ export function StatCards({ stats, variants }) {
       value: scrap_rate, 
       icon: AlertCircle, 
       color: '#ef4444',
-      status: scrap_rate < 2 ? 'success' : 'danger',
+      status: scrap_rate < 2 ? 'ÓPTIMO' : 'CRÍTICO',
       type: 'gauge'
     },
     { 
-      label: 'Producción Total', 
+      label: 'Volumen Operativo Consolidado', 
       value: stats.totalUnits.toLocaleString(), 
+      unitLabel: stats.areaBreakdown?.[0]?.units > 0 ? `u. de ${stats.areaBreakdown[0].name}` : 'unidades',
       icon: TrendingUp, 
       color: 'var(--primary)',
-      status: 'success',
+      status: 'VERIFICADO',
       type: 'value'
     }
   ]
@@ -122,11 +123,7 @@ export function StatCards({ stats, variants }) {
           ) : (
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '140px' }}>
                 <span style={{ fontSize: '2.5rem', fontWeight: 950, color: 'var(--text-main)', letterSpacing: '-0.04em' }}>{card.value}</span>
-                {card.trend && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 12px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '10px', color: 'var(--success)', fontSize: '0.75rem', fontWeight: 900 }}>
-                    {card.trend} <TrendingUp size={12} />
-                  </div>
-                )}
+                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginTop: '-5px' }}>{card.unitLabel}</span>
             </div>
           )}
         </motion.div>

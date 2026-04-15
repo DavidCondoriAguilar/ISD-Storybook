@@ -1,4 +1,9 @@
-import { ImportResult } from '../types/importTypes'
+import { APP_CONFIG } from '../../../config/appConfig'
+
+/**
+ * Service to validate and process imports based on EXACT Android ISD App Specification
+ * Enhanced for v2 Nested Format Support
+ */
 
 export async function validateFile(file) {
   if (!file) {
@@ -6,89 +11,85 @@ export async function validateFile(file) {
   }
 
   if (!file.name.endsWith('.json')) {
-    return { valid: false, error: 'El archivo debe ser JSON' }
+    return { valid: false, error: 'El archivo debe ser JSON (.json)' }
   }
 
   try {
-    const content = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => resolve(e.target.result);
-      reader.onerror = (e) => reject(new Error('Error al leer el archivo'));
-      reader.readAsText(file);
-    });
+    const content = await file.text();
+    const records = JSON.parse(content);
 
-    const data = JSON.parse(content);
-    const records = Array.isArray(data) ? data : (data && Array.isArray(data.records) ? data.records : null);
-
-    if (!records) {
-      return { valid: false, error: 'El archivo no contiene una lista de registros válida.' };
+    if (!Array.isArray(records)) {
+      return { valid: false, error: 'Formato inválido: El archivo debe ser un Array de JSON.' };
     }
 
-    // New format uses 'cantidad'
-    const units = records.reduce((sum, r) => sum + (Number(r.cantidad ?? r.quantity ?? 0)), 0);
-    const worker = data.worker?.name || records[0]?.trabajadorNombre || 'Usuario';
-    const shift = data.shift?.type || records[0]?.turno || 'N/A';
+    if (records.length === 0) {
+      return { valid: false, error: 'El archivo está vacío.' };
+    }
+
+    // Validate the first record as a sample of integrity (supports v1 and v2)
+    if (!validateRecord(records[0])) {
+      return { valid: false, error: 'El formato de los datos no coincide con la especificación de Android ISD.' };
+    }
+
+    // All good, extract metadata using dynamic mapping
+    const first = records[0];
+    const totalUnits = records.reduce((sum, r) => {
+      const qty = r.produccion ? r.produccion.cantidad : r.cantidad;
+      return sum + (Number(qty || 0));
+    }, 0);
 
     return { 
       valid: true, 
       data: { 
         records: records.length, 
-        units: units,
-        worker: worker,
-        shift: shift,
-        dni: records[0]?.trabajadorDni || null
+        units: totalUnits,
+        worker: first.trabajador?.nombre || first.trabajadorNombre || 'Usuario',
+        shift: first.tiempo?.tipo || first.tipoJornada || 'Estándar',
+        raw: records
       } 
     };
   } catch (err) {
-    return { valid: false, error: 'El archivo JSON no es válido o está corrupto.' };
+    console.error('Validation Error:', err);
+    return { valid: false, error: 'Error al procesar el JSON: ' + err.message };
   }
 }
 
-export async function processImport(file, validate) {
-  await new Promise(resolve => setTimeout(resolve, 500))
-
-  const shouldFail = Math.random() > 0.7
-
-  if (shouldFail) {
-    return {
-      result: ImportResult.PARTIAL,
-      success: 2,
-      failed: 1,
-      total: 3,
-      units: 950,
-      errors: [
-        { message: 'Producto no encontrado: ID 999', record: 'rec-003' }
-      ]
-    }
+/**
+ * Validates a single record supporting both Flat (v1) and Nested (v2) structures
+ */
+export function validateRecord(record) {
+  if (typeof record !== 'object' || record === null) return false;
+  
+  const r = record;
+  
+  // Check for Nested Format (v2)
+  const isV2 = r.trabajador && r.ubicacion && r.producto && r.produccion && r.tiempo;
+  
+  if (isV2) {
+    return (
+      typeof r.trabajador.nombre === 'string' &&
+      typeof r.producto.nombre === 'string' &&
+      typeof r.produccion.cantidad === 'number' &&
+      typeof r.fecha === 'number'
+    );
   }
 
-  return {
-    result: ImportResult.SUCCESS,
-    success: 3,
-    failed: 0,
-    total: 3,
-    units: 1430,
-    errors: []
+  // Check for Flat Format (v1)
+  const requiredV1 = ['id', 'moduloId', 'trabajadorDni', 'trabajadorNombre', 'cantidad', 'fechaTimestamp'];
+  for (const field of requiredV1) {
+    if (!(field in r)) return false;
   }
+  
+  return (
+    typeof r.trabajadorNombre === 'string' &&
+    typeof r.cantidad === 'number' &&
+    typeof r.fechaTimestamp === 'number'
+  );
 }
 
-export function generateReport(summary) {
-  const lines = [
-    '=== REPORTE DE IMPORTACIÓN ===',
-    `Fecha: ${new Date().toISOString()}`,
-    `Total registros: ${summary.total}`,
-    `Exitosos: ${summary.success}`,
-    `Fallidos: ${summary.failed}`,
-    `Unidades: ${summary.units}`,
-    ''
-  ]
-
-  if (summary.errors.length > 0) {
-    lines.push('=== ERRORES ===')
-    summary.errors.forEach(err => {
-      lines.push(`- ${err.message} (${err.record})`)
-    })
-  }
-
-  return lines.join('\n')
+/**
+ * Transforms Android IDs to Human Readable Names
+ */
+export function getModuleName(id) {
+  return APP_CONFIG.MODULES[id] || `Módulo ${id}`;
 }
