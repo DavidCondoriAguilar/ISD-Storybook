@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  LayoutDashboard, 
-  FileUp, 
-  Settings, 
-  Package, 
+import {
+  LayoutDashboard,
+  FileUp,
+  Settings,
+  Package,
   History,
   ChevronLeft,
   ChevronRight,
@@ -30,7 +30,7 @@ export function Layout() {
 
   const navItems = [
     { id: 'dashboard', label: 'Monitor Planta', icon: LayoutDashboard },
-    { id: 'import', label: 'Sincronizar', icon: FileUp }
+    { id: 'import', label: 'Importar', icon: FileUp }
   ]
 
   const renderContent = () => {
@@ -45,7 +45,7 @@ export function Layout() {
   return (
     <div className={`layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       {/* Sidebar Navigation (Lux-Tech) */}
-      <motion.aside 
+      <motion.aside
         initial={false}
         animate={{ width: isSidebarCollapsed ? '80px' : 'var(--sidebar-w)' }}
         className="sidebar"
@@ -61,7 +61,7 @@ export function Layout() {
 
         <nav className="sidebar-nav" style={{ padding: '0 12px' }}>
           {navItems.map((item) => (
-            <button 
+            <button
               key={item.id}
               className={`nav-tab ${activeTab === item.id ? 'active' : ''}`}
               onClick={() => setActiveTab(item.id)}
@@ -88,10 +88,10 @@ export function Layout() {
             <ChevronRight size={14} color="var(--border-strong)" />
             <span style={{ fontSize: '0.85rem', fontWeight: 950, color: 'var(--text-main)' }}>{activeTab === 'dashboard' ? 'Monitor' : 'Sincronización'}</span>
           </div>
-          
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '8px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-               {isSidebarCollapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
+              {isSidebarCollapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
             </button>
           </div>
         </header>

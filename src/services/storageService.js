@@ -1,5 +1,7 @@
 import { dbService, db } from './db';
 import { APP_CONFIG } from '../config/appConfig';
+import { validateProductionData } from '../features/import/utils/validationSchema';
+import { calculateRecordEfficiency } from '../config/productionTargets';
 
 /**
  * Enhanced Storage Service
@@ -30,22 +32,54 @@ export const storageService = {
     return await dbService.getAllImports();
   },
 
-  async save(importRecord) {
-    // Senior Logic: Normalize Nested JSON to Flat Structure
-    const normalizedRecords = (importRecord.rawRecords || []).map(r => {
+  async save(importPayload) {
+    // Senior Logic: Validate with Schema First
+    let validatedPayload;
+    try {
+      validatedPayload = validateProductionData(importPayload);
+    } catch (error) {
+      console.error('Validation Error:', error.message);
+      throw error;
+    }
+
+    // Normalization Config (Business Logic)
+    const FACTORES_UNIDAD = {
+      'unidades': 1,
+      'metros': 1,
+      'kg': 1,
+      'millar': 1000,
+      'pares': 2,
+      'rollos': 50,
+      'litros': 1
+    };
+
+    const sanitizarNombre = (n) => n ? n.replace('×', 'x').trim() : 'Sin Nombre';
+
+    // Senior Logic: Normalize Nested JSON to Flat Structure + Unit Conversion
+    const normalizedRecords = (validatedPayload.rawRecords || []).map(r => {
+      const originalDate = new Date(r.fecha || Date.now());
+      originalDate.setHours(0, 0, 0, 0);
+      const normalizedTimestamp = originalDate.getTime();
+
+      const unidadOriginal = (r.produccion?.unidad || 'unidades').toLowerCase();
+      const cantidadBruta = Number(r.produccion?.cantidad || 0);
+      const factor = FACTORES_UNIDAD[unidadOriginal] || 1;
+      const cantidadNormalizada = cantidadBruta * factor;
+
       if (r.trabajador && r.ubicacion && r.producto) {
         return {
           idLocal: r.id || `ISD-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
           trabajadorDni: r.trabajador.dni,
           trabajadorNombre: r.trabajador.nombre,
-          moduloId: r.ubicacion.modulo, // Name or ID
+          moduloId: r.ubicacion.modulo,
           maquinaId: r.ubicacion.maquina,
           productoId: r.producto.codigo,
-          productoNombre: r.producto.nombre,
-          cantidad: Number(r.produccion?.cantidad || 0),
-          unidad: r.produccion?.unidad || 'u.',
+          productoNombre: sanitizarNombre(r.producto.nombre),
+          cantidad: cantidadNormalizada, // STORE NORMALIZED VALUE
+          cantidadOriginal: cantidadBruta,
+          unidadOriginal: unidadOriginal,
           tiempoMinutos: r.tiempo?.minutos || 0,
-          fechaTimestamp: r.fecha,
+          fechaTimestamp: normalizedTimestamp,
           esHoraExtra: (r.tiempo?.horasExtra || 0) > 0,
           horasExtraCantidad: Number(r.tiempo?.horasExtra || 0),
           jornadaTotalHoras: r.tiempo?.horasTotal || "8.00",
@@ -56,7 +90,8 @@ export const storageService = {
       return { 
         ...r, 
         idLocal: r.idLocal || r.id || `ISD-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-        fechaTimestamp: r.fechaTimestamp || r.fecha || Date.now()
+        fechaTimestamp: normalizedTimestamp,
+        cantidad: Number(r.cantidad || 0)
       };
     });
 
@@ -70,15 +105,15 @@ export const storageService = {
       return !existingKeys.has(key);
     });
 
-    const duplicatesFound = (importRecord.rawRecords || []).length - newRawRecords.length;
+    const duplicatesFound = (validatedPayload.rawRecords || []).length - newRawRecords.length;
 
-    if (newRawRecords.length === 0 && (importRecord.rawRecords || []).length > 0) {
+    if (newRawRecords.length === 0 && (validatedPayload.rawRecords || []).length > 0) {
       return { skipped: true, duplicatesDetected: duplicatesFound };
     }
 
     const newRecord = {
       timestamp: new Date().toISOString(),
-      ...importRecord,
+      ...validatedPayload,
       success: newRawRecords.length,
       units: newRawRecords.reduce((s, r) => s + (Number(r.cantidad || 0)), 0),
       rawRecords: newRawRecords,
@@ -142,7 +177,10 @@ export const storageService = {
       const prodName = raw.productoNombre || 'Producto General';
       const qty = Number(raw.cantidad ?? 0);
       const rejections = Number(raw.cantidadRechazada ?? 0);
-      const efficiency = Number(raw.eficiencia || 0);
+      
+      // Senior Logic: Auto-calculate efficiency based on targets if missing
+      const efficiency = Number(raw.eficiencia) || calculateRecordEfficiency(area, qty, Number(raw.jornadaTotalHoras) || 8);
+      
       const overtime = Number(raw.horasExtraCantidad || 0);
       
       // Daily Tracking

@@ -28,8 +28,16 @@ import {
 
 const ModuleHealthCard = ({ module, idx }) => {
   const efficiency = module.avgEfficiency || 0;
-  const healthColor = efficiency > 85 ? '#10b981' : efficiency > 60 ? '#f59e0b' : '#ef4444';
+  const hasDataButNoTarget = efficiency === 0 && module.units > 0;
   
+  const healthColor = hasDataButNoTarget 
+    ? '#94a3b8' // Slate 400 (Pending)
+    : efficiency > 85 ? '#10b981' : efficiency > 60 ? '#f59e0b' : '#ef4444';
+  
+  const statusLabel = hasDataButNoTarget
+    ? 'PENDIENTE'
+    : efficiency > 85 ? 'ÓPTIMO' : efficiency > 60 ? 'ESTABLE' : 'CRÍTICO';
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -56,7 +64,7 @@ const ModuleHealthCard = ({ module, idx }) => {
           </span>
         </div>
         <div style={{ padding: '6px 12px', background: `${healthColor}15`, color: healthColor, borderRadius: '10px', fontSize: '0.65rem', fontWeight: 900 }}>
-          {efficiency > 85 ? 'ÓPTIMO' : efficiency > 60 ? 'ESTABLE' : 'CRÍTICO'}
+          {statusLabel}
         </div>
       </div>
 
