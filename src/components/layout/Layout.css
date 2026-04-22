@@ -18,7 +18,8 @@
   top: 0;
   z-index: 1000;
   padding: 24px 16px;
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: width;
   overflow: hidden;
 }
 
@@ -85,7 +86,8 @@
   margin-left: var(--sidebar-w);
   background: var(--bg-app);
   min-height: 100vh;
-  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: margin-left;
 }
 
 .sidebar-collapsed .main-wrapper {

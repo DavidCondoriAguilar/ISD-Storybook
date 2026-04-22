@@ -75,7 +75,9 @@ export const storageService = {
       // Business Logic: UUID como identificador único de trabajador
       const workerKey = r.trabajador?.dni || r.trabajador?.nombre;
       const businessHash = `${workerKey}-${normalizedTimestamp}-${cantidadBruta}-${r.ubicacion?.modulo}-${r.producto?.codigo || 'SIN_PRODUCTO'}`;
-      const generatedId = r.id ? `ISD-EXT-${r.id}` : (r.idLocal || `ISD-${btoa(unescape(encodeURIComponent(businessHash))).slice(0, 16)}`);
+      
+      // Senior Logic: Unique ID per worker/day/product to avoid clashing external IDs
+      const generatedId = r.id ? `ISD-EXT-${workerKey}-${r.id}` : (r.idLocal || `ISD-${btoa(unescape(encodeURIComponent(businessHash))).slice(0, 16)}`);
 
       // Manejar producto nullable
       const hasProducto = r.producto && r.producto.codigo && r.producto.nombre;
@@ -98,7 +100,9 @@ export const storageService = {
           horasExtraCantidad: Number(r.tiempo?.horasExtra || 0),
           jornadaTotalHoras: jornadaHoras,
           status: 'ok',
-          tipoJornada: r.tiempo?.tipo || 'Estándar'
+          tipoJornada: r.tipoJornada || 'Estándar',
+          fileName: validatedPayload.fileName,
+          importTimestamp: new Date().toISOString()
         }
       }
       return { 
@@ -122,6 +126,8 @@ export const storageService = {
     const duplicatesFound = (validatedPayload.rawRecords || []).length - newRawRecords.length;
 
     if (newRawRecords.length === 0 && (validatedPayload.rawRecords || []).length > 0) {
+      // Logic: If everything is duplicate, we still want to link them to a new import?
+      // No, for auditing, we only care about NEW records.
       return { skipped: true, duplicatesDetected: duplicatesFound };
     }
 
@@ -193,7 +199,7 @@ export const storageService = {
       const rejections = Number(raw.cantidadRechazada ?? 0);
       
       // Senior Logic: Auto-calculate efficiency based on targets if missing
-      const efficiency = Number(raw.eficiencia) || calculateRecordEfficiency(area, qty, Number(raw.jornadaTotalHoras) || 8);
+      const efficiency = Number(raw.eficiencia) || calculateRecordEfficiency(area, qty, Number(raw.jornadaTotalHoras) || 8, raw.unidadOriginal);
       
       const overtime = Number(raw.horasExtraCantidad || 0);
       

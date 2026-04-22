@@ -42,3 +42,26 @@ export const formatHours = (hours) => {
   if (!hours) return '0.00h';
   return `${hours}h`;
 };
+
+/**
+ * Senior Metric Scaling (e.g. 1.2M, 50K)
+ */
+export const formatMetric = (num) => {
+  if (num === null || num === undefined) return '0';
+  const val = Number(num);
+  if (val >= 1000000) return (val / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (val >= 1000) return (val / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+  return val.toLocaleString();
+};
+
+/**
+ * Enhanced date formatting with time
+ */
+export const formatDateTime = (isoString) => {
+  if (!isoString) return 'N/A';
+  const date = new Date(isoString);
+  return date.toLocaleString('es-ES', { 
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+};

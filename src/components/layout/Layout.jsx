@@ -19,7 +19,7 @@ import './Layout.css'
 
 export function Layout() {
   const [activeTab, setActiveTab] = useState('dashboard')
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [theme, setTheme] = useState(localStorage.getItem('app-theme') || 'light')
 
@@ -55,10 +55,9 @@ export function Layout() {
   return (
     <div className={`layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       {/* Sidebar Navigation (Elite Lux-Tech) */}
-      <motion.aside
-        initial={false}
-        animate={{ width: isSidebarCollapsed ? '80px' : 'var(--sidebar-w)' }}
-        className="sidebar"
+      <aside
+        className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}
+        style={{ width: isSidebarCollapsed ? '80px' : 'var(--sidebar-w)' }}
       >
         <div className="sidebar-header">
           <div className="brand-icon">
@@ -84,7 +83,7 @@ export function Layout() {
             </button>
           ))}
         </nav>
-      </motion.aside>
+      </aside>
 
       <main className="main-wrapper">
         <header className="top-bar">
@@ -113,7 +112,7 @@ export function Layout() {
           </div>
         </header>
 
-        <div style={{ padding: '24px 32px' }}>
+        <div style={{ padding: '16px 20px' }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}

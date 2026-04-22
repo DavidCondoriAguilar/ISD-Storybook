@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { AlertCircle, Target, Zap, TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { formatMetric } from '../../../../utils/formatters'
 
 const Gauge = ({ value, color, status, trend }) => {
   const data = [
@@ -77,7 +78,7 @@ export function StatCards({ stats, variants }) {
     },
     { 
       label: 'Volumen Total', 
-      value: totalUnits.toLocaleString(), 
+      value: formatMetric(totalUnits), 
       unitLabel: `${totalDays} jornada${totalDays > 1 ? 's' : ''} registrada${totalDays > 1 ? 's' : ''}`,
       icon: TrendingUp, 
       color: 'var(--primary)',
@@ -86,7 +87,7 @@ export function StatCards({ stats, variants }) {
     },
     { 
       label: 'Promedio Diario', 
-      value: avgDaily.toLocaleString(), 
+      value: formatMetric(avgDaily), 
       unitLabel: 'unidades / jornada',
       icon: Zap, 
       color: 'var(--primary)',
@@ -104,14 +105,14 @@ export function StatCards({ stats, variants }) {
           whileHover={{ translateY: -4, boxShadow: 'var(--shadow-purple)' }}
           style={{ 
             background: 'var(--bg-card)', 
-            padding: '20px 24px', 
-            borderRadius: '24px', 
+            padding: '12px 20px', 
+            borderRadius: '20px', 
             border: '1px solid var(--border)',
             boxShadow: 'var(--shadow-sm)',
             display: 'flex',
             alignItems: 'center',
-            gap: '20px',
-            height: '120px',
+            gap: '16px',
+            height: '90px',
             transition: 'var(--transition-smooth)'
           }}
         >

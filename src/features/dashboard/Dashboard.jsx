@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, memo } from 'react'
 import { motion } from 'framer-motion'
 import { Search, History, ChevronRight, ClipboardList, TrendingUp } from 'lucide-react'
 import { storageService } from '../../data/storageService'
 import { useNotification } from '../../context/NotificationContext'
-import { getModuleName, setModuleMapCache, getProductName, setProductMapCache, formatDate, formatHours } from '../../utils/formatters'
+import { getModuleName, setModuleMapCache, getProductName, setProductMapCache, formatDate, formatHours, formatMetric, formatDateTime } from '../../utils/formatters'
 import { db } from '../../data/db'
 
 // Sub-components
@@ -11,7 +11,8 @@ import { StatCards } from './components/StatCards'
 import { AnalyticsCharts } from './components/AnalyticsCharts'
 import { OperationalInsights } from './components/OperationalInsights/OperationalInsights'
 import { StrategicVision } from './components/StrategicVision/StrategicVision'
-import { DailyPerformance } from './components/DailyPerformance/DailyPerformance'
+import { DailyPerformance } from './components/DailyPerformance'
+import { LoadBalancing } from './components/LoadBalancing'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -23,13 +24,13 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
 }
 
-export function Dashboard({ forceHistory = false }) {
+export const Dashboard = memo(function Dashboard({ forceHistory = false }) {
   const { notify } = useNotification()
   const [data, setData] = useState({
     stats: { totalImports: 0, totalUnits: 0, successRate: 0, avgUnitsPerImport: 0, totalFailed: 0, lastImport: null },
     records: [], monthly: []
   })
-  const [showHistory, setShowHistory] = useState(forceHistory)
+  const [showHistory, setShowHistory] = useState(true)
   const [filterText, setFilterText] = useState('')
   const [filterModule, setFilterModule] = useState('all')
 
@@ -66,7 +67,10 @@ export function Dashboard({ forceHistory = false }) {
 
   const filteredRecords = useMemo(() => {
     let base = showHistory ? data.records : (data.stats.lastImport?.rawRecords || []);
-    return base.filter(r => {
+    // Sort base by date descending for better visibility in history
+    const sortedBase = [...base].sort((a, b) => (b.fechaTimestamp || 0) - (a.fechaTimestamp || 0));
+    
+    return sortedBase.filter(r => {
       const nameMatch = !filterText ||
         r.trabajadorNombre?.toLowerCase().includes(filterText.toLowerCase()) ||
         (r.productoNombre || getProductName(r.productoId)).toLowerCase().includes(filterText.toLowerCase());
@@ -99,7 +103,7 @@ export function Dashboard({ forceHistory = false }) {
               <div>
                 <h2 style={{ fontSize: '1.6rem', fontWeight: 950, color: 'var(--text-main)', letterSpacing: '-0.04em' }}>Diario de Auditoría Maestro</h2>
                 <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 700, marginTop: '2px' }}>
-                  {showHistory ? `Archivo Corporativo: ${filteredRecords.length} registros validados` : `Lote en Línea: ${data.stats.lastImport?.fileName || 'Sincronizado'}`}
+                  {showHistory ? `Consolidado Global: ${filteredRecords.length} registros en historial` : `Lote en Línea: ${data.stats.lastImport?.fileName || 'Sincronizado'}`}
                 </p>
               </div>
             </div>
@@ -186,13 +190,24 @@ export function Dashboard({ forceHistory = false }) {
                     </td>
                     <td style={{ width: '12%', textAlign: 'center' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <span style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc' }}>{r.cantidad.toLocaleString()}</span>
-                        <span style={{ fontSize: '0.6rem', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em' }}>UNIDADES</span>
+                        <span style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc' }}>
+                          {r.unidadOriginal === 'millar' ? r.cantidadOriginal.toLocaleString() : r.cantidad.toLocaleString()}
+                        </span>
+                        <span style={{ fontSize: '0.6rem', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em' }}>
+                          {r.unidadOriginal || 'unidades'}
+                        </span>
+                        {r.unidadOriginal === 'millar' && (
+                          <span style={{ fontSize: '0.55rem', color: 'var(--primary)', fontWeight: 700, marginTop: '2px' }}>
+                            ({r.cantidad.toLocaleString()} u. netas)
+                          </span>
+                        )}
                       </div>
                     </td>
                     <td style={{ width: '10%', textAlign: 'center' }}>
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid var(--border)' }}>
-                        <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#f8fafc' }}>{uph}</span>
+                        <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#f8fafc' }}>
+                          {r.unidadOriginal === 'millar' ? (r.cantidadOriginal / (parseFloat(r.jornadaTotalHoras) || 8)).toFixed(2) : uph}
+                        </span>
                         {parseFloat(uph) > 10 && <TrendingUp size={12} color="var(--success)" />}
                       </div>
                     </td>
@@ -200,6 +215,11 @@ export function Dashboard({ forceHistory = false }) {
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#f8fafc' }}>{formatHours(r.jornadaTotalHoras)}</span>
                         <span style={{ fontSize: '0.65rem', color: 'var(--text-dim)' }}>{formatDate(r.fechaTimestamp)}</span>
+                        {r.fileName && (
+                          <div style={{ fontSize: '0.55rem', color: 'var(--primary)', fontWeight: 850, marginTop: '4px', opacity: 0.8, textTransform: 'lowercase', border: '1px solid var(--primary-glow)', padding: '2px 6px', borderRadius: '4px', display: 'inline-block', width: 'fit-content' }}>
+                             src: {r.fileName}
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td style={{ width: '10%', textAlign: 'right' }}>
@@ -262,6 +282,9 @@ export function Dashboard({ forceHistory = false }) {
         )}
       </motion.div>
 
+      {/* Strategic Balance & Resource Optimization (Senior Addition) */}
+      <LoadBalancing stats={data.stats} variants={itemVariants} />
+
       {/* Daily Performance Strategic Analysis */}
       <DailyPerformance stats={data.stats} variants={itemVariants} />
 
@@ -278,4 +301,4 @@ export function Dashboard({ forceHistory = false }) {
       <AnalyticsCharts monthly={data.monthly} areaBreakdown={data.stats.areaBreakdown} totalUnits={data.stats.totalUnits} variants={itemVariants} />
     </motion.div>
   )
-}
+})

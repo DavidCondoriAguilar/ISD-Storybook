@@ -27,10 +27,10 @@ export function DailyPerformance({ stats, variants }) {
 
   return (
     <motion.div variants={variants} style={{ marginBottom: '40px' }}>
-      <div style={{ background: 'var(--bg-card)', padding: '40px', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-md)' }}>
+      <div style={{ background: 'var(--bg-card)', padding: '24px 32px', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-md)' }}>
         
         {/* Header with Date Selector */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', borderBottom: '1px solid var(--border)', paddingBottom: '30px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '1px solid var(--border)', paddingBottom: '20px' }}>
            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
               <div style={{ width: '56px', height: '56px', background: 'var(--primary-glow)', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
                 <Calendar size={26} />
@@ -61,7 +61,7 @@ export function DailyPerformance({ stats, variants }) {
            </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '60px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '40px' }}>
           
           {/* Daily Worker Leaderboard */}
           <div>

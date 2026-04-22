@@ -82,7 +82,7 @@
 }
 
 .table-header-custom {
-  padding: 40px 48px;
+  padding: 24px 32px;
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
 }
@@ -105,8 +105,8 @@
 }
 
 .history-table tbody td {
-  padding: 24px;
-  font-size: 0.85rem;
+  padding: 14px 20px;
+  font-size: 0.8rem;
   color: var(--text-main);
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
