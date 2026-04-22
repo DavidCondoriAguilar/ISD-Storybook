@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Search, History, ChevronRight, ClipboardList, TrendingUp } from 'lucide-react'
-import { storageService } from '../../services/storageService'
+import { storageService } from '../../data/storageService'
 import { useNotification } from '../../context/NotificationContext'
 import { getModuleName, setModuleMapCache, getProductName, setProductMapCache, formatDate, formatHours } from '../../utils/formatters'
-import { db } from '../../services/db'
+import { db } from '../../data/db'
 
 // Sub-components
 import { StatCards } from './components/StatCards'

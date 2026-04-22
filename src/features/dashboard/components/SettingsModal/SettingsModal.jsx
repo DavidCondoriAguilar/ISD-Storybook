@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Settings, X, Save, Edit3, Package, Layers, Trash2 } from 'lucide-react'
-import { db } from '../../../../services/db'
-import { storageService } from '../../../../services/storageService'
+import { db } from '../../../../data/db'
+import { storageService } from '../../../../data/storageService'
 import { useNotification } from '../../../../context/NotificationContext'
 
 export function SettingsModal({ isOpen, onClose, onRefresh }) {

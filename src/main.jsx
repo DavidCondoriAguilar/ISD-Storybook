@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
-import { storageService } from './services/storageService'
+import { storageService } from './data/storageService'
 import './index.css'
 
 // Initialize storage and migrate legacy data

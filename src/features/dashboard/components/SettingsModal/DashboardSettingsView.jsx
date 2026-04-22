@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Save, Package, Layers, Edit3, ShieldCheck } from 'lucide-react'
-import { db } from '../../../../services/db'
+import { db } from '../../../../data/db'
 import { useNotification } from '../../../../context/NotificationContext'
 
 export function DashboardSettingsView() {

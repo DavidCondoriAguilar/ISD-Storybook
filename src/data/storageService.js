@@ -1,4 +1,4 @@
-import { dbService, db } from './db';
+import { dbService, db } from '../data/db';
 import { APP_CONFIG } from '../config/appConfig';
 import { validateProductionData } from '../features/import/utils/validationSchema';
 import { calculateRecordEfficiency } from '../config/productionTargets';

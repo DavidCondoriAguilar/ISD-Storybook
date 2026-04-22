@@ -1,5 +1,5 @@
-import { storageService } from '../../services/storageService';
-import { db } from '../../services/db';
+import { storageService } from '../../data/storageService';
+import { db } from '../../data/db';
 
 describe('storageService - Real Data Validation (Android ISD Export)', () => {
   beforeEach(async () => {
