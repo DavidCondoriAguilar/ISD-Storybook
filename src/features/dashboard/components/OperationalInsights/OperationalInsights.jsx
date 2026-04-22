@@ -14,7 +14,7 @@ export function OperationalInsights({ stats, variants }) {
       style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '32px', marginBottom: '40px' }}
     >
       {/* 1. Machine Performance Monitor */}
-      <div style={{ background: 'white', padding: '32px', borderRadius: '32px', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+      <div style={{ background: 'var(--bg-card)', padding: '32px', borderRadius: '32px', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
           <div style={{ width: '48px', height: '48px', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
             <Cpu size={24} />
@@ -45,7 +45,7 @@ export function OperationalInsights({ stats, variants }) {
       </div>
 
       {/* 2. Overtime & Labor Cost Guard */}
-      <div style={{ background: 'white', padding: '32px', borderRadius: '32px', border: '2px solid transparent', borderColor: totalOvertimeHours > 20 ? `${riskColor}20` : 'var(--border)', boxShadow: 'var(--shadow-sm)', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ background: 'var(--bg-card)', padding: '32px', borderRadius: '32px', border: '2px solid transparent', borderColor: totalOvertimeHours > 20 ? `${riskColor}20` : 'var(--border)', boxShadow: 'var(--shadow-sm)', position: 'relative', overflow: 'hidden' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
           <div style={{ width: '48px', height: '48px', background: `${riskColor}10`, borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: riskColor }}>
             <Clock size={24} />

@@ -6,9 +6,9 @@ export function Notification() {
   const { notification } = useNotification()
 
   const getIcon = (type) => {
-    if (type === 'success') return <CheckCircle2 size={14} />
-    if (type === 'error') return <AlertCircle size={14} />
-    return <Info size={14} />
+    if (type === 'success') return <CheckCircle2 size={18} />
+    if (type === 'error') return <AlertCircle size={18} />
+    return <Info size={18} />
   }
 
   return (
@@ -21,29 +21,36 @@ export function Notification() {
           className={`notification ${notification.type}`}
           style={{
             position: 'fixed',
-            bottom: '24px',
-            right: '24px',
+            bottom: '32px',
+            right: '32px',
             zIndex: 9999,
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
-            padding: '6px 12px',
-            maxWidth: '220px',
-            background: 'rgba(15, 23, 42, 0.95)',
-            backdropFilter: 'blur(8px)',
+            gap: '12px',
+            padding: '12px 20px',
+            minWidth: '280px',
+            maxWidth: '450px',
+            background: 'rgba(15, 23, 42, 0.9)',
+            backdropFilter: 'blur(16px)',
             color: 'white',
-            borderRadius: '10px',
-            fontSize: '0.68rem',
-            fontWeight: 800,
-            boxShadow: '0 8px 24px -10px rgba(0,0,0,0.6)',
-            border: '1px solid rgba(255,255,255,0.05)',
-            lineHeight: 1.1
+            borderRadius: '16px',
+            fontSize: '0.85rem',
+            fontWeight: 700,
+            boxShadow: '0 20px 40px -12px rgba(0,0,0,0.4)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            lineHeight: 1.4
           }}
         >
-          <div style={{ color: notification.type === 'success' ? '#10b981' : (notification.type === 'warning' ? '#f59e0b' : '#3b82f6'), display: 'flex' }}>
+          <div style={{ 
+            color: notification.type === 'success' ? '#10b981' : (notification.type === 'error' ? '#ef4444' : '#3b82f6'), 
+            display: 'flex',
+            background: 'rgba(255, 255, 255, 0.05)',
+            padding: '8px',
+            borderRadius: '10px'
+          }}>
             {getIcon(notification.type)}
           </div>
-          <span>{notification.message}</span>
+          <span style={{ flex: 1 }}>{notification.message}</span>
         </motion.div>
       )}
     </AnimatePresence>

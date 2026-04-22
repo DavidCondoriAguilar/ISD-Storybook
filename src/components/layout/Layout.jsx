@@ -3,17 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard,
   FileUp,
-  Settings,
   Package,
-  History,
   ChevronLeft,
   ChevronRight,
-  LogOut,
-  Bell
+  Sun,
+  Moon,
+  Menu
 } from 'lucide-react'
 import { ImportProduction } from '../../features/import'
 import { Dashboard } from '../../features/dashboard'
-import { DashboardSettingsView } from '../../features/dashboard/components/SettingsModal/DashboardSettingsView'
+import { SettingsModal } from '../../features/dashboard/components/SettingsModal/SettingsModal'
 import { useNotification } from '../../context/NotificationContext'
 import { Notification } from '../ui/Notification/Notification'
 import './Layout.css'
@@ -21,6 +20,17 @@ import './Layout.css'
 export function Layout() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [theme, setTheme] = useState(localStorage.getItem('app-theme') || 'light')
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('app-theme', theme)
+  }, [theme])
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light')
+  }
   const { notify } = useNotification()
 
   const handleImportComplete = (summary) => {
@@ -44,28 +54,27 @@ export function Layout() {
 
   return (
     <div className={`layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-      {/* Sidebar Navigation (Lux-Tech) */}
+      {/* Sidebar Navigation (Elite Lux-Tech) */}
       <motion.aside
         initial={false}
         animate={{ width: isSidebarCollapsed ? '80px' : 'var(--sidebar-w)' }}
         className="sidebar"
       >
-        <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '30px 24px' }}>
-          <div style={{ width: '40px', height: '40px', background: 'var(--primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+        <div className="sidebar-header">
+          <div className="brand-icon">
             <Package size={22} />
           </div>
           {!isSidebarCollapsed && (
-            <span style={{ fontSize: '1.2rem', fontWeight: 950, letterSpacing: '-0.04em' }}>ProductionHub</span>
+            <span className="brand-text">ISD</span>
           )}
         </div>
 
-        <nav className="sidebar-nav" style={{ padding: '0 12px' }}>
+        <nav className="sidebar-nav">
           {navItems.map((item) => (
             <button
               key={item.id}
               className={`nav-tab ${activeTab === item.id ? 'active' : ''}`}
               onClick={() => setActiveTab(item.id)}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', borderRadius: '12px', border: 'none', background: activeTab === item.id ? 'var(--primary-light)' : 'transparent', color: activeTab === item.id ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', marginBottom: '4px', fontWeight: 800, transition: 'all 0.2s' }}
             >
               <item.icon size={20} strokeWidth={activeTab === item.id ? 2.5 : 2} />
               {!isSidebarCollapsed && <span>{item.label}</span>}
@@ -75,35 +84,43 @@ export function Layout() {
             </button>
           ))}
         </nav>
-
-        <div className="sidebar-footer" style={{ marginTop: 'auto', padding: '24px', opacity: 0.3 }}>
-          {/* Profile removed as per request */}
-        </div>
       </motion.aside>
 
-      <main className="main-wrapper" style={{ flex: 1, background: 'var(--bg-app)', minHeight: '100vh', overflowY: 'auto' }}>
-        <header className="top-bar" style={{ padding: '20px 40px', background: 'white', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)' }}>Planta Central</span>
-            <ChevronRight size={14} color="var(--border-strong)" />
-            <span style={{ fontSize: '0.85rem', fontWeight: 950, color: 'var(--text-main)' }}>{activeTab === 'dashboard' ? 'Monitor' : 'Sincronización'}</span>
+      <main className="main-wrapper">
+        <header className="top-bar">
+          <div className="top-bar-left">
+            <span className="breadcrumb-label">Planta Central</span>
+            <ChevronRight size={14} color="var(--text-dim)" />
+            <span style={{ fontSize: '0.9rem', fontWeight: 900, color: 'var(--text-main)' }}>
+              {activeTab === 'dashboard' ? 'Monitor de Auditoría' : 'Sincronización ERP'}
+            </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '8px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="top-bar-right">
+            <button
+              className="icon-btn-ghost"
+              onClick={toggleTheme}
+              title={`Cambiar a modo ${theme === 'light' ? 'oscuro' : 'claro'}`}
+            >
+              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+            </button>
+            <button
+              className="icon-btn-ghost"
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            >
               {isSidebarCollapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
             </button>
           </div>
         </header>
 
-        <div style={{ padding: '40px' }}>
+        <div style={{ padding: '24px 32px' }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, scale: 0.99 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.99 }}
-              transition={{ duration: 0.2 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
             >
               {renderContent()}
             </motion.div>
@@ -112,6 +129,11 @@ export function Layout() {
       </main>
 
       <Notification />
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        onRefresh={() => window.dispatchEvent(new Event('refresh_production_data'))}
+      />
     </div>
   )
 }

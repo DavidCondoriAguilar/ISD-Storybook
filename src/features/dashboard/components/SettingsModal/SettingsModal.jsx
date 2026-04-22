@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Settings, X, Save, Edit3, Package, Layers } from 'lucide-react'
+import { Settings, X, Save, Edit3, Package, Layers, Trash2 } from 'lucide-react'
 import { db } from '../../../../services/db'
+import { storageService } from '../../../../services/storageService'
 import { useNotification } from '../../../../context/NotificationContext'
 
 export function SettingsModal({ isOpen, onClose, onRefresh }) {
@@ -31,6 +32,16 @@ export function SettingsModal({ isOpen, onClose, onRefresh }) {
     onRefresh()
     notify('Diccionario de nombres actualizado 📈', 'success')
     onClose()
+  }
+
+  const handleClearData = async () => {
+    const confirm = window.confirm('⚠ ATENCIÓN: Se eliminarán TODOS los registros de producción y el historial de importaciones. Los nombres personalizados del diccionario se mantendrán. ¿Continuar?')
+    if (confirm) {
+      await storageService.clear()
+      onRefresh()
+      notify('Base de datos limpiada correctamente. 🧹', 'info')
+      onClose()
+    }
   }
 
   if (!isOpen) return null
@@ -95,7 +106,14 @@ export function SettingsModal({ isOpen, onClose, onRefresh }) {
             )}
           </div>
 
-          <div style={{ padding: '24px 32px', borderTop: '1px solid var(--border)', display: 'flex', gap: '12px' }}>
+          <div style={{ padding: '24px 32px', borderTop: '1px solid var(--border)', display: 'flex', gap: '12px', alignItems: 'center' }}>
+             <button 
+                onClick={handleClearData} 
+                title="Limpiar registros (Mantiene nombres)"
+                style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(239, 68, 68, 0.05)', color: 'var(--danger)', border: '1.5px solid rgba(239, 68, 68, 0.2)', borderRadius: '14px', cursor: 'pointer' }}
+             >
+                <Trash2 size={18} />
+             </button>
              <button onClick={handleSave} style={{ flex: 1, padding: '14px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '14px', fontWeight: 900, fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                 <Save size={18} /> Aplicar Cambios Realizados
              </button>

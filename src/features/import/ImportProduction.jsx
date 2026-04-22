@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { motion as m, AnimatePresence as AP } from 'framer-motion'
-import { FileUp, ShieldCheck, XCircle, CheckCircle, Upload, ArrowRight } from 'lucide-react'
+import { FileUp, ShieldCheck, XCircle, CheckCircle, Upload, ArrowRight, Trash2 } from 'lucide-react'
 import { useImportProduction } from './hooks/useImportProduction'
 import { STEPS } from './types/importTypes'
 import { Dropzone } from './components/Dropzone'
@@ -38,8 +38,17 @@ export function ImportProduction({ onImportComplete }) {
     handleRemoveFile,
     startImport,
     retry,
-    reset
+    reset,
+    clearAllHistory
   } = useImportProduction()
+
+  const handleClearHistory = async () => {
+    const confirm = window.confirm('¿Estás SEGURO de que deseas eliminar TODO el historial? Esta acción no se puede deshacer.')
+    if (confirm) {
+      await clearAllHistory()
+      notify('Historial eliminado por completo. Puedes empezar de cero. 🧹', 'info')
+    }
+  }
 
   const onFileLoadSuccess = (f) => {
     handleFileSelect(f)
@@ -92,7 +101,7 @@ export function ImportProduction({ onImportComplete }) {
         )}
       </AP>
 
-      <div className="import-options-card" style={{ padding: '32px', background: 'white', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+      <div className="import-options-card" style={{ padding: '32px', background: 'var(--bg-card)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
         <m.label className="checkbox-label" whileHover={{ x: 5 }} style={{ cursor: 'pointer', display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
           <m.input 
             type="checkbox" 
@@ -115,7 +124,7 @@ export function ImportProduction({ onImportComplete }) {
         <m.button 
           className="btn-cancel-large" 
           onClick={reset}
-          whileHover={{ x: -2, background: '#f8fafc' }}
+          whileHover={{ x: -2, background: 'var(--bg-app)' }}
           whileTap={{ scale: 0.98 }}
           style={{ flex: 1, padding: '20px', background: 'transparent', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-lg)', fontWeight: 800, color: 'var(--text-muted)', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}
         >
@@ -135,6 +144,23 @@ export function ImportProduction({ onImportComplete }) {
         >
           <CheckCircle size={22} /> Iniciar Sincronización <ArrowRight size={20} />
         </m.button>
+      </div>
+
+      <div className="danger-zone" style={{ marginTop: '40px', borderTop: '1px solid var(--border)', paddingTop: '32px' }}>
+         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px', background: 'rgba(239, 68, 68, 0.03)', borderRadius: '24px', border: '1px dashed rgba(239, 68, 68, 0.2)' }}>
+            <div>
+               <h4 style={{ color: 'var(--danger)', fontWeight: 900, marginBottom: '4px' }}>Zona Crítica</h4>
+               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Borra permanentemente todos los registros, duplicados y auditorías del sistema.</p>
+            </div>
+            <m.button 
+               onClick={handleClearHistory}
+               whileHover={{ scale: 1.05, background: 'var(--danger)' }}
+               whileTap={{ scale: 0.95 }}
+               style={{ padding: '12px 24px', background: 'transparent', color: 'var(--danger)', border: '2px solid var(--danger)', borderRadius: '14px', fontWeight: 900, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
+            >
+               <Trash2 size={16} /> Limpiar Base de Datos
+            </m.button>
+         </div>
       </div>
     </m.div>
   )

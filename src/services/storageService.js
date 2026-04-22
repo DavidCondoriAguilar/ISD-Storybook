@@ -66,10 +66,14 @@ export const storageService = {
       const factor = FACTORES_UNIDAD[unidadOriginal] || 1;
       const cantidadNormalizada = cantidadBruta * factor;
 
+      // Business Logic: If no ID provided, generate a deterministic one to avoid duplicates on re-import
+      const businessHash = `${r.trabajador?.nombre}-${normalizedTimestamp}-${cantidadBruta}-${r.ubicacion?.modulo}-${r.producto?.codigo}`;
+      const generatedId = r.id ? `ISD-EXT-${r.id}` : (r.idLocal || `ISD-${btoa(unescape(encodeURIComponent(businessHash))).slice(0, 16)}`);
+
       if (r.trabajador && r.ubicacion && r.producto) {
         return {
-          idLocal: r.id || `ISD-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-          trabajadorDni: r.trabajador.dni,
+          idLocal: generatedId,
+          trabajadorDni: r.trabajador.dni || 'N/A',
           trabajadorNombre: r.trabajador.nombre,
           moduloId: r.ubicacion.modulo,
           maquinaId: r.ubicacion.maquina,
@@ -89,7 +93,7 @@ export const storageService = {
       }
       return { 
         ...r, 
-        idLocal: r.idLocal || r.id || `ISD-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+        idLocal: generatedId,
         fechaTimestamp: normalizedTimestamp,
         cantidad: Number(r.cantidad || 0)
       };

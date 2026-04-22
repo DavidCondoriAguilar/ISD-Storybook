@@ -149,10 +149,16 @@ export function useImportProduction() {
     setResult(null)
   }, [])
 
+  const clearAllHistory = useCallback(async () => {
+    await storageService.clear()
+    reset()
+  }, [reset])
+
   return {
     step, file, fileStatus, validateBeforeImport,
     progress, processingStatus, processingSteps,
     summary, result, setValidateBeforeImport,
-    handleFileSelect, handleRemoveFile, startImport, retry, reset
+    handleFileSelect, handleRemoveFile, startImport, retry, reset,
+    clearAllHistory
   }
 }

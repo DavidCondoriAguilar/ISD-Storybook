@@ -1,105 +1,130 @@
-.import-production {
-  width: 100%;
-  max-width: 520px;
+.import-production-wrapper {
+  max-width: 800px;
   margin: 0 auto;
+  padding: 40px 20px;
 }
 
-.modal {
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  padding: 40px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-lg);
-  position: relative;
-  overflow: hidden;
-}
-
-.modal::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
-}
-
-.modal-title {
-  text-align: center;
-  margin-bottom: 32px;
-  color: var(--text-main);
-  font-size: 1.75rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.checkbox-label {
+.import-view-container {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--text-muted);
-  margin: 24px 0 32px;
-  cursor: pointer;
-  user-select: none;
-  font-weight: 500;
-  font-size: 0.95rem;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.import-hero {
+  text-align: center;
+}
+
+.hero-icon-bg {
+  box-shadow: 0 20px 40px -10px var(--primary-glow);
+  transition: var(--transition-bounce);
+}
+
+.hero-icon-bg:hover {
+  transform: rotate(10deg) scale(1.1);
+  box-shadow: 0 25px 50px -12px var(--primary-glow);
+}
+
+/* Option Card Enhancement */
+.import-options-card {
+  padding: 32px;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
   transition: var(--transition-smooth);
 }
 
-.checkbox-label:hover {
-  color: var(--text-main);
+.import-options-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }
 
-.checkbox-label input {
-  width: 20px;
-  height: 20px;
+.checkbox-label {
   cursor: pointer;
-  accent-color: var(--primary);
-  border-radius: var(--radius-sm);
-}
-
-.actions {
   display: flex;
-  gap: 12px;
+  gap: 20px;
+  align-items: flex-start;
+  transition: var(--transition-smooth);
 }
 
-.actions button {
+/* Elite Buttons */
+.import-actions {
+  display: flex;
+  gap: 20px;
+}
+
+.btn-cancel-large {
   flex: 1;
-  padding: 14px 24px;
-  border-radius: var(--radius-md);
-  font-weight: 700;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  font-weight: 800;
+  color: var(--text-muted);
   font-size: 1rem;
-  transition: var(--transition-bounce);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
+  transition: var(--transition-smooth);
 }
 
-.btn-cancel {
-  background: var(--bg-app);
-  color: var(--text-muted);
-}
-
-.btn-cancel:hover {
-  background: #e2e8f0;
+.btn-cancel-large:hover {
+  background: #f8fafc;
+  border-color: var(--text-dim);
   color: var(--text-main);
+  transform: translateX(-4px);
 }
 
-.btn-import {
+.btn-start-large {
+  flex: 2;
+  padding: 24px;
   background: var(--primary);
   color: white;
-  box-shadow: 0 4px 12px var(--primary-glow);
+  border-radius: var(--radius-lg);
+  font-weight: 900;
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: var(--transition-bounce);
+  box-shadow: 0 12px 24px var(--primary-glow);
 }
 
-.btn-import:hover:not(:disabled) {
+.btn-start-large:hover:not(:disabled) {
   background: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px var(--primary-glow);
+  transform: scale(1.02) translateY(-4px);
+  box-shadow: 0 20px 40px var(--primary-glow);
 }
 
-.btn-import:disabled {
-  opacity: 0.5;
+.btn-start-large:disabled {
+  background: var(--border-strong);
+  color: var(--text-dim);
+  box-shadow: none;
   cursor: not-allowed;
-  filter: grayscale(1);
+}
+
+/* Critique/Danger Zone */
+.danger-zone {
+  margin-top: 56px;
+  border-top: 1px solid var(--border-strong);
+  padding-top: 40px;
+}
+
+.danger-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px;
+  background: rgba(239, 68, 68, 0.02);
+  border-radius: var(--radius-xl);
+  border: 1.5px dashed rgba(239, 68, 68, 0.2);
+  transition: var(--transition-smooth);
+}
+
+.danger-box:hover {
+  background: rgba(239, 68, 68, 0.04);
+  border-color: var(--danger);
 }

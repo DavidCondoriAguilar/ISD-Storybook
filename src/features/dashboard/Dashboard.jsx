@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Search, History, ChevronRight, ClipboardList } from 'lucide-react'
+import { Search, History, ChevronRight, ClipboardList, TrendingUp } from 'lucide-react'
 import { storageService } from '../../services/storageService'
 import { useNotification } from '../../context/NotificationContext'
 import { getModuleName, setModuleMapCache, getProductName, setProductMapCache, formatDate, formatHours } from '../../utils/formatters'
@@ -29,10 +29,10 @@ export function Dashboard({ forceHistory = false }) {
     stats: { totalImports: 0, totalUnits: 0, successRate: 0, avgUnitsPerImport: 0, totalFailed: 0, lastImport: null },
     records: [], monthly: []
   })
-  const [showHistory, setShowHistory] = useState(forceHistory) 
+  const [showHistory, setShowHistory] = useState(forceHistory)
   const [filterText, setFilterText] = useState('')
   const [filterModule, setFilterModule] = useState('all')
-  
+
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 50
@@ -53,12 +53,12 @@ export function Dashboard({ forceHistory = false }) {
       storageService.getAllRecords(),
       storageService.getMonthlyData()
     ])
-    
+
     setData({ stats, records: allRecords, monthly })
   }, [])
 
-  useEffect(() => { 
-    refresh() 
+  useEffect(() => {
+    refresh()
     const handleGlobalRefresh = () => refresh()
     window.addEventListener('refresh_production_data', handleGlobalRefresh)
     return () => window.removeEventListener('refresh_production_data', handleGlobalRefresh)
@@ -67,7 +67,7 @@ export function Dashboard({ forceHistory = false }) {
   const filteredRecords = useMemo(() => {
     let base = showHistory ? data.records : (data.stats.lastImport?.rawRecords || []);
     return base.filter(r => {
-      const nameMatch = !filterText || 
+      const nameMatch = !filterText ||
         r.trabajadorNombre?.toLowerCase().includes(filterText.toLowerCase()) ||
         (r.productoNombre || getProductName(r.productoId)).toLowerCase().includes(filterText.toLowerCase());
       const moduleMatch = filterModule === 'all' || getModuleName(r.moduloId) === filterModule;
@@ -87,147 +87,194 @@ export function Dashboard({ forceHistory = false }) {
 
   return (
     <motion.div className="dashboard" variants={containerVariants} initial="hidden" animate="visible">
-      
-      {/* 1. Audit Table with Filter Bar (HEART OF THE OPERATION) */}
-      <motion.div variants={itemVariants} className="master-table-pane" style={{ marginBottom: '40px', padding: '32px', background: 'white', borderRadius: '32px', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-             <div style={{ width: '48px', height: '48px', background: 'var(--primary-light)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ClipboardList size={22} color="var(--primary)" />
-             </div>
-             <div>
-                <span style={{ display: 'block', fontSize: '1.1rem', fontWeight: 950, letterSpacing: '-0.02em' }}>Auditoría de Planta</span>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700 }}>{showHistory ? `Historial: ${filteredRecords.length} registros` : (data.stats.lastImport?.fileName || 'Esperando Datos')}</span>
-             </div>
-          </div>
-          
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <div style={{ position: 'relative' }}>
-              <Search size={16} style={{ position: 'absolute', left: '16px', top: '14px', color: 'var(--text-muted)' }} />
-              <input 
-                  type="text" 
-                  placeholder="Buscar trabajador o producto..." 
+
+      {/* 1. Master Audit Journal (Senior Decision Surface) */}
+      <motion.div variants={itemVariants} className="master-table-pane" style={{ padding: '0', marginBottom: '40px' }}>
+        <div className="table-header-custom">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div style={{ width: '64px', height: '64px', background: 'var(--primary-gradient)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-purple)' }}>
+                <ClipboardList size={28} color="white" />
+              </div>
+              <div>
+                <h2 style={{ fontSize: '1.6rem', fontWeight: 950, color: 'var(--text-main)', letterSpacing: '-0.04em' }}>Diario de Auditoría Maestro</h2>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 700, marginTop: '2px' }}>
+                  {showHistory ? `Archivo Corporativo: ${filteredRecords.length} registros validados` : `Lote en Línea: ${data.stats.lastImport?.fileName || 'Sincronizado'}`}
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <div style={{ position: 'relative' }}>
+                <Search size={16} style={{ position: 'absolute', left: '16px', top: '15px', color: 'var(--text-muted)', zIndex: 5 }} />
+                <input
+                  type="text"
+                  className="glass"
+                  placeholder="Filtrar operador "
                   value={filterText}
                   onChange={(e) => setFilterText(e.target.value)}
-                  style={{ padding: '12px 16px 12px 45px', borderRadius: '14px', border: '1px solid var(--border)', fontSize: '0.85rem', fontWeight: 700, minWidth: '320px', outline: 'none', background: 'var(--bg-app)' }}
-              />
+                  style={{ padding: '12px 16px 12px 45px', borderRadius: '16px', border: '1px solid var(--border-strong)', fontSize: '0.85rem', fontWeight: 750, minWidth: '320px', outline: 'none', color: 'var(--text-main)' }}
+                />
+              </div>
+
+              <select
+                value={filterModule}
+                className="glass"
+                onChange={(e) => setFilterModule(e.target.value)}
+                style={{ padding: '0 24px', borderRadius: '16px', border: '1px solid var(--border-strong)', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', outline: 'none', color: 'var(--text-main)', appearance: 'none', background: 'var(--bg-card)' }}
+              >
+                <option value="all">Filtro Planta: Todo</option>
+                {data.stats.areaBreakdown?.map(area => (
+                  <option key={area.name} value={area.name}>{area.name}</option>
+                ))}
+              </select>
+
+              <button
+                onClick={() => setShowHistory(!showHistory)}
+                className="icon-btn-ghost glass"
+                style={{ width: 'auto', padding: '0 28px', height: '48px', gap: '12px', fontSize: '0.85rem', fontWeight: 900, border: '1px solid var(--border-strong)' }}
+              >
+                {showHistory ? <ChevronRight size={18} /> : <History size={18} />}
+                {showHistory ? 'Lote Actual' : 'Histórico'}
+              </button>
             </div>
-            <select 
-              value={filterModule}
-              onChange={(e) => setFilterModule(e.target.value)}
-              style={{ padding: '12px 20px', borderRadius: '14px', border: '1px solid var(--border)', fontSize: '0.85rem', fontWeight: 800, background: 'white', cursor: 'pointer', outline: 'none' }}
-            >
-              <option value="all">Todos los Módulos</option>
-              {data.stats.areaBreakdown?.map(area => (
-                <option key={area.name} value={area.name}>{area.name}</option>
-              ))}
-            </select>
-            <button 
-                onClick={() => setShowHistory(!showHistory)} 
-                style={{ padding: '12px 24px', background: showHistory ? 'var(--primary)' : 'white', color: showHistory ? 'white' : 'var(--text-main)', border: '1px solid var(--border-strong)', borderRadius: '14px', fontSize: '0.8rem', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-            >
-                {showHistory ? <ChevronRight size={16} /> : <History size={16} />}
-                {showHistory ? 'Lote Actual' : 'Ver Historial'}
-            </button>
           </div>
         </div>
 
-        <div style={{ maxHeight: '600px', overflowY: 'auto', borderRadius: '16px', border: '1px solid var(--border-light)', marginBottom: '20px' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead style={{ position: 'sticky', top: 0, zIndex: 10, background: '#f8fafc', borderBottom: '2px solid var(--border)' }}>
+        <div className="table-scrollable glass" style={{ borderRadius: '0', border: 'none' }}>
+          <table className="history-table">
+            <thead>
               <tr>
-                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>MÓDULO</th>
-                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>PRODUCTO</th>
-                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>TRABAJADOR</th>
-                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)', textAlign: 'center' }}>TOTAL BASE</th>
-                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>CAPTURA ORIGINAL</th>
-                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>FECHA</th>
-                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>HORAS</th>
-                <th style={{ padding: '16px 20px', fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)' }}>TIPO</th>
+                <th>Centro de Operación</th>
+                <th>Producto & Identificador SKU</th>
+                <th>Operador Especialista</th>
+                <th style={{ textAlign: 'center' }}>Producción Bruta</th>
+                <th style={{ textAlign: 'center' }}>Eficiencia Operativa</th>
+                <th>Registro Cronológico</th>
+                <th>Estatus</th>
               </tr>
             </thead>
             <tbody>
               {displayedRecords.length === 0 ? (
-                <tr><td colSpan="8" style={{ padding: '60px', textAlign: 'center', color: 'var(--text-muted)', fontWeight: 700 }}>No hay registros para mostrar en esta auditoría.</td></tr>
-              ) : displayedRecords.map((r, i) => (
-                <tr key={r.id || i} style={{ borderBottom: '1px solid var(--border-light)', background: i % 2 === 0 ? 'white' : '#fafafa' }}>
-                  <td style={{ padding: '14px 20px', fontSize: '0.8rem', fontWeight: 900, color: 'var(--primary)' }}>{getModuleName(r.moduloId)}</td>
-                  <td style={{ padding: '14px 20px', fontSize: '0.85rem', fontWeight: 850 }}>{r.productoNombre || getProductName(r.productoId)}</td>
-                  <td style={{ padding: '14px 20px', fontSize: '0.8rem', fontWeight: 800 }}>{r.trabajadorNombre}</td>
-                  <td style={{ padding: '14px 20px', fontSize: '1rem', fontWeight: 950, textAlign: 'center', color: 'var(--text-main)' }}>
-                    {r.cantidad.toLocaleString()}
-                    <span style={{ fontSize: '0.6rem', marginLeft: '4px', opacity: 0.5 }}>u.</span>
-                  </td>
-                  <td style={{ padding: '14px 20px', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)' }}>
-                    {r.cantidadOriginal || r.cantidad} 
-                    <span style={{ fontSize: '0.65rem', marginLeft: '4px', fontWeight: 900, color: 'var(--primary)', textTransform: 'uppercase' }}>
-                      {r.unidadOriginal || 'u.'}
-                    </span>
-                  </td>
-                  <td style={{ padding: '14px 20px', fontSize: '0.8rem', fontWeight: 700 }}>{formatDate(r.fechaTimestamp)}</td>
-                  <td style={{ padding: '14px 20px', fontSize: '0.8rem', fontWeight: 800 }}>{formatHours(r.jornadaTotalHoras)}</td>
-                  <td style={{ padding: '14px 20px' }}>
-                    <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '0.65rem', fontWeight: 900, background: r.tipoJornada === 'Estándar' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.05)', color: r.tipoJornada === 'Estándar' ? 'var(--success)' : 'var(--danger)' }}>{r.tipoJornada}</span>
-                  </td>
-                </tr>
-              ))}
+                <tr><td colSpan="7" style={{ padding: '120px', textAlign: 'center', color: 'var(--text-muted)', fontWeight: 600 }}>Sincronización pendiente: Esperando datos del sistema central.</td></tr>
+              ) : displayedRecords.map((r, i) => {
+                const uph = (r.cantidad / (parseFloat(r.jornadaTotalHoras) || 8)).toFixed(1);
+                return (
+                  <tr key={r.idLocal || i}>
+                    <td style={{ width: '18%' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ color: '#818cf8', fontWeight: 700, fontSize: '0.85rem' }}>{getModuleName(r.moduloId)}</span>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginTop: '4px' }}>{r.maquinaId || 'Proceso Manual'}</span>
+                      </div>
+                    </td>
+                    <td style={{ width: '22%' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#f8fafc' }}>{r.productoNombre || getProductName(r.productoId)}</span>
+                        <span style={{ fontSize: '0.65rem', color: 'var(--text-dim)', fontFamily: 'monospace', marginTop: '3px', opacity: 0.6 }}>{r.productoId}</span>
+                      </div>
+                    </td>
+                    <td style={{ width: '18%' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary-gradient)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 800, flexShrink: 0 }}>
+                          {(r.trabajadorNombre || 'S').charAt(0)}
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#f8fafc' }}>{r.trabajadorNombre}</span>
+                          <span style={{ fontSize: '0.65rem', color: 'var(--text-dim)' }}>{uph} U/H</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ width: '12%', textAlign: 'center' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <span style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc' }}>{r.cantidad.toLocaleString()}</span>
+                        <span style={{ fontSize: '0.6rem', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em' }}>UNIDADES</span>
+                      </div>
+                    </td>
+                    <td style={{ width: '10%', textAlign: 'center' }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                        <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#f8fafc' }}>{uph}</span>
+                        {parseFloat(uph) > 10 && <TrendingUp size={12} color="var(--success)" />}
+                      </div>
+                    </td>
+                    <td style={{ width: '10%' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#f8fafc' }}>{formatHours(r.jornadaTotalHoras)}</span>
+                        <span style={{ fontSize: '0.65rem', color: 'var(--text-dim)' }}>{formatDate(r.fechaTimestamp)}</span>
+                      </div>
+                    </td>
+                    <td style={{ width: '10%', textAlign: 'right' }}>
+                      <span className={r.tipoJornada === 'Estándar' ? 'badge badge-success' : 'badge'} style={{
+                        background: r.tipoJornada !== 'Estándar' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                        color: r.tipoJornada !== 'Estándar' ? '#f87171' : '#34d399',
+                        border: `1px solid ${r.tipoJornada !== 'Estándar' ? '#f87171' : '#34d399'}40`,
+                        padding: '4px 10px'
+                      }}>
+                        {r.tipoJornada}
+                      </span>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
 
-        {/* Audit Pagination Controls */}
+        {/* Expert Pagination Section */}
         {totalPages > 1 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px' }}>
-             <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)' }}>
-                Viendo página {currentPage} de {totalPages}
-             </span>
-             <div style={{ display: 'flex', gap: '8px' }}>
-                <button 
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(prev => prev - 1)}
-                  style={{ padding: '8px 16px', background: 'white', border: '1px solid var(--border)', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 800, cursor: currentPage === 1 ? 'not-allowed' : 'pointer', opacity: currentPage === 1 ? 0.5 : 1 }}
-                >
-                  Anterior
-                </button>
-                <div style={{ display: 'flex', gap: '4px' }}>
-                   {[...Array(Math.min(5, totalPages))].map((_, i) => {
-                      const pageNum = i + 1; // Simplified for now
-                      return (
-                        <button 
-                          key={pageNum}
-                          onClick={() => setCurrentPage(pageNum)}
-                          style={{ width: '36px', height: '36px', background: currentPage === pageNum ? 'var(--primary)' : 'white', color: currentPage === pageNum ? 'white' : 'var(--text-main)', border: '1px solid var(--border)', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 900 }}
-                        >
-                          {pageNum}
-                        </button>
-                      )
-                   })}
-                </div>
-                <button 
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(prev => prev + 1)}
-                  style={{ padding: '8px 16px', background: 'white', border: '1px solid var(--border)', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 800, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', opacity: currentPage === totalPages ? 0.5 : 1 }}
-                >
-                  Siguiente
-                </button>
-             </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '32px 48px' }}>
+            <div style={{ color: 'var(--text-dim)', fontSize: '0.85rem', fontWeight: 800 }}>
+              Mostrando {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, filteredRecords.length)} de {filteredRecords.length} entradas validadas
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                disabled={currentPage === 1}
+                className="icon-btn-ghost glass"
+                onClick={() => setCurrentPage(prev => prev - 1)}
+                style={{ width: 'auto', padding: '0 20px', fontSize: '0.8rem', height: '44px' }}
+              >
+                Anterior
+              </button>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {[...Array(Math.min(5, totalPages))].map((_, i) => {
+                  const pageNum = i + 1;
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className="glass"
+                      style={{ width: '44px', height: '44px', background: currentPage === pageNum ? 'var(--primary-gradient)' : 'transparent', color: currentPage === pageNum ? 'white' : 'var(--text-main)', borderRadius: '14px', fontSize: '0.85rem', fontWeight: 900, border: '1px solid var(--border-strong)', boxShadow: currentPage === pageNum ? 'var(--shadow-purple)' : 'none' }}
+                    >
+                      {pageNum}
+                    </button>
+                  )
+                })}
+              </div>
+              <button
+                disabled={currentPage === totalPages}
+                className="icon-btn-ghost glass"
+                onClick={() => setCurrentPage(prev => prev + 1)}
+                style={{ width: 'auto', padding: '0 20px', fontSize: '0.8rem', height: '44px' }}
+              >
+                Siguiente
+              </button>
+            </div>
           </div>
         )}
       </motion.div>
 
-      {/* 2. Tactical Daily Closure (Daily results by Worker & Module) */}
+      {/* Daily Performance Strategic Analysis */}
       <DailyPerformance stats={data.stats} variants={itemVariants} />
 
-      {/* 3. Strategic Vision (OEE & MERMA - Business Impact) */}
+      {/* Strategic Efficiency Targets */}
       <StrategicVision stats={data.stats} variants={itemVariants} />
 
-      {/* 3. Macro Statistics (Summary) */}
+      {/* Compact KPI Control Bar */}
       <StatCards stats={data.stats} variants={itemVariants} />
 
-      {/* 4. Advanced Operational Intelligence (Machines & Overtime) */}
+      {/* Machine Analytics & Overtime Operational Intel */}
       <OperationalInsights stats={data.stats} variants={itemVariants} />
 
-      {/* 5. Visual Analytics Section */}
+      {/* Analytics Visualization Core */}
       <AnalyticsCharts monthly={data.monthly} areaBreakdown={data.stats.areaBreakdown} totalUnits={data.stats.totalUnits} variants={itemVariants} />
     </motion.div>
   )

@@ -5,8 +5,10 @@ import { z } from 'zod';
  * Validates the structure of incoming JSON from the Android App
  */
 export const ProductionRecordSchema = z.object({
+  version: z.string().optional(),
+  id: z.coerce.number().optional(),
   trabajador: z.object({
-    dni: z.string().min(1, "DNI es requerido"),
+    dni: z.string().optional(),
     nombre: z.string().min(1, "Nombre de trabajador es requerido")
   }),
   ubicacion: z.object({
@@ -28,7 +30,16 @@ export const ProductionRecordSchema = z.object({
     tipo: z.string().default('Estándar')
   }),
   fecha: z.coerce.number().or(z.string()),
-  sincronizado: z.boolean().optional()
+  fechaLegible: z.string().optional(),
+  updatedAt: z.coerce.number().optional(),
+  sincronizado: z.boolean().optional(),
+  metadatosFecha: z.object({
+    anio: z.number().optional(),
+    mes: z.number().optional(),
+    dia: z.number().optional(),
+    diaSemana: z.number().optional(),
+    semanaAnio: z.number().optional()
+  }).optional()
 });
 
 export const ImportPayloadSchema = z.object({
