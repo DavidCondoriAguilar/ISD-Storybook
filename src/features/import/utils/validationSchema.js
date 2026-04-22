@@ -8,7 +8,7 @@ export const ProductionRecordSchema = z.object({
   version: z.string().optional(),
   id: z.coerce.number().optional(),
   trabajador: z.object({
-    dni: z.string().optional(),
+    dni: z.string().optional(), // puede ser UUID si no hay DNI real
     nombre: z.string().min(1, "Nombre de trabajador es requerido")
   }),
   ubicacion: z.object({
@@ -18,13 +18,14 @@ export const ProductionRecordSchema = z.object({
   producto: z.object({
     nombre: z.string().min(1, "Nombre de producto es requerido"),
     codigo: z.string().min(1, "Código de producto es requerido")
-  }),
+  }).nullable().optional(),
   produccion: z.object({
     cantidad: z.coerce.number().min(0, "La cantidad no puede ser negativa"),
     unidad: z.string().default('u.')
   }),
   tiempo: z.object({
     minutos: z.coerce.number().optional(),
+    horas: z.string().optional(), // NUEVO: campo calculado de horas
     horasTotal: z.string().default("8.00"),
     horasExtra: z.coerce.number().default(0),
     tipo: z.string().default('Estándar')

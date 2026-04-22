@@ -66,27 +66,37 @@ export const storageService = {
       const factor = FACTORES_UNIDAD[unidadOriginal] || 1;
       const cantidadNormalizada = cantidadBruta * factor;
 
-      // Business Logic: If no ID provided, generate a deterministic one to avoid duplicates on re-import
-      const businessHash = `${r.trabajador?.nombre}-${normalizedTimestamp}-${cantidadBruta}-${r.ubicacion?.modulo}-${r.producto?.codigo}`;
+      // NUEVO: Usar tiempo.horas si existe, si no calcular desde tiempo.minutos o usar default
+      let jornadaHoras = r.tiempo?.horas || r.tiempo?.horasTotal || "8.00";
+      if (!r.tiempo?.horas && r.tiempo?.minutos) {
+        jornadaHoras = (r.tiempo.minutos / 60).toFixed(2);
+      }
+
+      // Business Logic: UUID como identificador único de trabajador
+      const workerKey = r.trabajador?.dni || r.trabajador?.nombre;
+      const businessHash = `${workerKey}-${normalizedTimestamp}-${cantidadBruta}-${r.ubicacion?.modulo}-${r.producto?.codigo || 'SIN_PRODUCTO'}`;
       const generatedId = r.id ? `ISD-EXT-${r.id}` : (r.idLocal || `ISD-${btoa(unescape(encodeURIComponent(businessHash))).slice(0, 16)}`);
 
-      if (r.trabajador && r.ubicacion && r.producto) {
+      // Manejar producto nullable
+      const hasProducto = r.producto && r.producto.codigo && r.producto.nombre;
+
+      if (r.trabajador && r.ubicacion) {
         return {
           idLocal: generatedId,
-          trabajadorDni: r.trabajador.dni || 'N/A',
+          trabajadorDni: r.trabajador.dni || r.trabajador.nombre, // UUID o nombre como fallback
           trabajadorNombre: r.trabajador.nombre,
           moduloId: r.ubicacion.modulo,
-          maquinaId: r.ubicacion.maquina,
-          productoId: r.producto.codigo,
-          productoNombre: sanitizarNombre(r.producto.nombre),
-          cantidad: cantidadNormalizada, // STORE NORMALIZED VALUE
+          maquinaId: r.ubicacion.maquina || 'Sin Máquina',
+          productoId: hasProducto ? r.producto.codigo : 'N/A',
+          productoNombre: hasProducto ? sanitizarNombre(r.producto.nombre) : 'Sin Producto',
+          cantidad: cantidadNormalizada,
           cantidadOriginal: cantidadBruta,
           unidadOriginal: unidadOriginal,
           tiempoMinutos: r.tiempo?.minutos || 0,
           fechaTimestamp: normalizedTimestamp,
           esHoraExtra: (r.tiempo?.horasExtra || 0) > 0,
           horasExtraCantidad: Number(r.tiempo?.horasExtra || 0),
-          jornadaTotalHoras: r.tiempo?.horasTotal || "8.00",
+          jornadaTotalHoras: jornadaHoras,
           status: 'ok',
           tipoJornada: r.tiempo?.tipo || 'Estándar'
         }
