@@ -1,4 +1,4 @@
-import { validateProductionData } from '../../features/import/utils/validationSchema'
+import { validateProductionData } from '../../domain/validators/productionValidator'
 import { 
   sanitizarNombre, 
   normalizeTimestamp, 

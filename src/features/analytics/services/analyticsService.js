@@ -1,40 +1,52 @@
-/**
- * Analytics Service - Industrial Intelligence Engine
- * Follows SOLID principles: Handles data transformation logic for dashboards.
- */
+import { format } from 'date-fns';
 
 export const analyticsService = {
-  /**
-   * Transforms raw records into daily production trends.
-   * Groups by Date and stacks Paneles (u.) vs Resortes (mil.)
-   */
-  getProductionTrend(records) {
-    const dailyMap = {};
+  getExecutiveKPIs(records) {
+    if (!records.length) return { totalUnits: 0, uniqueWorkers: 0, activeMachines: 0, totalRecords: 0 };
+
+    const workers = new Set();
+    const machines = new Set();
+    let totalUnits = 0;
 
     records.forEach(r => {
-      const dateStr = new Date(r.fechaTimestamp).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
-      if (!dailyMap[dateStr]) {
-        dailyMap[dateStr] = { date: dateStr, paneles: 0, resortes: 0 };
-      }
+      totalUnits += (r.cantidad || 0);
+      if (r.trabajadorNombre) workers.add(r.trabajadorNombre);
+      if (r.maquinaId && r.maquinaId !== 'Sin Máquina') machines.add(r.maquinaId);
+    });
 
-      const isResorte = String(r.maquinaId || '').toUpperCase().includes('RESORTE') || 
-                        String(r.productoNombre || '').toUpperCase().includes('RESORTE') ||
-                        String(r.maquinaId || '').toUpperCase().includes('MR');
+    return {
+      totalUnits,
+      uniqueWorkers: workers.size,
+      activeMachines: machines.size,
+      totalRecords: records.length
+    };
+  },
+
+  getProductionTrend(records) {
+    const dailyData = {};
+    
+    records.forEach(r => {
+      const date = format(new Date(r.fechaTimestamp), 'dd/MM');
+      if (!dailyData[date]) dailyData[date] = { date, paneles: 0, resortes: 0 };
+      
+      const mId = String(r.maquinaId || '').toUpperCase();
+      const pName = String(r.productoNombre || '').toUpperCase();
+      const isResorte = mId.includes('MR') || mId.includes('RESORTE') || pName.includes('RESORTE');
 
       if (isResorte) {
-        dailyMap[dateStr].resortes += r.cantidad;
+        dailyData[date].resortes += r.cantidad;
       } else {
-        dailyMap[dateStr].paneles += r.cantidad;
+        dailyData[date].paneles += r.cantidad;
       }
     });
 
-    // Sort by date (ascending for charts) and return as array
-    return Object.values(dailyMap).reverse(); // Reverse if records were descending
+    return Object.values(dailyData).sort((a, b) => {
+      const [d1, m1] = a.date.split('/').map(Number);
+      const [d2, m2] = b.date.split('/').map(Number);
+      return m1 === m2 ? d1 - d2 : m1 - m2;
+    });
   },
 
-  /**
-   * Identifies top performers by total output volume.
-   */
   getWorkerRankings(records) {
     const panelsMap = {};
     const springsMap = {};
@@ -44,7 +56,6 @@ export const analyticsService = {
       const mId = String(r.maquinaId || '').toUpperCase();
       const pName = String(r.productoNombre || '').toUpperCase();
       
-      // Robust detection: MR or RESORTE for Springs, everything else or MP for Panels
       const isResorte = mId.includes('MR') || mId.includes('RESORTE') || pName.includes('RESORTE');
 
       if (isResorte) {
@@ -68,43 +79,27 @@ export const analyticsService = {
     return { topPaneleros, topResorteros };
   },
 
-  /**
-   * Categorizes production by product size/type.
-   */
   getProductMix(records) {
     const mixMap = {};
-
     records.forEach(r => {
-      let category = 'Otros';
-      const name = String(r.productoNombre || '').toUpperCase();
-
-      if (name.includes('KING')) category = 'King';
-      else if (name.includes('2 PLZ')) category = '2 Plazas';
-      else if (name.includes('1.5 PLZ')) category = '1.5 Plazas';
-      else if (name.includes('1 PLZ')) category = '1 Plaza';
-      else if (name.includes('RESORTE')) category = 'Resortes';
-
-      if (!mixMap[category]) mixMap[category] = { name: category, value: 0 };
-      mixMap[category].value += r.cantidad;
+      const name = r.productoNombre || 'Otros';
+      if (!mixMap[name]) mixMap[name] = { name, value: 0 };
+      mixMap[name].value += r.cantidad;
     });
 
-    return Object.values(mixMap).sort((a, b) => b.value - a.value);
+    return Object.values(mixMap).sort((a, b) => b.value - a.value).slice(0, 6);
   },
 
-  /**
-   * Calculates high-level KPIs.
-   */
-  getExecutiveKPIs(records) {
-    const totalRecords = records.length;
-    const totalUnits = records.reduce((acc, r) => acc + r.cantidad, 0);
-    const uniqueWorkers = new Set(records.map(r => r.trabajadorNombre)).size;
-    const activeMachines = new Set(records.map(r => r.maquinaId)).size;
+  getMachineStats(records) {
+    const machineMap = {};
+    records.forEach(r => {
+      const mid = r.maquinaId || 'Sin Máquina';
+      if (!machineMap[mid]) machineMap[mid] = { name: mid, total: 0 };
+      machineMap[mid].total += r.cantidad;
+    });
 
-    return {
-      totalRecords,
-      totalUnits,
-      uniqueWorkers,
-      activeMachines
-    };
+    return Object.values(machineMap)
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 10);
   }
 };

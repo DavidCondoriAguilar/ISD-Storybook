@@ -14,7 +14,6 @@ export const storageService = {
           await dbService.saveImport(record)
         }
         localStorage.removeItem(APP_CONFIG.STORAGE.HISTORY_KEY)
-        console.log('Legacy data migrated to IndexedDB')
       } catch (e) {
         console.error('Migration failed', e)
       }

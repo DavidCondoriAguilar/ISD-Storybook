@@ -384,3 +384,7 @@
     overflow-x: auto;
   }
 }
+
+.dashboard-elite-view .pagination-wrapper {
+  margin-top: 16px;
+}

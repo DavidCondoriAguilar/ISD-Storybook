@@ -22,6 +22,7 @@ import autoTable from 'jspdf-autotable'
 import { storageService } from '../../data/storageService'
 import { db } from '../../data/db'
 import { useNotification } from '../../context/NotificationContext'
+import { Pagination } from './components/common/Pagination/Pagination'
 import './Dashboard.css'
 
 const containerVariants = {
@@ -67,6 +68,8 @@ export const Dashboard = memo(function Dashboard() {
   const { notify } = useNotification()
   const [filterText, setFilterText] = useState('')
   const [sortOrder, setSortOrder] = useState('desc')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(25)
 
   const records = useLiveQuery(
     () => db.records.toArray(),
@@ -126,6 +129,22 @@ export const Dashboard = memo(function Dashboard() {
     
     return result
   }, [filteredRecords])
+
+  const paginatedRecords = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage
+    return filteredRecords.slice(start, start + itemsPerPage)
+  }, [filteredRecords, currentPage, itemsPerPage])
+
+  const totalPages = Math.ceil(filteredRecords.length / itemsPerPage) || 1
+
+  const handlePageChange = useCallback((page) => {
+    setCurrentPage(page)
+  }, [])
+
+  const handleItemsPerPageChange = useCallback((size) => {
+    setItemsPerPage(size)
+    setCurrentPage(1)
+  }, [])
 
   const formatDate = useCallback((ts) => {
     if (!ts) return '-'
@@ -292,7 +311,7 @@ export const Dashboard = memo(function Dashboard() {
                   </td>
                 </motion.tr>
               ) : (
-                filteredRecords.map((r, i) => (
+                paginatedRecords.map((r, i) => (
                   <motion.tr 
                     key={r.idLocal || i} 
                     variants={rowVariants}
@@ -361,7 +380,16 @@ export const Dashboard = memo(function Dashboard() {
             </AnimatePresence>
           </tbody>
         </table>
+</motion.div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          itemsPerPage={itemsPerPage}
+          totalRecords={filteredRecords.length}
+          onPageChange={handlePageChange}
+          onItemsPerPageChange={handleItemsPerPageChange}
+        />
       </motion.div>
-    </motion.div>
-  )
-})
+    )
+  })

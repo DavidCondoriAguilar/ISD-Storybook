@@ -1,13 +1,13 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  AreaChart, Area, PieChart, Pie, Cell, Legend 
+  AreaChart, Area, PieChart, Pie, Cell, Legend, Sector
 } from 'recharts'
 import { 
   TrendingUp, Users, Cpu, Activity, 
-  Award, Layers, PieChart as PieIcon 
+  Award, Layers, PieChart as PieIcon, Settings
 } from 'lucide-react'
 import { db } from '../../../data/db'
 import { analyticsService } from '../services/analyticsService'
@@ -15,13 +15,65 @@ import { formatMetric } from '../../../utils/formatters'
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
+const renderActiveShape = (props) => {
+  const RADIAN = Math.PI / 180;
+  const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
+  const sin = Math.sin(-RADIAN * midAngle);
+  const cos = Math.cos(-RADIAN * midAngle);
+  const sx = cx + (outerRadius + 10) * cos;
+  const sy = cy + (outerRadius + 10) * sin;
+  const mx = cx + (outerRadius + 30) * cos;
+  const my = cy + (outerRadius + 30) * sin;
+  const ex = mx + (cos >= 0 ? 1 : -1) * 22;
+  const ey = my;
+  const textAnchor = cos >= 0 ? 'start' : 'end';
+
+  return (
+    <g>
+      <text x={cx} y={cy} dy={8} textAnchor="middle" fill="#f1f5f9" style={{ fontSize: '18px', fontWeight: 'bold' }}>
+        {payload.name}
+      </text>
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+      />
+      <Sector
+        cx={cx}
+        cy={cy}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        innerRadius={outerRadius + 6}
+        outerRadius={outerRadius + 10}
+        fill={fill}
+      />
+      <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
+      <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#94a3b8" style={{ fontSize: '12px' }}>{`${value.toLocaleString()} u.`}</text>
+      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#64748b" style={{ fontSize: '10px' }}>
+        {`(${(percent * 100).toFixed(1)}%)`}
+      </text>
+    </g>
+  );
+};
+
 const ExecutiveDashboard = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
   const records = useLiveQuery(() => db.records.toArray()) || [];
 
   const stats = useMemo(() => analyticsService.getExecutiveKPIs(records), [records]);
   const trendData = useMemo(() => analyticsService.getProductionTrend(records), [records]);
   const { topPaneleros, topResorteros } = useMemo(() => analyticsService.getWorkerRankings(records), [records]);
   const productMix = useMemo(() => analyticsService.getProductMix(records), [records]);
+  const machineStats = useMemo(() => analyticsService.getMachineStats(records), [records]);
+
+  const onPieEnter = (_, index) => {
+    setActiveIndex(index);
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -68,7 +120,7 @@ const ExecutiveDashboard = () => {
             <Layers size={20} />
             <h3>Tendencia de Producción (Mix de Planta)</h3>
           </div>
-          <div style={{ height: 300 }}>
+          <div className="chart-content">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={trendData}>
                 <defs>
@@ -99,9 +151,9 @@ const ExecutiveDashboard = () => {
         <motion.div className="chart-container glass" variants={itemVariants}>
           <div className="chart-header">
             <Award size={20} style={{ color: '#3b82f6' }} />
-            <h3>Top 5 Operarios: Paneles (u.)</h3>
+            <h3>MP - Máquinas Paneleras (u.)</h3>
           </div>
-          <div style={{ height: 250 }}>
+          <div className="chart-content">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topPaneleros} layout="vertical">
                 <XAxis type="number" hide />
@@ -121,9 +173,9 @@ const ExecutiveDashboard = () => {
         <motion.div className="chart-container glass" variants={itemVariants}>
           <div className="chart-header">
             <Award size={20} style={{ color: '#10b981' }} />
-            <h3>Top 5 Operarios: Resortes (mil.)</h3>
+            <h3>MR - Máquinas Resorteras (mil.)</h3>
           </div>
-          <div style={{ height: 250 }}>
+          <div className="chart-content">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topResorteros} layout="vertical">
                 <XAxis type="number" hide />
@@ -140,32 +192,61 @@ const ExecutiveDashboard = () => {
         </motion.div>
 
         {/* Product Mix */}
-        <motion.div className="chart-container glass" variants={itemVariants} style={{ gridColumn: 'span 2' }}>
+        <motion.div className="chart-container glass" variants={itemVariants}>
           <div className="chart-header">
             <PieIcon size={20} />
-            <h3>Distribución por Tipo de Colchón</h3>
+            <h3>Mezcla de Productos</h3>
           </div>
-          <div style={{ height: 300 }}>
+          <div className="chart-content" style={{ height: 350 }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
+                  activeIndex={activeIndex}
+                  activeShape={renderActiveShape}
                   data={productMix}
                   cx="50%"
                   cy="50%"
-                  innerRadius={80}
-                  outerRadius={110}
+                  innerRadius={70}
+                  outerRadius={100}
                   paddingAngle={5}
                   dataKey="value"
+                  onMouseEnter={onPieEnter}
                 >
                   {productMix.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip 
-                   contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', fontSize: '12px' }}
+                <Legend 
+                  layout="horizontal" 
+                  align="center" 
+                  verticalAlign="bottom" 
+                  formatter={(value, entry) => {
+                    const val = entry?.payload?.value;
+                    return <span style={{ color: '#94a3b8', fontSize: '10px' }}>{value} ({val ? formatMetric(val) : 0})</span>;
+                  }}
                 />
-                <Legend iconType="circle" layout="vertical" align="right" verticalAlign="middle" wrapperStyle={{ fontSize: '12px', paddingLeft: '20px' }} />
               </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+
+        {/* Machine Performance */}
+        <motion.div className="chart-container glass" variants={itemVariants}>
+          <div className="chart-header">
+            <Settings size={20} className="orange-text" />
+            <h3>Eficiencia de Máquinas (Top 10)</h3>
+          </div>
+          <div className="chart-content" style={{ height: 350 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={machineStats}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
+                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(val) => formatMetric(val)} />
+                <Tooltip 
+                  contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', fontSize: '11px' }}
+                />
+                <Bar dataKey="total" name="Producción Total" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </motion.div>
@@ -266,7 +347,10 @@ const ExecutiveDashboard = () => {
           padding: 24px;
           backdrop-filter: blur(10px);
           min-width: 0;
+          min-height: 380px;
           overflow: hidden;
+          display: flex;
+          flex-direction: column;
         }
 
         .chart-header {
@@ -277,6 +361,12 @@ const ExecutiveDashboard = () => {
           color: #94a3b8;
         }
         .chart-header h3 { font-size: 1rem; font-weight: 800; margin: 0; color: #f1f5f9; }
+
+        .chart-content {
+          flex: 1;
+          width: 100%;
+          min-height: 250px;
+        }
 
         @media (max-width: 1024px) {
           .charts-main-grid { grid-template-columns: 1fr; }
