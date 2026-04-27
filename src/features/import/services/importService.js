@@ -26,26 +26,21 @@ export async function validateFile(file) {
       return { valid: false, error: 'El archivo está vacío.' };
     }
 
-    // Senior Logic: Flexible Validation to support various ISD versions
     if (!validateRecord(records[0])) {
       return { valid: false, error: 'El formato de los datos no coincide con la especificación de Android ISD.' };
     }
 
-    // All good, extract metadata using dynamic mapping
-    const first = records[0];
-    const totalUnits = records.reduce((sum, r) => {
-      const qty = r.produccion?.cantidad ?? r.cantidad ?? r.total ?? 0;
-      return sum + (Number(qty || 0));
-    }, 0);
+    const normalized = normalizeRecords(records);
+    const summary = calculateSummary(normalized);
 
     return { 
       valid: true, 
       data: { 
-        records: records.length, 
-        units: totalUnits,
-        worker: first.trabajador?.nombre || first.trabajadorNombre || 'Usuario',
-        shift: first.tiempo?.tipo || first.tipoJornada || 'Estándar',
-        raw: records
+        records: normalized.length, 
+        units: summary.totalUnits,
+        worker: summary.worker,
+        shift: summary.shift,
+        raw: normalized
       } 
     };
   } catch (err) {
@@ -55,31 +50,64 @@ export async function validateFile(file) {
 }
 
 /**
- * Validates a single record supporting both Flat (v1) and Nested (v2) structures
- * Senior Logic: High flexibility to support all Android App versions
+ * Ensures all records follow the same "Golden Schema"
  */
-export function validateRecord(record) {
-  if (typeof record !== 'object' || record === null) return false;
-  
-  const r = record;
-  
-  // High-level heuristic: If it has trabajador and produccion, it's a valid ISD record
-  const isV2 = (r.trabajador && r.produccion) || (r.trabajadorNombre && r.cantidad);
-  
-  if (isV2) {
-    return true; // Trust the data if basic signature is present
-  }
-  
-  // Check for minimal legacy requirements
-  const requiredV1 = ['id', 'trabajadorNombre', 'cantidad'];
-  const hasV1 = requiredV1.every(f => f in r);
-  
-  return hasV1;
+export function normalizeRecords(records) {
+  return records.map(r => {
+    // Standardize structure for v1 and v2
+    const trabajadorNombre = r.trabajador?.nombre || r.trabajadorNombre || 'Desconocido';
+    const productoNombre = r.producto?.nombre || r.productoNombre || r.producto || 'Sin Producto';
+    const cantidad = Number(r.produccion?.cantidad ?? r.cantidad ?? r.total ?? 0);
+    const moduloId = r.ubicacion?.modulo || r.moduloId || 'N/A';
+    const maquinaId = r.ubicacion?.maquina || r.maquinaId || 'N/A';
+    
+    // Ensure we have a timestamp
+    const dateStr = r.fecha || r.tiempo?.fecha || new Date().toISOString();
+    const timestamp = new Date(dateStr).getTime();
+
+    return {
+      idLocal: r.id || `rec_${Math.random().toString(36).substr(2, 9)}`,
+      timestamp: timestamp,
+      fechaTimestamp: timestamp,
+      fechaLegible: dateStr.split('T')[0],
+      trabajadorNombre,
+      productoNombre,
+      cantidad,
+      moduloId,
+      maquinaId,
+      tipoJornada: r.tiempo?.tipo || r.tipoJornada || 'Estándar',
+      metadata: {
+        originalId: r.id,
+        version: r.trabajador ? 'v2' : 'v1'
+      }
+    };
+  });
 }
 
 /**
- * Transforms Android IDs to Human Readable Names
+ * Pure function to calculate data insights before storage
  */
+export function calculateSummary(normalizedRecords) {
+  if (!normalizedRecords.length) return null;
+
+  const totalUnits = normalizedRecords.reduce((sum, r) => sum + r.cantidad, 0);
+  const first = normalizedRecords[0];
+
+  return {
+    totalUnits,
+    totalRecords: normalizedRecords.length,
+    worker: first.trabajadorNombre,
+    shift: first.tipoJornada,
+    avgPerRecord: (totalUnits / normalizedRecords.length).toFixed(2)
+  };
+}
+
+export function validateRecord(record) {
+  if (typeof record !== 'object' || record === null) return false;
+  const isV2 = (record.trabajador && record.produccion) || (record.trabajadorNombre && record.cantidad);
+  return isV2 || (record.id && record.trabajadorNombre && record.cantidad);
+}
+
 export function getModuleName(id) {
   return APP_CONFIG.MODULES[id] || `Módulo ${id}`;
 }

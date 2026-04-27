@@ -7,10 +7,10 @@ import { APP_CONFIG } from '../config/appConfig';
  */
 export const db = new Dexie(APP_CONFIG.STORAGE.DB_NAME);
 
-// Define schema
+// Define schema with optimized indexing for industrial-scale queries
 db.version(APP_CONFIG.STORAGE.DB_VERSION).stores({
   imports: '++id, timestamp, fileName, worker', 
-  records: '++id, idLocal, timestamp, trabajadorNombre, moduloId, importId',
+  records: '++id, idLocal, timestamp, fechaTimestamp, trabajadorNombre, productoNombre, moduloId, maquinaId, importId',
   metadata: 'id, value'
 });
 
@@ -64,10 +64,22 @@ export const dbService = {
   },
 
   /**
-   * Clears all data
+   * Clears all data with administrative safety
    */
   async clearAll() {
-    await db.imports.clear();
-    await db.records.clear();
+    return await db.transaction('rw', db.imports, db.records, async () => {
+      await db.imports.clear();
+      await db.records.clear();
+    });
+  },
+
+  /**
+   * High-Performance range query using indices
+   */
+  async getRecordsByDateRange(startDate, endDate) {
+    return await db.records
+      .where('fechaTimestamp')
+      .between(startDate, endDate)
+      .toArray();
   }
 };
