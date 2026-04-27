@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, subDays, isSameDay } from 'date-fns';
 
 export const analyticsService = {
   getExecutiveKPIs(records) {
@@ -19,6 +19,60 @@ export const analyticsService = {
       uniqueWorkers: workers.size,
       activeMachines: machines.size,
       totalRecords: records.length
+    };
+  },
+
+  // NEW: Comparative and Efficiency Intelligence
+  getAdvancedMetrics(records) {
+    if (!records.length) return { 
+      todayTotal: 0, 
+      avgUnitsPerHour: 0, 
+      topWorkerName: 'N/A', 
+      variationVsYesterday: 0 
+    };
+
+    const now = new Date();
+    // In production, we usually take the max date found in data as "today"
+    const latestTimestamp = Math.max(...records.map(r => r.fechaTimestamp));
+    const today = new Date(latestTimestamp);
+    today.setHours(0,0,0,0);
+    const yesterday = subDays(today, 1);
+
+    let todayUnits = 0;
+    let yesterdayUnits = 0;
+    let totalHours = 0;
+    const workerTotals = {};
+
+    records.forEach(r => {
+      const rDate = new Date(r.fechaTimestamp);
+      rDate.setHours(0,0,0,0);
+
+      // 1. Totals for Today & Yesterday
+      if (isSameDay(rDate, today)) todayUnits += r.cantidad;
+      if (isSameDay(rDate, yesterday)) yesterdayUnits += r.cantidad;
+
+      // 2. Efficiency (U/H) - Using all records to get a global average
+      totalHours += parseFloat(r.jornadaTotalHoras || 8.75);
+
+      // 3. Top Worker Logic
+      const name = r.trabajadorNombre || 'Sin Nombre';
+      if (!workerTotals[name]) workerTotals[name] = 0;
+      workerTotals[name] += r.cantidad;
+    });
+
+    const topWorkerEntry = Object.entries(workerTotals).sort((a,b) => b[1] - a[1])[0];
+    
+    // Variation Calculation
+    let variation = 0;
+    if (yesterdayUnits > 0) {
+      variation = ((todayUnits - yesterdayUnits) / yesterdayUnits) * 100;
+    }
+
+    return {
+      todayTotal: todayUnits,
+      avgUnitsPerHour: (todayUnits / (totalHours / (records.length / 5))).toFixed(1), // Normalized U/H
+      topWorkerName: topWorkerEntry ? topWorkerEntry[0] : 'N/A',
+      variationVsYesterday: variation.toFixed(1)
     };
   },
 
@@ -67,16 +121,10 @@ export const analyticsService = {
       }
     });
 
-    const topPaneleros = Object.values(panelsMap).sort((a, b) => b.total - a.total).slice(0, 5);
-    const topResorteros = Object.values(springsMap).sort((a, b) => b.total - a.total).slice(0, 5);
-
-    console.log('📊 ANALYTICS CLASSIFICATION:', {
-      paneleros: topPaneleros.length,
-      resorteros: topResorteros.length,
-      totalRecords: records.length
-    });
-
-    return { topPaneleros, topResorteros };
+    return {
+      topPaneleros: Object.values(panelsMap).sort((a, b) => b.total - a.total).slice(0, 5),
+      topResorteros: Object.values(springsMap).sort((a, b) => b.total - a.total).slice(0, 5)
+    };
   },
 
   getProductMix(records) {
