@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion as m, AnimatePresence as AP } from 'framer-motion'
 import { FileUp, ShieldCheck, XCircle, CheckCircle, Upload, ArrowRight, Trash2 } from 'lucide-react'
 import { useImportProduction } from './hooks/useImportProduction'
@@ -7,6 +8,7 @@ import { Dropzone } from './components/Dropzone'
 import { FileCard } from './components/FileCard'
 import { ProcessingModal } from './components/ProcessingModal'
 import { ResultModal } from './components/ResultModal'
+import { useNotification } from '../../context/NotificationContext'
 import './ImportProduction.css'
 
 const pageVariants = {
@@ -21,9 +23,8 @@ const pageVariants = {
   }
 }
 
-import { useNotification } from '../../context/NotificationContext'
-
 export function ImportProduction({ onImportComplete }) {
+  const navigate = useNavigate()
   const { notify } = useNotification()
   const {
     step,
@@ -50,6 +51,10 @@ export function ImportProduction({ onImportComplete }) {
     }
   }
 
+  const handleGoToDashboard = () => {
+    navigate('/dashboard')
+  }
+
   const onFileLoadSuccess = (f) => {
     handleFileSelect(f)
     notify(`JSON Capturado correctamente 📋`, 'success')
@@ -69,18 +74,16 @@ export function ImportProduction({ onImportComplete }) {
       initial="initial"
       animate="animate"
       exit="exit"
-      style={{ maxWidth: '700px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '40px' }}
     >
       <div className="import-hero">
         <m.div 
           className="hero-icon-bg"
           whileHover={{ rotate: [0, -10, 10, 0] }}
-          style={{ width: '80px', height: '80px', background: 'var(--primary-light)', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', margin: '0 auto 32px' }}
         >
           <Upload size={36} />
         </m.div>
-        <h2 style={{ fontSize: '2.5rem', fontWeight: 900, textAlign: 'center', letterSpacing: '-0.03em' }}>Portal de Carga</h2>
-        <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: 500, marginTop: '8px' }}>
+        <h2 className="hero-title">Portal de Carga</h2>
+        <p className="hero-subtitle">
           Sincroniza tus registros de producción con el historial ejecutivo de la planta.
         </p>
       </div>
@@ -94,39 +97,38 @@ export function ImportProduction({ onImportComplete }) {
             initial={{ height: 0, scale: 0.8 }}
             animate={{ height: 'auto', scale: 1 }}
             exit={{ height: 0, scale: 0.8 }}
-            style={{ marginBottom: '24px' }}
+            className="file-card-container"
           >
             <FileCard file={file} onRemove={handleRemoveFile} />
           </m.div>
         )}
       </AP>
 
-      <div className="import-options-card" style={{ padding: '32px', background: 'var(--bg-card)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
-        <m.label className="checkbox-label" whileHover={{ x: 5 }} style={{ cursor: 'pointer', display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+      <div className="import-options-card">
+        <m.label className="checkbox-label" whileHover={{ x: 5 }}>
           <m.input 
             type="checkbox" 
             checked={validateBeforeImport}
             onChange={(e) => setValidateBeforeImport(e.target.checked)}
-            style={{ width: '24px', height: '24px', borderRadius: '8px', border: '2px solid var(--primary)', accentColor: 'var(--primary)', flexShrink: 0 }}
+            className="custom-checkbox"
           />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <span style={{ fontWeight: 850, fontSize: '1.1rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div className="checkbox-text-group">
+            <span className="checkbox-title">
               <ShieldCheck size={20} color="var(--success)" /> Validación de Integridad Estricta
             </span>
-            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 500, lineHeight: 1.5 }}>
+            <span className="checkbox-description">
               Comprueba duplicados, esquemas relacionales y formatos de operarios antes de la carga final al ERP.
             </span>
           </div>
         </m.label>
       </div>
 
-      <div className="import-actions" style={{ display: 'flex', gap: '20px' }}>
+      <div className="import-actions">
         <m.button 
           className="btn-cancel-large" 
           onClick={reset}
-          whileHover={{ x: -2, background: 'var(--bg-app)' }}
+          whileHover={{ x: -2 }}
           whileTap={{ scale: 0.98 }}
-          style={{ flex: 1, padding: '20px', background: 'transparent', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-lg)', fontWeight: 800, color: 'var(--text-muted)', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}
         >
           <XCircle size={20} /> Cancelar Trámite
         </m.button>
@@ -134,29 +136,24 @@ export function ImportProduction({ onImportComplete }) {
           className="btn-start-large" 
           onClick={startImport}
           disabled={!file}
-          whileHover={file ? { scale: 1.02, background: 'var(--primary-dark)' } : {}}
+          whileHover={file ? { scale: 1.02 } : {}}
           whileTap={file ? { scale: 0.98 } : {}}
-          style={{ 
-            flex: 2, padding: '20px', background: file ? 'var(--primary)' : 'var(--border)', 
-            color: 'white', borderRadius: 'var(--radius-lg)', fontWeight: 800, fontSize: '1.1rem', 
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', box_shadow: file ? '0 12px 24px var(--primary-glow)' : 'none', transition: 'all 0.3s ease' 
-          }}
         >
           <CheckCircle size={22} /> Iniciar Sincronización <ArrowRight size={20} />
         </m.button>
       </div>
 
-      <div className="danger-zone" style={{ marginTop: '40px', borderTop: '1px solid var(--border)', paddingTop: '32px' }}>
-         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px', background: 'rgba(239, 68, 68, 0.03)', borderRadius: '24px', border: '1px dashed rgba(239, 68, 68, 0.2)' }}>
-            <div>
-               <h4 style={{ color: 'var(--danger)', fontWeight: 900, marginBottom: '4px' }}>Zona Crítica</h4>
-               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Borra permanentemente todos los registros, duplicados y auditorías del sistema.</p>
+      <div className="danger-zone">
+         <div className="danger-box">
+            <div className="danger-text">
+               <h4 className="danger-title">Zona Crítica</h4>
+               <p className="danger-description">Borra permanentemente todos los registros, duplicados y auditorías del sistema.</p>
             </div>
             <m.button 
+               className="btn-danger-outline"
                onClick={handleClearHistory}
-               whileHover={{ scale: 1.05, background: 'var(--danger)' }}
+               whileHover={{ scale: 1.05, background: 'var(--danger)', color: 'white' }}
                whileTap={{ scale: 0.95 }}
-               style={{ padding: '12px 24px', background: 'transparent', color: 'var(--danger)', border: '2px solid var(--danger)', borderRadius: '14px', fontWeight: 900, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
             >
                <Trash2 size={16} /> Limpiar Base de Datos
             </m.button>
@@ -176,11 +173,11 @@ export function ImportProduction({ onImportComplete }) {
            </m.div>
         )}
         
-        {(step === STEPS.SUCCESS || step === STEPS.ERROR) && (
-          <m.div key="res-view" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-            <ResultModal result={result} summary={summary} onClose={reset} onRetry={step === STEPS.ERROR ? retry : undefined} onDownload={() => {}} />
-          </m.div>
-        )}
+{(step === STEPS.SUCCESS || step === STEPS.ERROR) && (
+           <m.div key="res-view" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+             <ResultModal result={result} summary={summary} onClose={handleGoToDashboard} onRetry={step === STEPS.ERROR ? retry : undefined} onDownload={() => {}} />
+           </m.div>
+         )}
       </AP>
     </div>
   )

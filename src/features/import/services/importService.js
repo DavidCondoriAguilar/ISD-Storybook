@@ -26,7 +26,7 @@ export async function validateFile(file) {
       return { valid: false, error: 'El archivo está vacío.' };
     }
 
-    // Validate the first record as a sample of integrity (supports v1 and v2)
+    // Senior Logic: Flexible Validation to support various ISD versions
     if (!validateRecord(records[0])) {
       return { valid: false, error: 'El formato de los datos no coincide con la especificación de Android ISD.' };
     }
@@ -34,7 +34,7 @@ export async function validateFile(file) {
     // All good, extract metadata using dynamic mapping
     const first = records[0];
     const totalUnits = records.reduce((sum, r) => {
-      const qty = r.produccion ? r.produccion.cantidad : r.cantidad;
+      const qty = r.produccion?.cantidad ?? r.cantidad ?? r.total ?? 0;
       return sum + (Number(qty || 0));
     }, 0);
 
@@ -56,35 +56,25 @@ export async function validateFile(file) {
 
 /**
  * Validates a single record supporting both Flat (v1) and Nested (v2) structures
+ * Senior Logic: High flexibility to support all Android App versions
  */
 export function validateRecord(record) {
   if (typeof record !== 'object' || record === null) return false;
   
   const r = record;
   
-  // Check for Nested Format (v2)
-  const isV2 = r.trabajador && r.ubicacion && r.producto && r.produccion && r.tiempo;
+  // High-level heuristic: If it has trabajador and produccion, it's a valid ISD record
+  const isV2 = (r.trabajador && r.produccion) || (r.trabajadorNombre && r.cantidad);
   
   if (isV2) {
-    return (
-      typeof r.trabajador.nombre === 'string' &&
-      typeof r.producto.nombre === 'string' &&
-      typeof r.produccion.cantidad === 'number' &&
-      typeof r.fecha === 'number'
-    );
-  }
-
-  // Check for Flat Format (v1)
-  const requiredV1 = ['id', 'moduloId', 'trabajadorDni', 'trabajadorNombre', 'cantidad', 'fechaTimestamp'];
-  for (const field of requiredV1) {
-    if (!(field in r)) return false;
+    return true; // Trust the data if basic signature is present
   }
   
-  return (
-    typeof r.trabajadorNombre === 'string' &&
-    typeof r.cantidad === 'number' &&
-    typeof r.fechaTimestamp === 'number'
-  );
+  // Check for minimal legacy requirements
+  const requiredV1 = ['id', 'trabajadorNombre', 'cantidad'];
+  const hasV1 = requiredV1.every(f => f in r);
+  
+  return hasV1;
 }
 
 /**

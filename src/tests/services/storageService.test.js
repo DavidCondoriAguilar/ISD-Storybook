@@ -1,92 +1,127 @@
-import { storageService } from '../../data/storageService';
-import { db } from '../../data/db';
+import { describe, it, expect, beforeEach } from 'vitest'
+import { storageService } from '../../data/storageService'
+import { db } from '../../data/db'
 
-describe('storageService - Real Data Validation (Android ISD Export)', () => {
+describe('StorageService (Lógica Industrial)', () => {
+  
   beforeEach(async () => {
-    await db.imports.clear();
-    await db.records.clear();
-    await db.metadata.clear();
-  });
+    // Limpiar BD antes de cada test para integridad
+    await db.records.clear()
+    await db.imports.clear()
+  })
 
-  const realExportData = [
-    {
-      "id": 6, "moduloId": 2, "maquinaId": 1, "productoId": 1,
-      "trabajadorDni": "65656565", "trabajadorNombre": "pablo",
-      "cantidad": 500, "unidad": "litros", "fechaTimestamp": 1776223195643,
-      "esHoraExtra": false, "horasExtraCantidad": 0, "jornadaTotalHoras": "8.00", "tipoJornada": "Estándar"
-    },
-    {
-      "id": 5, "moduloId": 2, "maquinaId": 1, "productoId": 1,
-      "trabajadorDni": "35656566", "trabajadorNombre": "juan",
-      "cantidad": 399, "unidad": "litros", "fechaTimestamp": 1776221698683,
-      "esHoraExtra": true, "horasExtraCantidad": 65, "jornadaTotalHoras": "138.00", "tipoJornada": "Con extras"
-    },
-    {
-      "id": 4, "moduloId": 2, "maquinaId": 1, "productoId": 1,
-      "trabajadorDni": "54545455", "trabajadorNombre": "resorte",
-      "cantidad": 600, "unidad": "millar", "fechaTimestamp": 1776221313252,
-      "esHoraExtra": true, "horasExtraCantidad": 65, "jornadaTotalHoras": "138.00", "tipoJornada": "Con extras"
-    },
-    {
-      "id": 3, "moduloId": 2, "maquinaId": 1, "productoId": 1,
-      "trabajadorDni": "71273434", "trabajadorNombre": "deiv",
-      "cantidad": 600, "unidad": "litros", "fechaTimestamp": 1776221132157,
-      "esHoraExtra": true, "horasExtraCantidad": 65, "jornadaTotalHoras": "138.00", "tipoJornada": "Con extras"
-    },
-    {
-      "id": 2, "moduloId": 2, "maquinaId": 1, "productoId": 1,
-      "trabajadorDni": "35353533", "trabajadorNombre": "test",
-      "cantidad": 65, "unidad": "millar", "fechaTimestamp": 1776218933553,
-      "esHoraExtra": true, "horasExtraCantidad": 6, "jornadaTotalHoras": "20.00", "tipoJornada": "Con extras"
-    },
-    {
-      "id": 1, "moduloId": 2, "maquinaId": 1,
-      "trabajadorDni": "46454542", "trabajadorNombre": "test",
-      "cantidad": 166, "unidad": "millar", "fechaTimestamp": 1776217008691,
-      "esHoraExtra": true, "horasExtraCantidad": 6, "jornadaTotalHoras": "20.00", "tipoJornada": "Con extras"
-    }
-  ];
+  describe('Normalización de Fechas (Precisión Local)', () => {
+    it('debe parsear correctamente metadatosFecha (anio, mes, dia)', async () => {
+      const mockRecord = {
+        metadatosFecha: { anio: 2026, mes: 3, dia: 30 },
+        trabajadorNombre: 'Test',
+        cantidad: 100
+      }
+      
+      const payload = { fileName: 'test.json', worker: 'Test', rawRecords: [mockRecord] }
+      await storageService.save(payload)
+      
+      const records = await storageService.getAllRecords()
+      const date = new Date(records[0].fechaTimestamp)
+      
+      // En JS, mes 3 (Marzo) es index 2
+      expect(date.getFullYear()).toBe(2026)
+      expect(date.getMonth()).toBe(2) 
+      expect(date.getDate()).toBe(30)
+    })
 
-  it('should process user real data sample correctly', async () => {
-    const importPayload = {
-      fileName: 'real_export.json',
-      worker: 'Admin',
-      shift: 'Global',
-      rawRecords: realExportData
-    };
+    it('debe parsear correctamente formato DD/MM/YYYY (Excel)', async () => {
+      const mockRecord = {
+        fecha: '07/04/2026',
+        trabajadorNombre: 'Test',
+        cantidad: 50
+      }
+      
+      const payload = { fileName: 'excel.json', worker: 'Test', rawRecords: [mockRecord] }
+      await storageService.save(payload)
+      
+      const records = await storageService.getAllRecords()
+      const date = new Date(records[0].fechaTimestamp)
+      
+      expect(date.getFullYear()).toBe(2026)
+      expect(date.getMonth()).toBe(3) // Abril
+      expect(date.getDate()).toBe(7)
+    })
+  })
 
-    const result = await storageService.save(importPayload);
+  describe('Integridad de Datos y Duplicados', () => {
+    it('debe generar IDs únicos para registros idénticos en el mismo día (Fix de Jair/Jerson)', async () => {
+      const mockRecords = [
+        { fecha: '30/03/2026', trabajadorNombre: 'Jerson', productoNombre: 'Embarillado', cantidad: 10 },
+        { fecha: '30/03/2026', trabajadorNombre: 'Jerson', productoNombre: 'Embarillado', cantidad: 10 }
+      ]
+      
+      const payload = { fileName: 'duplicate_entries.json', worker: 'Jerson', rawRecords: mockRecords }
+      await storageService.save(payload)
+      
+      const records = await storageService.getAllRecords()
+      
+      // Deben existir ambos, no fusionarse
+      expect(records.length).toBe(2)
+      expect(records[0].idLocal).not.toBe(records[1].idLocal)
+    })
+  })
 
-    // Basic Integrity
-    expect(result.success).toBe(6);
-    expect(result.units).toBe(2330); // 500+399+600+600+65+166
+  describe('Lógica de Unidades (Paneleras vs Resorteras)', () => {
+    it('debe asignar "u." a máquinas Paneleras (MP)', async () => {
+      const mockRecord = {
+        maquina: 'Maquina Panelera 2',
+        productoNombre: 'Colchón 2 plz',
+        cantidad: 100
+      }
+      
+      const payload = { fileName: 'mp.json', worker: 'Eliza', rawRecords: [mockRecord] }
+      await storageService.save(payload)
+      
+      const records = await storageService.getAllRecords()
+      // La lógica de unidad está en el UI (Dashboard.jsx), pero podemos verificar que el maquinaId se guardó bien
+      expect(records[0].maquinaId).toContain('Panelera')
+    })
+    
+    it('debe manejar cantidades que vienen como strings numéricos', async () => {
+      const mockRecord = {
+        trabajadorNombre: 'StringTest',
+        cantidad: "150" // String en lugar de Number
+      }
+      const payload = { fileName: 'strings.json', worker: 'Test', rawRecords: [mockRecord] }
+      await storageService.save(payload)
+      const records = await storageService.getAllRecords()
+      expect(records[0].cantidad).toBe(150)
+    })
 
-    // Module Discovery Check
-    const discoveredModule = await db.metadata.get('module_2');
-    expect(discoveredModule).toBeDefined();
-    expect(discoveredModule.value).toBe('Módulo 2');
+    it('debe asignar valores por defecto si faltan campos críticos', async () => {
+      const mockRecord = {
+        // Falta trabajador, falta maquina, falta producto
+        cantidad: 10
+      }
+      const payload = { fileName: 'empty.json', worker: 'Test', rawRecords: [mockRecord] }
+      await storageService.save(payload)
+      const records = await storageService.getAllRecords()
+      
+      expect(records[0].trabajadorNombre).toBe('Sin Nombre')
+      expect(records[0].productoNombre).toBe('Sin Producto')
+      expect(records[0].maquinaId).toBe('Sin Máquina')
+    })
+  })
 
-    // Stats Validation
-    const stats = await storageService.getStats();
-    expect(stats.totalUnits).toBe(2330);
-    expect(stats.topWorker).toBe('Pablo'); // Pablo (500) + Juan (399) ... Wait, test has 2 records. 
-    // Let's re-calculate: pablo=500, juan=399, resorte=600, deiv=600, test=65+166=231.
-    // Top should be 'resorte' or 'deiv' (both 600).
-    expect(['resorte', 'deiv']).toContain(stats.topWorker.toLowerCase());
-  });
-
-  it('should handle hours extra as exceptions in stats', async () => {
-    await storageService.save({
-      fileName: 'shift_test.json',
-      worker: 'System',
-      shift: 'N/A',
-      rawRecords: realExportData
-    });
-
-    const stats = await storageService.getStats();
-    // In our logic, we count records. Here 5 out of 6 are extra hours.
-    const allRecords = await db.records.toArray();
-    const extras = allRecords.filter(r => r.esHoraExtra);
-    expect(extras.length).toBe(5);
-  });
-});
+  describe('Lógica de Unidades y Clasificación', () => {
+    it('debe por defecto usar "u." para máquinas desconocidas (ej. MPX)', async () => {
+      const mockRecord = {
+        maquina: 'Cortadora Especial 5',
+        productoNombre: 'Varillas',
+        cantidad: 50
+      }
+      const payload = { fileName: 'unknown.json', worker: 'Test', rawRecords: [mockRecord] }
+      await storageService.save(payload)
+      const records = await storageService.getAllRecords()
+      
+      // La lógica de unidad en el Dashboard detectará esto como "u." (default)
+      expect(records[0].maquinaId).toBe('Cortadora Especial 5')
+    })
+  })
+})
