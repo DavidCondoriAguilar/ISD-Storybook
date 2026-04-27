@@ -8,7 +8,7 @@ export const useDashboardRecords = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(25)
 
-  const records = useLiveQuery(() => db.records.toArray(), []) || []
+  const rawRecords = useLiveQuery(() => db.records.toArray(), []) || []
 
   const toggleSort = useCallback(() => {
     setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')
@@ -17,30 +17,30 @@ export const useDashboardRecords = () => {
   const filteredRecords = useMemo(() => {
     const search = filterText.toLowerCase()
     const filtered = filterText
-      ? records.filter(r => 
+      ? rawRecords.filter(r => 
           (r.trabajadorNombre || '').toLowerCase().includes(search) ||
           (r.productoNombre || '').toLowerCase().includes(search) ||
           (r.moduloId || '').toLowerCase().includes(search) ||
           (r.maquinaId || '').toLowerCase().includes(search)
         )
-      : records
+      : rawRecords
     
     return [...filtered].sort((a, b) => {
       const dateA = a.fechaTimestamp || 0
       const dateB = b.fechaTimestamp || 0
       return sortOrder === 'desc' ? dateB - dateA : dateA - dateB
     })
-  }, [records, filterText, sortOrder])
+  }, [rawRecords, filterText, sortOrder])
 
-  const paginatedRecords = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage
-    return filteredRecords.slice(start, start + itemsPerPage)
-  }, [filteredRecords, currentPage, itemsPerPage])
+  // No slicing since pagination is hidden for now
+  const displayRecords = useMemo(() => {
+    return filteredRecords
+  }, [filteredRecords])
 
   const totalPages = Math.ceil(filteredRecords.length / itemsPerPage) || 1
 
   return {
-    records: paginatedRecords,
+    records: displayRecords,
     allFilteredRecords: filteredRecords,
     totalCount: filteredRecords.length,
     filterText,

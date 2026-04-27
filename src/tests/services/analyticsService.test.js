@@ -1,61 +1,64 @@
-import { describe, it, expect } from 'vitest'
-import { analyticsService } from '../../features/analytics/services/analyticsService'
+import { describe, it, expect } from 'vitest';
+import { analyticsService } from '../../features/analytics/services/analyticsService';
 
-describe('AnalyticsService (Inteligencia Industrial)', () => {
+describe('AnalyticsService - Industrial Logic Tests', () => {
   
   const mockRecords = [
-    { 
-      trabajadorNombre: 'Luis Polo', 
-      cantidad: 30000, 
-      maquinaId: 'Maquina Resortera 1', 
-      productoNombre: 'Millares de Resortes' 
-    },
-    { 
-      trabajadorNombre: 'Eliza', 
-      cantidad: 100, 
-      maquinaId: 'Maquina Panelera 2', 
-      productoNombre: 'Colchón 2 plz' 
-    },
-    { 
-      trabajadorNombre: 'Jair', 
-      cantidad: 50, 
-      maquinaId: 'Sin Máquina', 
-      productoNombre: 'Embarillado' 
-    },
-    { 
-      trabajadorNombre: 'Luis Polo', 
-      cantidad: 5000, 
-      maquinaId: 'MR2', 
-      productoNombre: 'Resortes Bonnell' 
-    }
-  ]
+    // Trabajador A - Paneles (MP)
+    { trabajadorNombre: 'Jair', maquinaId: 'MP1', productoNombre: 'Panel 2plz', cantidad: 100, fechaTimestamp: new Date('2026-04-10').getTime() },
+    { trabajadorNombre: 'Jair', maquinaId: 'MP1', productoNombre: 'Panel 1.5plz', cantidad: 50, fechaTimestamp: new Date('2026-04-10').getTime() },
+    
+    // Trabajador B - Resortes (MR)
+    { trabajadorNombre: 'Luis Polo', maquinaId: 'MR1', productoNombre: 'Resortes Bonell', cantidad: 10000, fechaTimestamp: new Date('2026-04-10').getTime() },
+    { trabajadorNombre: 'Luis Polo', maquinaId: 'MR2', productoNombre: 'Millares de Resortes', cantidad: 5000, fechaTimestamp: new Date('2026-04-11').getTime() },
+    
+    // Trabajador C - Mixto (pero debería separarse)
+    { trabajadorNombre: 'Angelo', maquinaId: 'MP2', productoNombre: 'Panel King', cantidad: 80, fechaTimestamp: new Date('2026-04-11').getTime() }
+  ];
 
-  describe('Clasificación MP vs MR (Unidades vs Millares)', () => {
-    it('debe separar correctamente los totales por tipo de máquina', () => {
-      const { topPaneleros, topResorteros } = analyticsService.getWorkerRankings(mockRecords)
-      
-      // Luis Polo debe estar en Resorteros con 35000
-      const luis = topResorteros.find(w => w.name === 'Luis Polo')
-      expect(luis).toBeDefined()
-      expect(luis.total).toBe(35000)
-      
-      // Eliza debe estar en Paneleros con 100
-      const eliza = topPaneleros.find(w => w.name === 'Eliza')
-      expect(eliza).toBeDefined()
-      expect(eliza.total).toBe(100)
+  it('debe clasificar correctamente Paneles (MP) vs Resortes (MR)', () => {
+    const trend = analyticsService.getProductionTrend(mockRecords);
+    
+    // El 10/04 tenemos 150 paneles (100+50) y 10000 resortes
+    const day10 = trend.find(d => d.date === '10/04');
+    expect(day10.paneles).toBe(150);
+    expect(day10.resortes).toBe(10000);
+    
+    // El 11/04 tenemos 80 paneles (Angelo) y 5000 resortes (Luis)
+    const day11 = trend.find(d => d.date === '11/04');
+    expect(day11.paneles).toBe(80);
+    expect(day11.resortes).toBe(5000);
+  });
 
-      // Jair debe estar en Paneleros con 50 (Sin Máquina es Panel por defecto)
-      const jair = topPaneleros.find(w => w.name === 'Jair')
-      expect(jair).toBeDefined()
-      expect(jair.total).toBe(50)
-    })
-  })
+  it('debe generar rankings de trabajadores separados por unidad de medida', () => {
+    const { topPaneleros, topResorteros } = analyticsService.getWorkerRankings(mockRecords);
 
-  describe('Resumen Ejecutivo (KPIs)', () => {
-    it('debe calcular totales generales correctamente', () => {
-      const stats = analyticsService.getExecutiveKPIs(mockRecords)
-      expect(stats.totalUnits).toBe(35150)
-      expect(stats.uniqueWorkers).toBe(3)
-    })
-  })
-})
+    // Jair debe ser el #1 en Paneles con 150
+    expect(topPaneleros[0].name).toBe('Jair');
+    expect(topPaneleros[0].total).toBe(150);
+
+    // Luis Polo debe ser el #1 en Resortes con 15000
+    expect(topResorteros[0].name).toBe('Luis Polo');
+    expect(topResorteros[0].total).toBe(15000);
+  });
+
+  it('debe calcular correctamente las estadísticas de máquinas', () => {
+    const machineStats = analyticsService.getMachineStats(mockRecords);
+    
+    const mr1 = machineStats.find(m => m.name === 'MR1');
+    expect(mr1.total).toBe(10000);
+
+    const mp1 = machineStats.find(m => m.name === 'MP1');
+    expect(mp1.total).toBe(150); // 100 + 50
+  });
+
+  it('debe manejar registros sin máquina o nombre de trabajador', () => {
+    const edgeCases = [
+      { cantidad: 10, fechaTimestamp: Date.now() } // No tiene nada
+    ];
+    const kpis = analyticsService.getExecutiveKPIs(edgeCases);
+    expect(kpis.totalUnits).toBe(10);
+    expect(kpis.uniqueWorkers).toBe(0);
+    expect(kpis.activeMachines).toBe(0);
+  });
+});
