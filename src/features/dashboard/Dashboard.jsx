@@ -115,10 +115,10 @@ const Dashboard = memo(function Dashboard() {
                       {new Date(r.fechaTimestamp).toLocaleDateString('es-ES')}
                     </td>
                     <td className="td-elite product-cell">{r.productoNombre}</td>
-                    <td className="td-elite"><span className="area-badge">{r.moduloId}</span></td>
+                    <td className="td-elite"><span className="area-badge">{r.area || 'General'}</span></td>
                     <td className="td-elite worker-cell">{r.trabajadorNombre}</td>
                     <td className="td-elite text-right total-cell">
-                      {r.cantidad?.toLocaleString()} <span className="unit">{dashboardService.isMillar(r) ? 'mil.' : 'u.'}</span>
+                      {r.cantidad?.toLocaleString()} <span className="unit">{r.unidad || 'u.'}</span>
                     </td>
                     <td className="td-elite"><code className="machine-chip">{r.maquinaId}</code></td>
                   </motion.tr>

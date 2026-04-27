@@ -50,7 +50,7 @@ export function useImportProduction() {
       worker: validation.data?.worker || 'Usuario',
       records: validation.data?.records || 0,
       units: validation.data?.units || 0,
-      raw: validation.data?.raw || []
+      raw: validation.data?.rawRecords || [] // Sincronizado con el trabajador
     })
     setFileStatus(FileStatus.READY)
   }, [])
@@ -62,7 +62,7 @@ export function useImportProduction() {
   }, [])
 
   const startImport = useCallback(async () => {
-    if (!file || !file.raw) return
+    if (!file || !file.raw || file.raw.length === 0) return
     
     setStep(STEPS.PROCESSING)
     setProgress(0)
@@ -71,7 +71,7 @@ export function useImportProduction() {
     setResult(null)
 
     try {
-      // 1. Process Data (Instant, already parsed during selection)
+      // 1. Process Data
       const records = file.raw; 
 
       const statusConfig = [
@@ -88,20 +88,17 @@ export function useImportProduction() {
         setProgress((i + 1) * 33)
       }
 
-      // 2. Extract Final Summary using DYNAMIC field mapping
-      const totalUnits = records.reduce((s, r) => {
-        const qty = r.produccion ? r.produccion.cantidad : r.cantidad;
-        return s + (Number(qty || 0));
-      }, 0);
+      // 2. Extract Final Summary (Safe Access)
+      const firstRec = records[0] || {};
+      const totalUnits = records.reduce((s, r) => s + (Number(r.cantidad || 0)), 0);
 
-      const firstRec = records[0];
       const finalSummary = {
         success: totalUnits,
         failed: 0,
         total: records.length,
         units: totalUnits,
-        worker: firstRec.trabajador?.nombre || firstRec.trabajadorNombre || 'Usuario',
-        shift: firstRec.tiempo?.tipo || firstRec.tipoJornada || 'Estándar',
+        worker: firstRec.trabajadorNombre || firstRec.trabajador?.nombre || 'Usuario',
+        shift: firstRec.tipoJornada || firstRec.tiempo?.tipo || 'Estándar',
         errors: [],
         rawRecords: records 
       }

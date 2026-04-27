@@ -2,35 +2,30 @@ import { sanitizarNombre } from '../../utils/formatters'
 
 export { sanitizarNombre }
 
+/**
+ * NORMALIZADOR DE TIEMPO (Sincronizado con fechaLegible)
+ */
 export const normalizeTimestamp = (r) => {
   let normalizedTimestamp;
   try {
-    if (r.metadatosFecha && r.metadatosFecha.anio) {
+    if (r.fechaTimestamp) {
+      normalizedTimestamp = r.fechaTimestamp;
+    } else if (r.metadatosFecha && r.metadatosFecha.anio) {
       const { anio, mes, dia } = r.metadatosFecha;
-      const localDate = new Date(anio, (mes || 1) - 1, dia || 1, 0, 0, 0, 0);
+      const localDate = new Date(anio, (mes || 1) - 1, dia || 1, 12, 0, 0, 0);
       normalizedTimestamp = localDate.getTime();
     } else if (r.fechaLegible) {
       const [y, m, d] = r.fechaLegible.split('-').map(Number);
-      const localDate = new Date(y, m - 1, d, 0, 0, 0, 0);
+      const localDate = new Date(y, m - 1, d, 12, 0, 0, 0);
       normalizedTimestamp = localDate.getTime();
     } else {
       let dateStr = String(r.fecha || r.fechaLegible || "");
-      if (dateStr.includes('/')) {
-        const parts = dateStr.split('/');
-        if (parts.length === 3) {
-          const localDate = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]), 0, 0, 0, 0);
-          normalizedTimestamp = localDate.getTime();
-        }
-      }
-      
-      if (!normalizedTimestamp) {
-        const dateObj = new Date(dateStr || Date.now());
-        dateObj.setHours(0, 0, 0, 0);
-        normalizedTimestamp = dateObj.getTime();
-      }
+      const dateObj = new Date(dateStr || Date.now());
+      dateObj.setHours(12, 0, 0, 0);
+      normalizedTimestamp = dateObj.getTime();
     }
   } catch (e) {
-    normalizedTimestamp = new Date().setHours(0, 0, 0, 0);
+    normalizedTimestamp = new Date().setHours(12, 0, 0, 0);
   }
   return normalizedTimestamp
 }
@@ -41,9 +36,12 @@ export const normalizeWorker = (r) => {
   return { workerKey, workerName }
 }
 
+/**
+ * NORMALIZADOR DE UBICACIÓN (Respeta el Área detectada)
+ */
 export const normalizeLocation = (r) => ({
-  modulo: r.ubicacion?.modulo || r.modulo || 'Otros',
-  maquina: r.ubicacion?.maquina || r.maquina || 'Sin Máquina'
+  modulo: r.area || r.ubicacion?.modulo || r.modulo || 'General',
+  maquina: r.maquinaId || r.ubicacion?.maquina || r.maquina || 'Sin Máquina'
 })
 
 export const normalizeProduct = (r) => ({
@@ -51,11 +49,17 @@ export const normalizeProduct = (r) => ({
   code: r.producto?.codigo || r.productoId || 'N/A'
 })
 
-export const normalizeProduction = (r) => ({
-  cantidadNeta: Number(r.produccion?.cantidad ?? r.cantidad ?? r.total ?? 0),
-  lecturaMaquina: Number(r.outputMaquina ?? r.produccion?.output ?? 0),
-  unidadOriginal: (r.produccion?.unidad || r.unidad || 'unidades').toLowerCase()
-})
+/**
+ * NORMALIZADOR DE PRODUCCIÓN (Detecta Millares/Unidades)
+ */
+export const normalizeProduction = (r) => {
+  const unidadDetectada = r.unidad || r.produccion?.unidad || r.unidadOriginal || 'u.';
+  return {
+    cantidadNeta: Number(r.cantidad ?? r.produccion?.cantidad ?? r.total ?? 0),
+    lecturaMaquina: Number(r.outputMaquina ?? r.produccion?.output ?? 0),
+    unidadOriginal: unidadDetectada.toLowerCase().includes('mil') ? 'mil.' : 'u.'
+  }
+}
 
 export const normalizeTime = (r) => {
   let jornadaHoras = r.tiempo?.horas || r.tiempo?.horasTotal || "8.75";
@@ -71,6 +75,6 @@ export const normalizeTime = (r) => {
 }
 
 export const generateRecordId = (workerKey, normalizedTimestamp, i, r) => {
-  const businessHash = `${workerKey}-${normalizedTimestamp}-${r.produccion?.cantidad ?? r.cantidad ?? 0}-${r.ubicacion?.modulo || r.modulo || 'Otros'}-${r.producto?.nombre || r.productoNombre || 'Sin Producto'}-${i}`;
+  const businessHash = `${workerKey}-${normalizedTimestamp}-${r.cantidad ?? 0}-${r.area || 'General'}-${i}`;
   return `ISD-${workerKey}-${normalizedTimestamp}-${i}-${r.id || r.idLocal || btoa(unescape(encodeURIComponent(businessHash))).slice(0, 8)}`;
 }

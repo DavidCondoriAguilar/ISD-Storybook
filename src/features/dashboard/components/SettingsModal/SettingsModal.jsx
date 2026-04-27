@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Settings, X, Save, Edit3, Package, Layers, Trash2 } from 'lucide-react'
+import { Settings, X, Save, Edit3, Package, Layers, Trash2, Database } from 'lucide-react'
 import { db } from '../../../../data/db'
 import { storageService } from '../../../../data/storageService'
+import { backupService } from '../../../../data/backupService'
 import { useNotification } from '../../../../context/NotificationContext'
 
 export function SettingsModal({ isOpen, onClose, onRefresh }) {
@@ -107,6 +108,16 @@ export function SettingsModal({ isOpen, onClose, onRefresh }) {
           </div>
 
           <div style={{ padding: '24px 32px', borderTop: '1px solid var(--border)', display: 'flex', gap: '12px', alignItems: 'center' }}>
+             <button 
+                onClick={async () => {
+                  const res = await backupService.exportDatabase();
+                  if (res.success) notify('Backup generado con éxito 📦', 'success');
+                }} 
+                title="Descargar Backup Completo"
+                style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(59, 130, 246, 0.05)', color: 'var(--primary)', border: '1.5px solid rgba(59, 130, 246, 0.2)', borderRadius: '14px', cursor: 'pointer' }}
+             >
+                <Database size={18} />
+             </button>
              <button 
                 onClick={handleClearData} 
                 title="Limpiar registros (Mantiene nombres)"

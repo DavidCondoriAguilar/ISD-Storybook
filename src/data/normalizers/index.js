@@ -36,11 +36,13 @@ export const normalizeRecords = (validatedPayload, existingRecords = []) => {
       trabajadorDni: workerKey,
       trabajadorNombre: workerName,
       moduloId: modulo,
+      area: modulo, // Guardamos explícitamente el área detectada
       maquinaId: maquina,
       productoId: prodCode,
       productoNombre: sanitizarNombre(prodName),
       cantidad: cantidadNeta,
       cantidadOriginal: cantidadNeta,
+      unidad: unidadOriginal, // Guardamos la unidad estandarizada
       unidadOriginal: unidadOriginal,
       lecturaMaquina: lecturaMaquina,
       tiempoMinutos: minutos,

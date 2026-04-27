@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, memo } from 'react'
+import { useCallback, memo, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
 import { LayoutDashboard, FileUp, Presentation } from 'lucide-react'
@@ -9,6 +9,7 @@ import { AppRoutes } from './AppRoutes'
 import { SettingsModal } from '../../features/dashboard/components/SettingsModal/SettingsModal'
 import { Notification } from '../ui/Notification/Notification'
 import { useNotification } from '../../context/NotificationContext'
+import { useAppStore } from '../../store/useAppStore'
 
 import './Layout.css'
 
@@ -19,20 +20,20 @@ const NAV_ITEMS = [
 ]
 
 export const Layout = memo(() => {
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'light')
   const location = useLocation()
   const { notify } = useNotification()
+  
+  // Zustand Global State
+  const { 
+    theme,
+    isSettingsOpen, 
+    setSettingsOpen 
+  } = useAppStore()
 
-  // Theme Sync
+  // Sincronización inicial del tema con el DOM
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
-    localStorage.setItem('app-theme', theme)
   }, [theme])
-
-  const toggleTheme = useCallback(() => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light')
-  }, [])
 
   const handleImportComplete = useCallback((summary) => {
     notify(`Importación completada (+${summary.success} registros) 🚀`, 'success')
@@ -45,11 +46,7 @@ export const Layout = memo(() => {
 
   return (
     <div className="layout">
-      <Sidebar 
-        navItems={NAV_ITEMS} 
-        theme={theme} 
-        onToggleTheme={toggleTheme} 
-      />
+      <Sidebar navItems={NAV_ITEMS} />
 
       <main className="main-wrapper">
         <TopBar title={pageTitle} />
@@ -73,7 +70,7 @@ export const Layout = memo(() => {
       
       <SettingsModal
         isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
+        onClose={() => setSettingsOpen(false)}
         onRefresh={() => window.dispatchEvent(new Event('refresh_production_data'))}
       />
     </div>

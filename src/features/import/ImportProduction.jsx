@@ -14,6 +14,7 @@ import { ImportHero } from './components/ImportHero'
 import { ImportOptions } from './components/ImportOptions'
 import { ImportActions } from './components/ImportActions'
 import { DangerZone } from './components/DangerZone'
+import { backupService } from '../../data/backupService'
 
 import './ImportProduction.css'
 
@@ -52,10 +53,20 @@ export const ImportProduction = memo(function ImportProduction({ onImportComplet
   }, [handleFileSelect, notify])
 
   useEffect(() => {
-    if (step === STEPS.SUCCESS && onImportComplete) {
-      onImportComplete(summary, { fileName: file.name, worker: file.worker })
+    if (step === STEPS.SUCCESS) {
+      if (onImportComplete) {
+        onImportComplete(summary, { fileName: file.name, worker: file.worker })
+      }
+      
+      // Senior UX: Redireccionamiento automático tras éxito
+      const timer = setTimeout(() => {
+        navigate('/dashboard')
+        notify('Datos sincronizados y actualizados. 📊', 'info')
+      }, 2000)
+
+      return () => clearTimeout(timer)
     }
-  }, [step, summary, onImportComplete, file])
+  }, [step, summary, onImportComplete, file, navigate, notify])
 
   const renderImportForm = () => (
     <m.div key="import-form" className="import-view-container" variants={pageVariants} initial="initial" animate="animate" exit="exit">
@@ -104,6 +115,7 @@ export const ImportProduction = memo(function ImportProduction({ onImportComplet
                summary={summary} 
                onClose={() => navigate('/dashboard')} 
                onRetry={step === STEPS.ERROR ? retry : undefined} 
+               onDownload={backupService.exportDatabase}
              />
            </m.div>
          )}

@@ -1,12 +1,12 @@
-import { useState } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { useLocation, NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Sun, Moon } from 'lucide-react'
+import { useAppStore } from '../../store/useAppStore'
 import './Sidebar.css'
 
-export const Sidebar = ({ navItems, theme, onToggleTheme }) => {
-  const [activeTooltip, setActiveTooltip] = useState(null)
+export const Sidebar = ({ navItems }) => {
   const location = useLocation()
+  const { theme, toggleTheme, activeTooltip, setActiveTooltip } = useAppStore()
 
   return (
     <aside className="sidebar">
@@ -58,7 +58,7 @@ export const Sidebar = ({ navItems, theme, onToggleTheme }) => {
       <div className="sidebar-footer">
         <button
           className="nav-item"
-          onClick={onToggleTheme}
+          onClick={toggleTheme}
           onMouseEnter={() => setActiveTooltip(theme === 'light' ? 'Modo oscuro' : 'Modo claro')}
           onMouseLeave={() => setActiveTooltip(null)}
           aria-label={theme === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'}
