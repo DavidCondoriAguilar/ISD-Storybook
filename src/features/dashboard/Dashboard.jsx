@@ -152,18 +152,7 @@ export const Dashboard = memo(function Dashboard() {
     return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`
   }, [])
 
-  const handleExportPDF = useCallback(() => {
-    const doc = new jsPDF()
-    
-    doc.setFontSize(18)
-    doc.text('Reporte de Produccion - ISD', 14, 22)
-    
-    doc.setFontSize(10)
-    doc.setTextColor(100)
-    doc.text(`Generado: ${new Date().toLocaleString('es-ES')}`, 14, 30)
-    doc.text(`Total registros: ${filteredRecords.length} | U: ${totalsByType.unidades.toLocaleString()} | M: ${totalsByType.millares.toLocaleString()}`, 14, 36)
-    
-    const isMillar = (r) => {
+  const isMillar = (r) => {
       const producto = (r.productoNombre || '').toLowerCase()
       const maquina = (r.maquinaId || '').toUpperCase()
       return producto.includes('millar') || 
@@ -171,7 +160,74 @@ export const Dashboard = memo(function Dashboard() {
              maquina.includes('RESORTERA') || 
              maquina.includes('MR')
     }
-    
+
+    const COLORS = {
+      primary: [99, 102, 241],
+      secondary: [16, 185, 129],
+      dark: [30, 41, 59],
+      light: [241, 245, 249],
+      text: [100, 116, 139],
+      white: [255, 255, 255]
+    }
+
+    const today = new Date()
+    const fileName = `isd-report-${today.toISOString().split('T')[0]}`
+
+    const headerHeight = 45
+
+    doc.addImage('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgMkwyIDdMMTIgMTJMMjIgN0wxMCAyWiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz48cGF0aCBkPSJNMiAxN0wxMiAyMkwxNiA3IiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik0yIDEyTDEyIDE3TDIyIDEyIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==', 'PNG', 14, 14, 18, 18)
+
+    doc.setFillColor(...COLORS.dark)
+    doc.rect(0, 0, 210, headerHeight, 'F')
+
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(16)
+    doc.setFont('helvetica', 'bold')
+    doc.text('ISD - SISTEMA DE AUDITORÍA INDUSTRIAL', 40, 18)
+
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'normal')
+    doc.text('Reporte de Producción', 40, 26)
+
+    doc.setFontSize(8)
+    doc.text(`Planta Central | ${today.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })} | ${today.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`, 40, 34)
+
+    const summaryY = headerHeight + 12
+
+    doc.setFillColor(...COLORS.light)
+    doc.roundedRect(14, summaryY, 182, 28, 3, 3, 'F')
+
+    doc.setTextColor(...COLORS.dark)
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'bold')
+    doc.text('RESUMEN EJECUTIVO', 20, summaryY + 8)
+
+    const summaryItems = [
+      { label: 'Registros', value: filteredRecords.length.toLocaleString(), color: COLORS.primary },
+      { label: 'Paneles', value: `${totalsByType.unidades.toLocaleString()} u.`, color: COLORS.primary },
+      { label: 'Resortes', value: `${totalsByType.millares.toLocaleString()} mil.`, color: COLORS.secondary },
+      { label: 'Total', value: (totalsByType.unidades + totalsByType.millares).toLocaleString(), color: COLORS.dark }
+    ]
+
+    const boxWidth = 42
+    const boxStartX = 20
+    const boxGap = 45
+
+    summaryItems.forEach((item, i) => {
+      const x = boxStartX + (i * boxGap)
+
+      doc.setFillColor(...item.color)
+      doc.roundedRect(x, summaryY + 12, boxWidth, 12, 2, 2, 'F')
+
+      doc.setTextColor(255, 255, 255)
+      doc.setFontSize(7)
+      doc.setFont('helvetica', 'bold')
+      doc.text(item.label.toUpperCase(), x + 4, summaryY + 18)
+
+      doc.setFontSize(9)
+      doc.text(item.value, x + 4, summaryY + 23)
+    })
+
     const tableData = filteredRecords.map((r, i) => [
       i + 1,
       formatDate(r.fechaTimestamp),
@@ -184,16 +240,56 @@ export const Dashboard = memo(function Dashboard() {
     ])
 
     autoTable(doc, {
-      startY: 42,
-      head: [['#', 'FECHA', 'PRODUCTO', 'AREA', 'TRABAJADOR', 'LECTURA', 'TOTAL', 'MAQUINA']],
+      startY: summaryY + 36,
+      head: [['#', 'FECHA', 'PRODUCTO', 'ÁREA', 'TRABAJADOR', 'LECTURA', 'TOTAL', 'MÁQUINA']],
       body: tableData,
-      styles: { fontSize: 8 },
-      headStyles: { fillColor: [99, 102, 241] },
-      alternateRowStyles: { fillColor: [245, 247, 250] },
+      styles: {
+        fontSize: 7,
+        cellPadding: 3,
+        lineColor: [226, 232, 240],
+        lineWidth: 0.1
+      },
+      headStyles: {
+        fillColor: COLORS.dark,
+        textColor: COLORS.white,
+        fontStyle: 'bold',
+        halign: 'center'
+      },
+      bodyStyles: {
+        textColor: COLORS.dark,
+        valign: 'middle'
+      },
+      alternateRowStyles: {
+        fillColor: COLORS.light
+      },
+      columnStyles: {
+        0: { halign: 'center', cellWidth: 10 },
+        1: { cellWidth: 22 },
+        2: { cellWidth: 40 },
+        3: { cellWidth: 20 },
+        4: { cellWidth: 30 },
+        5: { halign: 'right', cellWidth: 18 },
+        6: { halign: 'right', cellWidth: 22 },
+        7: { cellWidth: 28 }
+      },
       margin: { left: 14, right: 14 }
     })
 
-    doc.save(`isd-report-${new Date().toISOString().split('T')[0]}.pdf`)
+    const pageCount = doc.internal.getNumberOfPages()
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i)
+      doc.setFillColor(...COLORS.dark)
+      doc.rect(0, 287, 210, 10, 'F')
+
+      doc.setTextColor(255, 255, 255)
+      doc.setFontSize(7)
+      doc.setFont('helvetica', 'normal')
+      doc.text(`ISD v2.0 | Producción Industrial`, 14, 293)
+      doc.text(`Página ${i} de ${pageCount}`, 160, 293)
+      doc.text('CONFIDENCIAL', 95, 293, { align: 'center' })
+    }
+
+    doc.save(`${fileName}.pdf`)
     notify('Reporte PDF exportado exitosamente', 'success')
   }, [filteredRecords, totalsByType, formatDate, notify])
 
