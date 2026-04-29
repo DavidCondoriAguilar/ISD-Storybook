@@ -1,0 +1,5527 @@
+[
+  {
+    "version": "1.0",
+    "id": 1,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 100,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 30
+    },
+    "fechaLegible": "2026-03-30",
+    "outputMaquina": 2240
+  },
+  {
+    "version": "1.0",
+    "id": 2,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 60,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 30
+    },
+    "fechaLegible": "2026-03-30",
+    "outputMaquina": 2566
+  },
+  {
+    "version": "1.0",
+    "id": 3,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 60,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 30
+    },
+    "fechaLegible": "2026-03-30",
+    "outputMaquina": 583
+  },
+  {
+    "version": "1.0",
+    "id": 4,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 50,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 30
+    },
+    "fechaLegible": "2026-03-30",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 5,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Doblado de Varillas 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 30
+    },
+    "fechaLegible": "2026-03-30",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 6,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 10,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 30
+    },
+    "fechaLegible": "2026-03-30",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 7,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 70,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 30
+    },
+    "fechaLegible": "2026-03-30",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 8,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 34403,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 30
+    },
+    "fechaLegible": "2026-03-30",
+    "outputMaquina": 34403
+  },
+  {
+    "version": "1.0",
+    "id": 9,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 32041,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 30
+    },
+    "fechaLegible": "2026-03-30",
+    "outputMaquina": 32041
+  },
+  {
+    "version": "1.0",
+    "id": 10,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 119,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 31
+    },
+    "fechaLegible": "2026-03-31",
+    "outputMaquina": 2359
+  },
+  {
+    "version": "1.0",
+    "id": 11,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 60,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 31
+    },
+    "fechaLegible": "2026-03-31",
+    "outputMaquina": 2626
+  },
+  {
+    "version": "1.0",
+    "id": 12,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 60,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 31
+    },
+    "fechaLegible": "2026-03-31",
+    "outputMaquina": 643
+  },
+  {
+    "version": "1.0",
+    "id": 13,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Cortado de varilla de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 31
+    },
+    "fechaLegible": "2026-03-31",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 14,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Doblado de Varillas 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 31
+    },
+    "fechaLegible": "2026-03-31",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 15,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 30,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 31
+    },
+    "fechaLegible": "2026-03-31",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 16,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Cortado de varilla de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 31
+    },
+    "fechaLegible": "2026-03-31",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 17,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Doblado de Varillas 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 31
+    },
+    "fechaLegible": "2026-03-31",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 18,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 30,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 31
+    },
+    "fechaLegible": "2026-03-31",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 19,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 40905,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 31
+    },
+    "fechaLegible": "2026-03-31",
+    "outputMaquina": 75308
+  },
+  {
+    "version": "1.0",
+    "id": 20,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 36179,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 3,
+      "dia": 31
+    },
+    "fechaLegible": "2026-03-31",
+    "outputMaquina": 68220
+  },
+  {
+    "version": "1.0",
+    "id": 21,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 107,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 1
+    },
+    "fechaLegible": "2026-04-01",
+    "outputMaquina": 2466
+  },
+  {
+    "version": "1.0",
+    "id": 22,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 1
+    },
+    "fechaLegible": "2026-04-01",
+    "outputMaquina": 2701
+  },
+  {
+    "version": "1.0",
+    "id": 23,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 1
+    },
+    "fechaLegible": "2026-04-01",
+    "outputMaquina": 718
+  },
+  {
+    "version": "1.0",
+    "id": 24,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Cortado de varilla de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 1
+    },
+    "fechaLegible": "2026-04-01",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 25,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Doblado de Varillas 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 1
+    },
+    "fechaLegible": "2026-04-01",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 26,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 51,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 1
+    },
+    "fechaLegible": "2026-04-01",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 27,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Cortado de varilla de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 1
+    },
+    "fechaLegible": "2026-04-01",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 28,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Doblado de Varillas 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 1
+    },
+    "fechaLegible": "2026-04-01",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 29,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 60,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 1
+    },
+    "fechaLegible": "2026-04-01",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 30,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 22,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 1
+    },
+    "fechaLegible": "2026-04-01",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 31,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 41571,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 1
+    },
+    "fechaLegible": "2026-04-01",
+    "outputMaquina": 116879
+  },
+  {
+    "version": "1.0",
+    "id": 32,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 32816,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 1
+    },
+    "fechaLegible": "2026-04-01",
+    "outputMaquina": 101036
+  },
+  {
+    "version": "1.0",
+    "id": 33,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 14,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 2
+    },
+    "fechaLegible": "2026-04-02",
+    "outputMaquina": 2480
+  },
+  {
+    "version": "1.0",
+    "id": 34,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "1 plz (6x20)"
+    },
+    "produccion": {
+      "cantidad": 60,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 2
+    },
+    "fechaLegible": "2026-04-02",
+    "outputMaquina": 2540
+  },
+  {
+    "version": "1.0",
+    "id": 35,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 2
+    },
+    "fechaLegible": "2026-04-02",
+    "outputMaquina": 2541
+  },
+  {
+    "version": "1.0",
+    "id": 36,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 0,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 2
+    },
+    "fechaLegible": "2026-04-02",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 37,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 0,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 2
+    },
+    "fechaLegible": "2026-04-02",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 38,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 20,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 2
+    },
+    "fechaLegible": "2026-04-02",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 39,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 11619,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 2
+    },
+    "fechaLegible": "2026-04-02",
+    "outputMaquina": 128498
+  },
+  {
+    "version": "1.0",
+    "id": 40,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 7760,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 2
+    },
+    "fechaLegible": "2026-04-02",
+    "outputMaquina": 108796
+  },
+  {
+    "version": "1.0",
+    "id": 41,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 20,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 2
+    },
+    "fechaLegible": "2026-04-02",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 42,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 107,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 3
+    },
+    "fechaLegible": "2026-04-03",
+    "outputMaquina": 2648
+  },
+  {
+    "version": "1.0",
+    "id": 43,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 113,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 3
+    },
+    "fechaLegible": "2026-04-03",
+    "outputMaquina": 2814
+  },
+  {
+    "version": "1.0",
+    "id": 44,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 112,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 3
+    },
+    "fechaLegible": "2026-04-03",
+    "outputMaquina": 830
+  },
+  {
+    "version": "1.0",
+    "id": 45,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 76,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 6
+    },
+    "fechaLegible": "2026-04-06",
+    "outputMaquina": 2724
+  },
+  {
+    "version": "1.0",
+    "id": 46,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 113,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 6
+    },
+    "fechaLegible": "2026-04-06",
+    "outputMaquina": 2814
+  },
+  {
+    "version": "1.0",
+    "id": 47,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 112,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 6
+    },
+    "fechaLegible": "2026-04-06",
+    "outputMaquina": 830
+  },
+  {
+    "version": "1.0",
+    "id": 48,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 40493,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 6
+    },
+    "fechaLegible": "2026-04-06",
+    "outputMaquina": 157372
+  },
+  {
+    "version": "1.0",
+    "id": 49,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 33454,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 6
+    },
+    "fechaLegible": "2026-04-06",
+    "outputMaquina": 134490
+  },
+  {
+    "version": "1.0",
+    "id": 50,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 50,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 6
+    },
+    "fechaLegible": "2026-04-06",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 51,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Cortado de varilla de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 6
+    },
+    "fechaLegible": "2026-04-06",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 52,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Doblado de Varillas 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 6
+    },
+    "fechaLegible": "2026-04-06",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 53,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 10,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 6
+    },
+    "fechaLegible": "2026-04-06",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 54,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 100,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 7
+    },
+    "fechaLegible": "2026-04-07",
+    "outputMaquina": 2824
+  },
+  {
+    "version": "1.0",
+    "id": 55,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 7
+    },
+    "fechaLegible": "2026-04-07",
+    "outputMaquina": 2889
+  },
+  {
+    "version": "1.0",
+    "id": 56,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 7
+    },
+    "fechaLegible": "2026-04-07",
+    "outputMaquina": 905
+  },
+  {
+    "version": "1.0",
+    "id": 57,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 26133,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 7
+    },
+    "fechaLegible": "2026-04-07",
+    "outputMaquina": 183505
+  },
+  {
+    "version": "1.0",
+    "id": 58,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 26609,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 7
+    },
+    "fechaLegible": "2026-04-07",
+    "outputMaquina": 161099
+  },
+  {
+    "version": "1.0",
+    "id": 59,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 72,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 7
+    },
+    "fechaLegible": "2026-04-07",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 60,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 50,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 7
+    },
+    "fechaLegible": "2026-04-07",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 61,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 5,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 7
+    },
+    "fechaLegible": "2026-04-07",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 62,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "PERMISO AL MEDIO DIA"
+    },
+    "produccion": {
+      "cantidad": 0,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 7
+    },
+    "fechaLegible": "2026-04-07",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 63,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "King (17*21)"
+    },
+    "produccion": {
+      "cantidad": 42,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 8
+    },
+    "fechaLegible": "2026-04-08",
+    "outputMaquina": 2866
+  },
+  {
+    "version": "1.0",
+    "id": 64,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 25,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 8
+    },
+    "fechaLegible": "2026-04-08",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 65,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 8
+    },
+    "fechaLegible": "2026-04-08",
+    "outputMaquina": 2867
+  },
+  {
+    "version": "1.0",
+    "id": 66,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 8
+    },
+    "fechaLegible": "2026-04-08",
+    "outputMaquina": 2964
+  },
+  {
+    "version": "1.0",
+    "id": 67,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 8
+    },
+    "fechaLegible": "2026-04-08",
+    "outputMaquina": 980
+  },
+  {
+    "version": "1.0",
+    "id": 68,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 41124,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 8
+    },
+    "fechaLegible": "2026-04-08",
+    "outputMaquina": 224629
+  },
+  {
+    "version": "1.0",
+    "id": 69,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 35374,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 8
+    },
+    "fechaLegible": "2026-04-08",
+    "outputMaquina": 196473
+  },
+  {
+    "version": "1.0",
+    "id": 70,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 17*21 (king)"
+    },
+    "produccion": {
+      "cantidad": 32,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 8
+    },
+    "fechaLegible": "2026-04-08",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 71,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 15,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 8
+    },
+    "fechaLegible": "2026-04-08",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 72,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 31,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 8
+    },
+    "fechaLegible": "2026-04-08",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 73,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Cortado de varilla de 17*21 (king)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 8
+    },
+    "fechaLegible": "2026-04-08",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 74,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Doblado de Varillas 17*21 (king)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 8
+    },
+    "fechaLegible": "2026-04-08",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 75,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 27,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 9
+    },
+    "fechaLegible": "2026-04-09",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 76,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 94,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 9
+    },
+    "fechaLegible": "2026-04-09",
+    "outputMaquina": 2961
+  },
+  {
+    "version": "1.0",
+    "id": 77,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 9
+    },
+    "fechaLegible": "2026-04-09",
+    "outputMaquina": 3039
+  },
+  {
+    "version": "1.0",
+    "id": 78,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 9
+    },
+    "fechaLegible": "2026-04-09",
+    "outputMaquina": 1055
+  },
+  {
+    "version": "1.0",
+    "id": 79,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 42455,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 9
+    },
+    "fechaLegible": "2026-04-09",
+    "outputMaquina": 267084
+  },
+  {
+    "version": "1.0",
+    "id": 80,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 35992,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 9
+    },
+    "fechaLegible": "2026-04-09",
+    "outputMaquina": 232465
+  },
+  {
+    "version": "1.0",
+    "id": 81,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 17*21 (king)"
+    },
+    "produccion": {
+      "cantidad": 10,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 9
+    },
+    "fechaLegible": "2026-04-09",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 82,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 35,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 9
+    },
+    "fechaLegible": "2026-04-09",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 83,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 44,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 9
+    },
+    "fechaLegible": "2026-04-09",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 84,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 25,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 9
+    },
+    "fechaLegible": "2026-04-09",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 85,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Doblado de Varillas 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 9
+    },
+    "fechaLegible": "2026-04-09",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 86,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "1.5 plz (8x22)"
+    },
+    "produccion": {
+      "cantidad": 72,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 10
+    },
+    "fechaLegible": "2026-04-10",
+    "outputMaquina": 3033
+  },
+  {
+    "version": "1.0",
+    "id": 87,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 58,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 10
+    },
+    "fechaLegible": "2026-04-10",
+    "outputMaquina": 3091
+  },
+  {
+    "version": "1.0",
+    "id": 88,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 82,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 10
+    },
+    "fechaLegible": "2026-04-10",
+    "outputMaquina": 3121
+  },
+  {
+    "version": "1.0",
+    "id": 89,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 83,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 10
+    },
+    "fechaLegible": "2026-04-10",
+    "outputMaquina": 1138
+  },
+  {
+    "version": "1.0",
+    "id": 90,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 37290,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 10
+    },
+    "fechaLegible": "2026-04-10",
+    "outputMaquina": 304374
+  },
+  {
+    "version": "1.0",
+    "id": 91,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 33025,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 10
+    },
+    "fechaLegible": "2026-04-10",
+    "outputMaquina": 265490
+  },
+  {
+    "version": "1.0",
+    "id": 92,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 8*22 (1.5 plz)"
+    },
+    "produccion": {
+      "cantidad": 8,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 10
+    },
+    "fechaLegible": "2026-04-10",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 93,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 41,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 10
+    },
+    "fechaLegible": "2026-04-10",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 94,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 28,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 10
+    },
+    "fechaLegible": "2026-04-10",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 95,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 8*22 (1.5 plz)"
+    },
+    "produccion": {
+      "cantidad": 4,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 10
+    },
+    "fechaLegible": "2026-04-10",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 96,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 60,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 10
+    },
+    "fechaLegible": "2026-04-10",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 97,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Doblado de Varillas 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 10
+    },
+    "fechaLegible": "2026-04-10",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 98,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 49,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 11
+    },
+    "fechaLegible": "2026-04-11",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 99,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "1.5 plz (8x22)"
+    },
+    "produccion": {
+      "cantidad": 18,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 11
+    },
+    "fechaLegible": "2026-04-11",
+    "outputMaquina": 3109
+  },
+  {
+    "version": "1.0",
+    "id": 100,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "Limpieza de Máquina"
+    },
+    "produccion": {
+      "cantidad": 0,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 11
+    },
+    "fechaLegible": "2026-04-11",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 101,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 45,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 11
+    },
+    "fechaLegible": "2026-04-11",
+    "outputMaquina": 3166
+  },
+  {
+    "version": "1.0",
+    "id": 102,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 45,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 11
+    },
+    "fechaLegible": "2026-04-11",
+    "outputMaquina": 1183
+  },
+  {
+    "version": "1.0",
+    "id": 103,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "Limpieza de Máquina"
+    },
+    "produccion": {
+      "cantidad": 0,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 11
+    },
+    "fechaLegible": "2026-04-11",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 104,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 14636,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 11
+    },
+    "fechaLegible": "2026-04-11",
+    "outputMaquina": 319010
+  },
+  {
+    "version": "1.0",
+    "id": 105,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 12907,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 11
+    },
+    "fechaLegible": "2026-04-11",
+    "outputMaquina": 278397
+  },
+  {
+    "version": "1.0",
+    "id": 106,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 8*22 (1.5 plz)"
+    },
+    "produccion": {
+      "cantidad": 32,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 11
+    },
+    "fechaLegible": "2026-04-11",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 107,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 18,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 11
+    },
+    "fechaLegible": "2026-04-11",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 108,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 8*22 (1.5 plz)"
+    },
+    "produccion": {
+      "cantidad": 23,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 11
+    },
+    "fechaLegible": "2026-04-11",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 109,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "1.5 plz (8x22)"
+    },
+    "produccion": {
+      "cantidad": 115,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 13
+    },
+    "fechaLegible": "2026-04-13",
+    "outputMaquina": 3224
+  },
+  {
+    "version": "1.0",
+    "id": 110,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 68,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 13
+    },
+    "fechaLegible": "2026-04-13",
+    "outputMaquina": 3234
+  },
+  {
+    "version": "1.0",
+    "id": 111,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 67,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 13
+    },
+    "fechaLegible": "2026-04-13",
+    "outputMaquina": 1250
+  },
+  {
+    "version": "1.0",
+    "id": 112,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 36990,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 13
+    },
+    "fechaLegible": "2026-04-13",
+    "outputMaquina": 356000
+  },
+  {
+    "version": "1.0",
+    "id": 113,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 29603,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 13
+    },
+    "fechaLegible": "2026-04-13",
+    "outputMaquina": 308000
+  },
+  {
+    "version": "1.0",
+    "id": 114,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 8*22 (1.5 plz)"
+    },
+    "produccion": {
+      "cantidad": 60,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 13
+    },
+    "fechaLegible": "2026-04-13",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 115,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 8*22 (1.5 plz)"
+    },
+    "produccion": {
+      "cantidad": 20,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 13
+    },
+    "fechaLegible": "2026-04-13",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 116,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Cortado de varilla de 8*22 (1.5 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 13
+    },
+    "fechaLegible": "2026-04-13",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 117,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Doblado de Varillas 8*22(1.5 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 13
+    },
+    "fechaLegible": "2026-04-13",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 118,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 61,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 14
+    },
+    "fechaLegible": "2026-04-14",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 119,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "1.5 plz (8x22)"
+    },
+    "produccion": {
+      "cantidad": 65,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 14
+    },
+    "fechaLegible": "2026-04-14",
+    "outputMaquina": 3289
+  },
+  {
+    "version": "1.0",
+    "id": 120,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 14
+    },
+    "fechaLegible": "2026-04-14",
+    "outputMaquina": 1325
+  },
+  {
+    "version": "1.0",
+    "id": 121,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 14
+    },
+    "fechaLegible": "2026-04-14",
+    "outputMaquina": 3309
+  },
+  {
+    "version": "1.0",
+    "id": 122,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 34173,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 14
+    },
+    "fechaLegible": "2026-04-14",
+    "outputMaquina": 34173
+  },
+  {
+    "version": "1.0",
+    "id": 123,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 25732,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 14
+    },
+    "fechaLegible": "2026-04-14",
+    "outputMaquina": 25732
+  },
+  {
+    "version": "1.0",
+    "id": 124,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 8*22 (1.5 plz)"
+    },
+    "produccion": {
+      "cantidad": 60,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 14
+    },
+    "fechaLegible": "2026-04-14",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 125,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "No trabajó"
+    },
+    "produccion": {
+      "cantidad": 0,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 14
+    },
+    "fechaLegible": "2026-04-14",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 126,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "1.5 plz (8x22)"
+    },
+    "produccion": {
+      "cantidad": 22,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 15
+    },
+    "fechaLegible": "2026-04-15",
+    "outputMaquina": 3311
+  },
+  {
+    "version": "1.0",
+    "id": 127,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x21)"
+    },
+    "produccion": {
+      "cantidad": 43,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 15
+    },
+    "fechaLegible": "2026-04-15",
+    "outputMaquina": 3354
+  },
+  {
+    "version": "1.0",
+    "id": 128,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 21,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 15
+    },
+    "fechaLegible": "2026-04-15",
+    "outputMaquina": 3375
+  },
+  {
+    "version": "1.0",
+    "id": 129,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 15
+    },
+    "fechaLegible": "2026-04-15",
+    "outputMaquina": 1400
+  },
+  {
+    "version": "1.0",
+    "id": 130,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 15
+    },
+    "fechaLegible": "2026-04-15",
+    "outputMaquina": 3384
+  },
+  {
+    "version": "1.0",
+    "id": 131,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 0,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 15
+    },
+    "fechaLegible": "2026-04-15",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 132,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 24397,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 15
+    },
+    "fechaLegible": "2026-04-15",
+    "outputMaquina": 50129
+  },
+  {
+    "version": "1.0",
+    "id": 133,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 8*22 (1.5 plz)"
+    },
+    "produccion": {
+      "cantidad": 18,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 15
+    },
+    "fechaLegible": "2026-04-15",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 134,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*21 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 33,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 15
+    },
+    "fechaLegible": "2026-04-15",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 135,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*21 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 10,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 15
+    },
+    "fechaLegible": "2026-04-15",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 136,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 8*22 (1.5 plz)"
+    },
+    "produccion": {
+      "cantidad": 45,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 15
+    },
+    "fechaLegible": "2026-04-15",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 137,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Cortado de varilla de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 15
+    },
+    "fechaLegible": "2026-04-15",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 138,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 20,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 16
+    },
+    "fechaLegible": "2026-04-16",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 139,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 82,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 16
+    },
+    "fechaLegible": "2026-04-16",
+    "outputMaquina": 3457
+  },
+  {
+    "version": "1.0",
+    "id": 140,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 16
+    },
+    "fechaLegible": "2026-04-16",
+    "outputMaquina": 1475
+  },
+  {
+    "version": "1.0",
+    "id": 141,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 16
+    },
+    "fechaLegible": "2026-04-16",
+    "outputMaquina": 3459
+  },
+  {
+    "version": "1.0",
+    "id": 142,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 56195,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 16
+    },
+    "fechaLegible": "2026-04-16",
+    "outputMaquina": 90368
+  },
+  {
+    "version": "1.0",
+    "id": 143,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 16600,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 16
+    },
+    "fechaLegible": "2026-04-16",
+    "outputMaquina": 66729
+  },
+  {
+    "version": "1.0",
+    "id": 144,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 80,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 16
+    },
+    "fechaLegible": "2026-04-16",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 145,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "No trabajó"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 16
+    },
+    "fechaLegible": "2026-04-16",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 146,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 44,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 17
+    },
+    "fechaLegible": "2026-04-17",
+    "outputMaquina": 3501
+  },
+  {
+    "version": "1.0",
+    "id": 147,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 83,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 17
+    },
+    "fechaLegible": "2026-04-17",
+    "outputMaquina": 3584
+  },
+  {
+    "version": "1.0",
+    "id": 148,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 83,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 17
+    },
+    "fechaLegible": "2026-04-17",
+    "outputMaquina": 1558
+  },
+  {
+    "version": "1.0",
+    "id": 149,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 83,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 17
+    },
+    "fechaLegible": "2026-04-17",
+    "outputMaquina": 3542
+  },
+  {
+    "version": "1.0",
+    "id": 150,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 20051,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 17
+    },
+    "fechaLegible": "2026-04-17",
+    "outputMaquina": 110419
+  },
+  {
+    "version": "1.0",
+    "id": 151,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 17787,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 17
+    },
+    "fechaLegible": "2026-04-17",
+    "outputMaquina": 84516
+  },
+  {
+    "version": "1.0",
+    "id": 152,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 65,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 17
+    },
+    "fechaLegible": "2026-04-17",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 153,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 16,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 17
+    },
+    "fechaLegible": "2026-04-17",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 154,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Cortado de varilla de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 17
+    },
+    "fechaLegible": "2026-04-17",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 155,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 72,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 17
+    },
+    "fechaLegible": "2026-04-17",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 156,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 74,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 18
+    },
+    "fechaLegible": "2026-04-18",
+    "outputMaquina": 3658
+  },
+  {
+    "version": "1.0",
+    "id": 157,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 24,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 18
+    },
+    "fechaLegible": "2026-04-18",
+    "outputMaquina": 3682
+  },
+  {
+    "version": "1.0",
+    "id": 158,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 68,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 18
+    },
+    "fechaLegible": "2026-04-18",
+    "outputMaquina": 1626
+  },
+  {
+    "version": "1.0",
+    "id": 159,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 68,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 18
+    },
+    "fechaLegible": "2026-04-18",
+    "outputMaquina": 3610
+  },
+  {
+    "version": "1.0",
+    "id": 160,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 5453,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 18
+    },
+    "fechaLegible": "2026-04-18",
+    "outputMaquina": 115872
+  },
+  {
+    "version": "1.0",
+    "id": 161,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 8417,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 18
+    },
+    "fechaLegible": "2026-04-18",
+    "outputMaquina": 92933
+  },
+  {
+    "version": "1.0",
+    "id": 162,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 30,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 18
+    },
+    "fechaLegible": "2026-04-18",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 163,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 50,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 18
+    },
+    "fechaLegible": "2026-04-18",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 164,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 84,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 20
+    },
+    "fechaLegible": "2026-04-20",
+    "outputMaquina": 3766
+  },
+  {
+    "version": "1.0",
+    "id": 165,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 29,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 20
+    },
+    "fechaLegible": "2026-04-20",
+    "outputMaquina": 3795
+  },
+  {
+    "version": "1.0",
+    "id": 166,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 76,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 20
+    },
+    "fechaLegible": "2026-04-20",
+    "outputMaquina": 1702
+  },
+  {
+    "version": "1.0",
+    "id": 167,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 76,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 20
+    },
+    "fechaLegible": "2026-04-20",
+    "outputMaquina": 3686
+  },
+  {
+    "version": "1.0",
+    "id": 168,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 39100,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 20
+    },
+    "fechaLegible": "2026-04-20",
+    "outputMaquina": 154972
+  },
+  {
+    "version": "1.0",
+    "id": 169,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 29287,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 20
+    },
+    "fechaLegible": "2026-04-20",
+    "outputMaquina": 122220
+  },
+  {
+    "version": "1.0",
+    "id": 170,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 112,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 20
+    },
+    "fechaLegible": "2026-04-20",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 171,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Cortado de varilla de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 20
+    },
+    "fechaLegible": "2026-04-20",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 172,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Doblado de Varillas 11*22(2 plz)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 20
+    },
+    "fechaLegible": "2026-04-20",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 173,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 62,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 20
+    },
+    "fechaLegible": "2026-04-20",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 174,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 30,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 21
+    },
+    "fechaLegible": "2026-04-21",
+    "outputMaquina": 3825
+  },
+  {
+    "version": "1.0",
+    "id": 175,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 88,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 21
+    },
+    "fechaLegible": "2026-04-21",
+    "outputMaquina": 3913
+  },
+  {
+    "version": "1.0",
+    "id": 176,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 21
+    },
+    "fechaLegible": "2026-04-21",
+    "outputMaquina": 1777
+  },
+  {
+    "version": "1.0",
+    "id": 177,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 21
+    },
+    "fechaLegible": "2026-04-21",
+    "outputMaquina": 3761
+  },
+  {
+    "version": "1.0",
+    "id": 178,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 0,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 21
+    },
+    "fechaLegible": "2026-04-21",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 179,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 0,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 21
+    },
+    "fechaLegible": "2026-04-21",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 180,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 63,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 21
+    },
+    "fechaLegible": "2026-04-21",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 181,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 38,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 21
+    },
+    "fechaLegible": "2026-04-21",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 182,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 40,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 21
+    },
+    "fechaLegible": "2026-04-21",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 183,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 58,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 22
+    },
+    "fechaLegible": "2026-04-22",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 184,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 65,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 22
+    },
+    "fechaLegible": "2026-04-22",
+    "outputMaquina": 3978
+  },
+  {
+    "version": "1.0",
+    "id": 185,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 22
+    },
+    "fechaLegible": "2026-04-22",
+    "outputMaquina": 1852
+  },
+  {
+    "version": "1.0",
+    "id": 186,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 22
+    },
+    "fechaLegible": "2026-04-22",
+    "outputMaquina": 3836
+  },
+  {
+    "version": "1.0",
+    "id": 187,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 75508,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 22
+    },
+    "fechaLegible": "2026-04-22",
+    "outputMaquina": 230480
+  },
+  {
+    "version": "1.0",
+    "id": 188,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 58898,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 22
+    },
+    "fechaLegible": "2026-04-22",
+    "outputMaquina": 181118
+  },
+  {
+    "version": "1.0",
+    "id": 189,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 65,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 22
+    },
+    "fechaLegible": "2026-04-22",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 190,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 41,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 22
+    },
+    "fechaLegible": "2026-04-22",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 191,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 97,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 23
+    },
+    "fechaLegible": "2026-04-23",
+    "outputMaquina": 4075
+  },
+  {
+    "version": "1.0",
+    "id": 192,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 23
+    },
+    "fechaLegible": "2026-04-23",
+    "outputMaquina": 1927
+  },
+  {
+    "version": "1.0",
+    "id": 193,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 75,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 23
+    },
+    "fechaLegible": "2026-04-23",
+    "outputMaquina": 3911
+  },
+  {
+    "version": "1.0",
+    "id": 194,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 41901,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 23
+    },
+    "fechaLegible": "2026-04-23",
+    "outputMaquina": 272381
+  },
+  {
+    "version": "1.0",
+    "id": 195,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 32856,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 23
+    },
+    "fechaLegible": "2026-04-23",
+    "outputMaquina": 213974
+  },
+  {
+    "version": "1.0",
+    "id": 196,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 130,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 23
+    },
+    "fechaLegible": "2026-04-23",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 197,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 77,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 23
+    },
+    "fechaLegible": "2026-04-23",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 198,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "king (17x21)"
+    },
+    "produccion": {
+      "cantidad": 63,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 24
+    },
+    "fechaLegible": "2026-04-24",
+    "outputMaquina": 4077
+  },
+  {
+    "version": "1.0",
+    "id": 199,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 2,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 24
+    },
+    "fechaLegible": "2026-04-24",
+    "outputMaquina": 4140
+  },
+  {
+    "version": "1.0",
+    "id": 200,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 37,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 24
+    },
+    "fechaLegible": "2026-04-24",
+    "outputMaquina": 1964
+  },
+  {
+    "version": "1.0",
+    "id": 201,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 38,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 24
+    },
+    "fechaLegible": "2026-04-24",
+    "outputMaquina": 3949
+  },
+  {
+    "version": "1.0",
+    "id": 202,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 105,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 24
+    },
+    "fechaLegible": "2026-04-24",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 203,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 39709,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 24
+    },
+    "fechaLegible": "2026-04-24",
+    "outputMaquina": 312090
+  },
+  {
+    "version": "1.0",
+    "id": 204,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 32338,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 24
+    },
+    "fechaLegible": "2026-04-24",
+    "outputMaquina": 246312
+  },
+  {
+    "version": "1.0",
+    "id": 205,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 17*21 (king)"
+    },
+    "produccion": {
+      "cantidad": 40,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 24
+    },
+    "fechaLegible": "2026-04-24",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 206,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Cortado de varilla de 17*21 (king)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 24
+    },
+    "fechaLegible": "2026-04-24",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 207,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Doblado de Varillas 17*21(king)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 24
+    },
+    "fechaLegible": "2026-04-24",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 208,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 41,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 24
+    },
+    "fechaLegible": "2026-04-24",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 209,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 17*21 (king)"
+    },
+    "produccion": {
+      "cantidad": 6,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 24
+    },
+    "fechaLegible": "2026-04-24",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 210,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP1"
+    },
+    "producto": {
+      "nombre": "1.5 plz (7x20)"
+    },
+    "produccion": {
+      "cantidad": 70,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 25
+    },
+    "fechaLegible": "2026-04-25",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 211,
+    "trabajador": {
+      "nombre": "Eliza"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP2"
+    },
+    "producto": {
+      "nombre": "2 plz (11x22)"
+    },
+    "produccion": {
+      "cantidad": 38,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 25
+    },
+    "fechaLegible": "2026-04-25",
+    "outputMaquina": 4178
+  },
+  {
+    "version": "1.0",
+    "id": 212,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP3"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 67,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 25
+    },
+    "fechaLegible": "2026-04-25",
+    "outputMaquina": 2031
+  },
+  {
+    "version": "1.0",
+    "id": 213,
+    "trabajador": {
+      "nombre": "Angelo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MP4"
+    },
+    "producto": {
+      "nombre": "2 plz pegado (10X20)"
+    },
+    "produccion": {
+      "cantidad": 68,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 25
+    },
+    "fechaLegible": "2026-04-25",
+    "outputMaquina": 4017
+  },
+  {
+    "version": "1.0",
+    "id": 214,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR1"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 19438,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 25
+    },
+    "fechaLegible": "2026-04-25",
+    "outputMaquina": 331528
+  },
+  {
+    "version": "1.0",
+    "id": 215,
+    "trabajador": {
+      "nombre": "Luis Polo"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "MR2"
+    },
+    "producto": {
+      "nombre": "Millares de Resortes"
+    },
+    "produccion": {
+      "cantidad": 15523,
+      "unidad": "millar"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 25
+    },
+    "fechaLegible": "2026-04-25",
+    "outputMaquina": 261835
+  },
+  {
+    "version": "1.0",
+    "id": 216,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 21,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 25
+    },
+    "fechaLegible": "2026-04-25",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 217,
+    "trabajador": {
+      "nombre": "Jair"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 17*21 (king)"
+    },
+    "produccion": {
+      "cantidad": 7,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 25
+    },
+    "fechaLegible": "2026-04-25",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 218,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 11*22 (2 plz)"
+    },
+    "produccion": {
+      "cantidad": 10,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 25
+    },
+    "fechaLegible": "2026-04-25",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 219,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Embarillado de 17*21 (king)"
+    },
+    "produccion": {
+      "cantidad": 10,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 25
+    },
+    "fechaLegible": "2026-04-25",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 220,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Cortado de varilla de 17*21 (king)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 25
+    },
+    "fechaLegible": "2026-04-25",
+    "outputMaquina": 0
+  },
+  {
+    "version": "1.0",
+    "id": 221,
+    "trabajador": {
+      "nombre": "Jerson"
+    },
+    "ubicacion": {
+      "modulo": "Paneles",
+      "maquina": "N/A"
+    },
+    "producto": {
+      "nombre": "Doblado de Varillas 17*21(king)"
+    },
+    "produccion": {
+      "cantidad": 1,
+      "unidad": "unidades"
+    },
+    "metadatosFecha": {
+      "anio": 2026,
+      "mes": 4,
+      "dia": 25
+    },
+    "fechaLegible": "2026-04-25",
+    "outputMaquina": 0
+  }
+]

@@ -2,7 +2,13 @@ import { format, subDays, isSameDay } from 'date-fns';
 
 export const analyticsService = {
   getExecutiveKPIs(records) {
-    if (!records.length) return { totalUnits: 0, uniqueWorkers: 0, activeMachines: 0, totalRecords: 0 };
+    const DEFAULT_METAS = { paneles: 1500, resortes: 1000 };
+    if (!records.length) return { 
+      totalUnits: 0, totalPaneles: 0, totalResortes: 0, 
+      uniqueWorkers: 0, activeMachines: 0, totalRecords: 0,
+      cumplimientoPaneles: 0, cumplimientoResortes: 0,
+      metas: DEFAULT_METAS
+    };
 
     const workers = new Set();
     const machines = new Set();
@@ -24,13 +30,32 @@ export const analyticsService = {
       if (r.maquinaId && r.maquinaId !== 'Sin Máquina') machines.add(r.maquinaId);
     });
 
+    // 1. Detectar rango de días únicos en el set de datos
+    const uniqueDays = new Set(records.map(r => {
+      const d = new Date(r.fechaTimestamp);
+      return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    })).size || 1;
+
+    // 2. Metas Diarias Base
+    const METAS_BASE = { paneles: 1500, resortes: 1000 };
+    
+    // 3. Escalar Metas según el rango de tiempo filtrado
+    const METAS_ESCALADAS = {
+      paneles: METAS_BASE.paneles * uniqueDays,
+      resortes: METAS_BASE.resortes * uniqueDays
+    };
+
     return {
       totalUnits: totalPaneles + totalResortes,
       totalPaneles,
       totalResortes,
       uniqueWorkers: workers.size,
       activeMachines: machines.size,
-      totalRecords: records.length
+      totalRecords: records.length,
+      cumplimientoPaneles: (totalPaneles / METAS_ESCALADAS.paneles) * 100,
+      cumplimientoResortes: (totalResortes / METAS_ESCALADAS.resortes) * 100,
+      metas: METAS_ESCALADAS,
+      diasActivos: uniqueDays
     };
   },
 
@@ -39,7 +64,8 @@ export const analyticsService = {
     if (!records.length) return { 
       todayTotal: 0, 
       avgUnitsPerHour: 0, 
-      topWorkerName: 'N/A', 
+      topPanelero: { name: 'N/A', reason: 'Sin Datos' }, 
+      topResortero: { name: 'N/A', reason: 'Sin Datos' }, 
       variationVsYesterday: 0 
     };
 

@@ -35,6 +35,7 @@ export const useDashboardRecords = () => {
       filtered = filtered.filter(r => r.fechaTimestamp >= start && r.fechaTimestamp <= end)
     } else if (timeRange !== 'all' && timeRange !== 'custom') {
       const cutoff = subDays(new Date(), timeRange)
+      cutoff.setHours(0, 0, 0, 0); // Forzar inicio del día para no perder registros matutinos
       filtered = filtered.filter(r => r.fechaTimestamp >= cutoff.getTime())
     }
 

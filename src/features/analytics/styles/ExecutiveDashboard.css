@@ -292,5 +292,30 @@
 
 @media (max-width: 1024px) {
   .charts-main-grid { grid-template-columns: 1fr; }
+  .advanced-stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .exec-dashboard { padding: 16px; }
+  .exec-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .header-actions { width: 100%; flex-wrap: wrap; }
+  .exec-search { width: 100%; }
+  .filter-btn { width: 100%; justify-content: center; }
+  
   .advanced-stats-row { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr; }
+  
+  .exec-title { font-size: 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  .kpi-card-exec { padding: 16px; }
+  .kpi-info .value { font-size: 1.2rem; }
+  .adv-content .value { font-size: 1.1rem; }
+  
+  /* Ajuste de zona visual en móvil para que no sea tan alta */
+  .visual-zone { height: 300px !important; }
+  .data-zone { padding: 15px !important; }
+  
+  .legend-item-pro { padding: 4px !important; }
 }

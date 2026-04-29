@@ -57,14 +57,29 @@ const ExecutiveDashboard = memo(() => {
 
       {/* Primary KPI Grid */}
       <div className="stats-grid">
-        <KPICard title="Producción Paneles" value={formatMetric(stats.totalPaneles)} icon={<Activity />} color="blue" subtitle="Total en Unidades (MP)" />
-        <KPICard title="Producción Resortes" value={formatMetric(stats.totalResortes)} icon={<Layers />} color="green" subtitle="Total en Millares (MR)" />
+        <KPICard 
+          title="Producción Paneles" 
+          value={formatMetric(stats.totalPaneles)} 
+          icon={<Activity />} 
+          color="blue" 
+          progress={stats.cumplimientoPaneles}
+          subtitle={`Meta: ${formatMetric(stats.metas?.paneles || 0)} u.`} 
+        />
+        <KPICard 
+          title="Producción Resortes" 
+          value={formatMetric(stats.totalResortes)} 
+          icon={<Layers />} 
+          color="green" 
+          progress={stats.cumplimientoResortes}
+          subtitle={`Meta: ${stats.metas?.resortes || 0} mil.`} 
+        />
         <KPICard title="Fuerza Laboral" value={stats.uniqueWorkers} icon={<Users />} color="orange" subtitle="Operarios especialistas" />
         <KPICard title="Registros Auditados" value={stats.totalRecords} icon={<TrendingUp />} color="purple" subtitle="Total histórico" />
       </div>
 
       {/* Advanced Metrics (Restored as per request) */}
       <div className="advanced-stats-row">
+        {/* 
         <AdvMetricCard 
           label="Cierre Hoy (Día)" 
           value={formatMetric(advStats.todayTotal)} 
@@ -77,8 +92,9 @@ const ExecutiveDashboard = memo(() => {
           }
         />
         <AdvMetricCard label="Promedio U/H" value={`${advStats.avgUnitsPerHour} u.`} icon={<Clock size={18} />} sub="Eficiencia General de Planta" />
-        <AdvMetricCard label="Líder Paneles" value={advStats.topPanelero.name} icon={<Award size={18} />} sub={advStats.topPanelero.reason} isHighlight />
-        <AdvMetricCard label="Líder Resortes" value={advStats.topResortero.name} icon={<Star size={18} />} sub={advStats.topResortero.reason} isHighlight />
+        */}
+        <AdvMetricCard label="Líder Paneles" value={advStats.topPanelero?.name || 'N/A'} icon={<Award size={18} />} sub={advStats.topPanelero?.reason || 'Sin Datos'} isHighlight />
+        <AdvMetricCard label="Líder Resortes" value={advStats.topResortero?.name || 'N/A'} icon={<Star size={18} />} sub={advStats.topResortero?.reason || 'Sin Datos'} isHighlight />
       </div>
 
       <div className="charts-main-grid">

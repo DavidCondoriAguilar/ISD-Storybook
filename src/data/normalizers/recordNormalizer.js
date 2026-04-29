@@ -37,12 +37,28 @@ export const normalizeWorker = (r) => {
 }
 
 /**
- * NORMALIZADOR DE UBICACIÓN (Respeta el Área detectada)
+ * NORMALIZADOR DE UBICACIÓN (Detección Inteligente de Área)
  */
-export const normalizeLocation = (r) => ({
-  modulo: r.area || r.ubicacion?.modulo || r.modulo || 'General',
-  maquina: r.maquinaId || r.ubicacion?.maquina || r.maquina || 'Sin Máquina'
-})
+export const normalizeLocation = (r) => {
+  const maquina = r.maquinaId || r.ubicacion?.maquina || r.maquina || 'Sin Máquina';
+  const producto = (r.producto?.nombre || r.productoNombre || '').toUpperCase();
+  const mId = maquina.toUpperCase();
+
+  let modulo = r.area || r.ubicacion?.modulo || r.modulo;
+
+  // Lógica Senior: Si no viene área, la deducimos por contexto industrial
+  if (!modulo || modulo === 'General' || modulo === 'Paneles') {
+    if (mId.includes('MR') || producto.includes('RESORTE')) {
+      modulo = 'Resortes';
+    } else if (mId.includes('MP') || producto.includes('PANEL') || producto.includes('PLZ')) {
+      modulo = 'Paneles';
+    } else {
+      modulo = modulo || 'Paneles';
+    }
+  }
+
+  return { modulo, maquina };
+}
 
 export const normalizeProduct = (r) => ({
   name: r.producto?.nombre || r.productoNombre || 'Sin Producto',

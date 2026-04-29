@@ -26,6 +26,7 @@ export const useExecutiveData = () => {
       filtered = filtered.filter(r => r.fechaTimestamp >= start && r.fechaTimestamp <= end)
     } else if (timeRange !== 'all' && timeRange !== 'custom') {
       const cutoff = subDays(new Date(), timeRange)
+      cutoff.setHours(0, 0, 0, 0);
       filtered = filtered.filter(r => r.fechaTimestamp >= cutoff.getTime())
     }
 
