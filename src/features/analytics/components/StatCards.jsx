@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 
-export const KPICard = ({ title, value, icon, color, subtitle, progress }) => (
+export const KPICard = ({ title, value, icon, color, subtitle, progress, trend }) => (
   <motion.div className="kpi-card-exec" whileHover={{ y: -4, borderColor: 'rgba(255,255,255,0.15)' }}>
     <div className={`kpi-icon ${color}`}>{icon}</div>
     <div className="kpi-info">
@@ -24,6 +24,19 @@ export const KPICard = ({ title, value, icon, color, subtitle, progress }) => (
               }} 
             />
           </div>
+        </div>
+      )}
+      {trend !== undefined && trend !== 0 && (
+        <div className={`kpi-trend ${trend >= 0 ? 'up' : 'down'}`} style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '4px', 
+          fontSize: '0.65rem', 
+          fontWeight: '800', 
+          marginTop: '8px',
+          color: trend >= 0 ? '#10b981' : '#ef4444'
+        }}>
+          {trend >= 0 ? '▲' : '▼'} {Math.abs(trend).toFixed(1)}% vs ayer
         </div>
       )}
       {subtitle && <span className="subtitle" style={{ fontSize: '0.65rem', opacity: 0.6, marginTop: '6px', display: 'block' }}>{subtitle}</span>}

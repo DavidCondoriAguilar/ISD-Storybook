@@ -38,9 +38,13 @@ export const renderActiveShape = (props) => {
       />
       <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
       <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#94a3b8" style={{ fontSize: '11px' }}>{`${value.toLocaleString()} u.`}</text>
+      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#f1f5f9" style={{ fontSize: '11px', fontWeight: '700' }}>
+        {payload.name.toLowerCase().includes('resorte') 
+          ? `${(payload.value / 1000).toLocaleString()} mil.` 
+          : `${payload.value.toLocaleString()} u.`}
+      </text>
       <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={16} textAnchor={textAnchor} fill="#64748b" style={{ fontSize: '10px' }}>
-        {`(${(percent * 100).toFixed(1)}%)`}
+        {`Volumen Real`}
       </text>
     </g>
   );

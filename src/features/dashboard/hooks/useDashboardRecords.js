@@ -10,7 +10,7 @@ export const useDashboardRecords = () => {
   const [itemsPerPage, setItemsPerPage] = useState(25)
   
   // Date Filtering State
-  const [timeRange, setTimeRange] = useState(30)
+  const [timeRange, setTimeRange] = useState('all')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -25,10 +25,11 @@ export const useDashboardRecords = () => {
     let filtered = rawRecords
 
     // 1. Date Range Filtering
-    if (timeRange === 'custom' && startDate && endDate) {
+    if ((timeRange === 'custom' || timeRange === 'day') && startDate && endDate) {
       const [sYear, sMonth, sDay] = startDate.split('-').map(Number)
       const [eYear, eMonth, eDay] = endDate.split('-').map(Number)
       
+      // Aseguramos que cubra todo el día, desde las 00:00 hasta las 23:59
       const start = new Date(sYear, sMonth - 1, sDay, 0, 0, 0, 0).getTime()
       const end = new Date(eYear, eMonth - 1, eDay, 23, 59, 59, 999).getTime()
       

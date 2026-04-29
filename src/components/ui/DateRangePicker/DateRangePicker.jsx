@@ -15,6 +15,7 @@ export const DateRangePicker = memo(({
 }) => {
   const getRangeLabel = () => {
     if (timeRange === 'all') return 'Historial Completo'
+    if (timeRange === 'day') return startDate ? `Día: ${startDate}` : 'Seleccionar Día'
     if (timeRange === 'custom') {
       if (startDate && endDate) return `${startDate} → ${endDate}`
       return 'Rango Personalizado'
@@ -39,22 +40,16 @@ export const DateRangePicker = memo(({
           >
             <div className="filter-options">
               <button 
-                className={timeRange === 1 ? 'active' : ''} 
-                onClick={() => { setTimeRange(1); setIsFilterOpen(false); }}
+                className={timeRange === 'day' ? 'active' : ''} 
+                onClick={() => setTimeRange('day')}
               >
-                Hoy
+                Un día específico...
               </button>
               <button 
-                className={timeRange === 7 ? 'active' : ''} 
-                onClick={() => { setTimeRange(7); setIsFilterOpen(false); }}
+                className={timeRange === 'custom' ? 'active' : ''} 
+                onClick={() => setTimeRange('custom')}
               >
-                Últimos 7 días
-              </button>
-              <button 
-                className={timeRange === 30 ? 'active' : ''} 
-                onClick={() => { setTimeRange(30); setIsFilterOpen(false); }}
-              >
-                Últimos 30 días
+                Rango personalizado...
               </button>
               <button 
                 className={timeRange === 'all' ? 'active' : ''} 
@@ -62,13 +57,30 @@ export const DateRangePicker = memo(({
               >
                 Todo el tiempo
               </button>
-              <button 
-                className={timeRange === 'custom' ? 'active' : ''} 
-                onClick={() => setTimeRange('custom')}
-              >
-                Personalizado...
-              </button>
             </div>
+
+            {timeRange === 'day' && (
+              <div className="custom-range-selector" onClick={(e) => e.stopPropagation()}>
+                <div className="date-input-group">
+                  <label>Seleccionar Fecha:</label>
+                  <input 
+                    type="date" 
+                    value={startDate} 
+                    onChange={(e) => {
+                      setStartDate(e.target.value);
+                      setEndDate(e.target.value); // Para el día único, inicio = fin
+                    }} 
+                  />
+                </div>
+                <button 
+                  className="apply-btn"
+                  onClick={() => setIsFilterOpen(false)}
+                  disabled={!startDate}
+                >
+                  Ver este día
+                </button>
+              </div>
+            )}
 
             {timeRange === 'custom' && (
               <div className="custom-range-selector" onClick={(e) => e.stopPropagation()}>

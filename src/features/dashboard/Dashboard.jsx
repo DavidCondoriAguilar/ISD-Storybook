@@ -145,13 +145,15 @@ const Dashboard = memo(function Dashboard() {
                   return (
                     <motion.tr 
                       key={r.idLocal || i}
-                      className="audit-row"
+                      className={`audit-row ${(!r.outputMaquina && r.cantidad > 0) ? 'row-alert' : ''}`}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
+                      title={(!r.outputMaquina && r.cantidad > 0) ? 'Alerta: Sin lectura de máquina' : ''}
                     >
                       <td className="td-elite row-num-cell" style={{ opacity: 0.5, fontSize: '10px', fontWeight: 'bold' }}>
                         {i + 1}
+                        {(!r.outputMaquina && r.cantidad > 0) && <span className="alert-dot">!</span>}
                       </td>
                       <td className="td-elite date-cell">
                         {new Date(r.fechaTimestamp).toLocaleDateString('es-ES')}

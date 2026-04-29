@@ -460,3 +460,27 @@
 .dashboard-elite-view .pagination-wrapper {
   margin-top: 16px;
 }
+/* Alertas de Discrepancia */
+.row-alert {
+  background: rgba(239, 68, 68, 0.05) !important;
+}
+
+.row-alert:hover {
+  background: rgba(239, 68, 68, 0.08) !important;
+}
+
+.alert-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+  margin-left: 5px;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+  vertical-align: middle;
+  font-weight: bold;
+}

@@ -16,6 +16,7 @@ import { renderActiveShape } from '../components/ActiveShapePie'
 import { ExecutiveHeader } from '../components/ExecutiveHeader'
 import { ChartCard } from '../components/ChartCard'
 import { KPICard, AdvMetricCard } from '../components/StatCards'
+import { EmployeeMatrix } from '../components/EmployeeMatrix'
 
 import '../styles/ExecutiveDashboard.css'
 
@@ -30,7 +31,7 @@ const ExecutiveDashboard = memo(() => {
     searchTerm, setSearchTerm,
     isFilterOpen, setIsFilterOpen,
     stats, advStats, trendData,
-    topPaneleros, topResorteros,
+    topPaneleros, topResorteros, allWorkers,
     productMix, machineStats
   } = useExecutiveData();
 
@@ -59,22 +60,20 @@ const ExecutiveDashboard = memo(() => {
       <div className="stats-grid">
         <KPICard 
           title="Producción Paneles" 
-          value={formatMetric(stats.totalPaneles)} 
+          value={`${formatMetric(stats.totalPaneles)} u.`} 
           icon={<Activity />} 
           color="blue" 
-          progress={stats.cumplimientoPaneles}
-          subtitle={`Meta: ${formatMetric(stats.metas?.paneles || 0)} u.`} 
+          trend={stats.variations?.paneles}
         />
         <KPICard 
           title="Producción Resortes" 
-          value={formatMetric(stats.totalResortes)} 
+          value={`${formatMetric(stats.totalResortes)} mil.`} 
           icon={<Layers />} 
           color="green" 
-          progress={stats.cumplimientoResortes}
-          subtitle={`Meta: ${stats.metas?.resortes || 0} mil.`} 
+          trend={stats.variations?.resortes}
         />
-        <KPICard title="Fuerza Laboral" value={stats.uniqueWorkers} icon={<Users />} color="orange" subtitle="Operarios especialistas" />
-        <KPICard title="Registros Auditados" value={stats.totalRecords} icon={<TrendingUp />} color="purple" subtitle="Total histórico" />
+        <KPICard title="Fuerza Laboral" value={stats.uniqueWorkers} icon={<Users />} color="cyan" />
+        <KPICard title="Registros Auditados" value={stats.totalRecords} icon={<TrendingUp />} color="purple" />
       </div>
 
       {/* Advanced Metrics (Restored as per request) */}
@@ -111,10 +110,44 @@ const ExecutiveDashboard = memo(() => {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
               <XAxis dataKey="date" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
-              <YAxis stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(val) => formatMetric(val)} />
+              <YAxis 
+                yAxisId="left"
+                stroke="#3b82f6" 
+                fontSize={10} 
+                tickLine={false} 
+                axisLine={false} 
+                tickFormatter={(val) => `${val}u`} 
+              />
+              <YAxis 
+                yAxisId="right"
+                orientation="right"
+                stroke="#10b981" 
+                fontSize={10} 
+                tickLine={false} 
+                axisLine={false} 
+                tickFormatter={(val) => formatMetric(val)} 
+              />
               <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: '11px' }} />
-              <Area type="monotone" dataKey="paneles" name="Paneles (u.)" stroke="#3b82f6" fillOpacity={1} fill="url(#colorPaneles)" strokeWidth={2} />
-              <Area type="monotone" dataKey="resortes" name="Resortes (mil.)" stroke="#10b981" fillOpacity={1} fill="url(#colorResortes)" strokeWidth={2} />
+              <Area 
+                yAxisId="left"
+                type="monotone" 
+                dataKey="paneles" 
+                name="Paneles (u.)" 
+                stroke="#3b82f6" 
+                fillOpacity={1} 
+                fill="url(#colorPaneles)" 
+                strokeWidth={2} 
+              />
+              <Area 
+                yAxisId="right"
+                type="monotone" 
+                dataKey="resortes" 
+                name="Resortes (mil.)" 
+                stroke="#10b981" 
+                fillOpacity={1} 
+                fill="url(#colorResortes)" 
+                strokeWidth={2} 
+              />
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -219,6 +252,8 @@ const ExecutiveDashboard = memo(() => {
           </ResponsiveContainer>
         </ChartCard>
       </div>
+
+      <EmployeeMatrix workers={allWorkers} />
     </motion.div>
   );
 });

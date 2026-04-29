@@ -30,6 +30,11 @@ Transformar el actual sistema de monitoreo en una herramienta de **Inteligencia 
 *   **¿Por qué implementarlo?**: Identifica si hay bajas de rendimiento en horarios específicos o bajo ciertas supervisiones.
 *   **Valor**: Optimización de la rotación de personal y estandarización de la calidad.
 
+### 5. Auditoría de Integridad de Datos (Sincronización Máquina-Humano) 🔴 [CRÍTICO]
+*   **¿Qué es?**: Sistema de validación para detectar registros con "Prod. Máquina = 0" o desajustes extremos entre lo reportado y el contador real.
+*   **¿Por qué implementarlo?**: Actualmente se detecta una eficiencia global del **17.7%**, la cual es artificialmente baja debido a omisiones en el registro de máquinas o fallas en sensores.
+*   **Valor**: Permite obtener la **Eficiencia Real** de la planta. Sin datos precisos de máquina, la gerencia está "ciega" respecto al verdadero rendimiento de los activos.
+
 ---
 
 ## 🛠️ Respaldo Tecnológico

@@ -5,7 +5,7 @@ import { db } from '../../../data/db'
 import { analyticsService } from '../services/analyticsService'
 
 export const useExecutiveData = () => {
-  const [timeRange, setTimeRange] = useState(30)
+  const [timeRange, setTimeRange] = useState('all')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
@@ -16,7 +16,7 @@ export const useExecutiveData = () => {
   const filteredRecords = useMemo(() => {
     let filtered = rawRecords
 
-    if (timeRange === 'custom' && startDate && endDate) {
+    if ((timeRange === 'custom' || timeRange === 'day') && startDate && endDate) {
       const [sYear, sMonth, sDay] = startDate.split('-').map(Number)
       const [eYear, eMonth, eDay] = endDate.split('-').map(Number)
       
@@ -42,12 +42,16 @@ export const useExecutiveData = () => {
     return filtered
   }, [rawRecords, timeRange, startDate, endDate, searchTerm])
 
-  const stats = useMemo(() => analyticsService.getExecutiveKPIs(filteredRecords), [filteredRecords])
-  const advStats = useMemo(() => analyticsService.getAdvancedMetrics(filteredRecords), [filteredRecords])
-  const trendData = useMemo(() => analyticsService.getProductionTrend(filteredRecords), [filteredRecords])
-  const { topPaneleros, topResorteros } = useMemo(() => analyticsService.getWorkerRankings(filteredRecords), [filteredRecords])
-  const productMix = useMemo(() => analyticsService.getProductMix(filteredRecords), [filteredRecords])
-  const machineStats = useMemo(() => analyticsService.getMachineStats(filteredRecords), [filteredRecords])
+  const dashboardData = useMemo(() => analyticsService.getExecutiveDashboardData(filteredRecords), [filteredRecords])
+
+  const stats = dashboardData.stats || {}
+  const advStats = dashboardData.advStats || {}
+  const trendData = dashboardData.trendData || []
+  const topPaneleros = dashboardData.topPaneleros || []
+  const topResorteros = dashboardData.topResorteros || []
+  const allWorkers = dashboardData.allWorkers || []
+  const productMix = dashboardData.productMix || []
+  const machineStats = dashboardData.machineStats || []
 
   return {
     timeRange,
@@ -65,6 +69,7 @@ export const useExecutiveData = () => {
     trendData,
     topPaneleros,
     topResorteros,
+    allWorkers,
     productMix,
     machineStats
   }
