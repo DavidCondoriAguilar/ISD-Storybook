@@ -17,8 +17,12 @@ export const useExecutiveData = () => {
     let filtered = rawRecords
 
     if (timeRange === 'custom' && startDate && endDate) {
-      const start = new Date(startDate).getTime()
-      const end = new Date(endDate).setHours(23, 59, 59, 999)
+      const [sYear, sMonth, sDay] = startDate.split('-').map(Number)
+      const [eYear, eMonth, eDay] = endDate.split('-').map(Number)
+      
+      const start = new Date(sYear, sMonth - 1, sDay, 0, 0, 0, 0).getTime()
+      const end = new Date(eYear, eMonth - 1, eDay, 23, 59, 59, 999).getTime()
+      
       filtered = filtered.filter(r => r.fechaTimestamp >= start && r.fechaTimestamp <= end)
     } else if (timeRange !== 'all' && timeRange !== 'custom') {
       const cutoff = subDays(new Date(), timeRange)

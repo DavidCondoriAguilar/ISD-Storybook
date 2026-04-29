@@ -110,8 +110,8 @@ export const analyticsService = {
     return {
       todayTotal: todayUnits,
       avgUnitsPerHour: (todayUnits / (totalHours / (records.length / 5))).toFixed(1),
-      topWorkerName: topWorker ? topWorker.name : 'N/A',
-      topWorkerReason: topWorker ? topWorker.reason : 'N/A',
+      topPanelero: candidates.filter(c => c.reason.includes('Ensamblaje') || c.reason.includes('Eficiencia')).sort((a,b) => b.score - a.score)[0] || { name: 'N/A', reason: 'Sin Datos' },
+      topResortero: candidates.filter(c => c.reason.includes('Volumen') || c.reason.includes('Flujo')).sort((a,b) => b.score - a.score)[0] || { name: 'N/A', reason: 'Sin Datos' },
       variationVsYesterday: variation.toFixed(1)
     };
   },
