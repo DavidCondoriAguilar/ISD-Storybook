@@ -44,7 +44,7 @@ export const normalizeRecords = (validatedPayload, existingRecords = []) => {
       cantidadOriginal: cantidadNeta,
       unidad: unidadOriginal, // Guardamos la unidad estandarizada
       unidadOriginal: unidadOriginal,
-      lecturaMaquina: lecturaMaquina,
+      outputMaquina: lecturaMaquina,
       tiempoMinutos: minutos,
       fechaTimestamp: normalizedTimestamp,
       esHoraExtra: horasExtra > 0,

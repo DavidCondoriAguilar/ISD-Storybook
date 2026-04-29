@@ -13,12 +13,34 @@ export const dashboardService = {
   },
 
   calculateTotals(records) {
-    return records.reduce((acc, r) => {
+    const workers = new Set()
+    const machines = new Set()
+
+    const totals = records.reduce((acc, r) => {
       const isM = this.isMillar(r)
       if (isM) acc.millares += (r.cantidad || 0)
       else acc.unidades += (r.cantidad || 0)
+      
+      if (r.trabajadorNombre) workers.add(r.trabajadorNombre)
+      if (r.maquinaId && r.maquinaId !== 'Sin Máquina') machines.add(r.maquinaId)
+
+      if (r.outputMaquina > 0) {
+        acc.totalOutput += r.outputMaquina
+        acc.totalWithMachine += r.cantidad
+      }
       return acc
-    }, { unidades: 0, millares: 0 })
+    }, { unidades: 0, millares: 0, totalOutput: 0, totalWithMachine: 0 })
+
+    const efficiency = totals.totalOutput > 0 
+      ? (totals.totalWithMachine / totals.totalOutput) * 100 
+      : 0
+
+    return {
+      ...totals,
+      efficiency: efficiency.toFixed(1),
+      workerCount: workers.size,
+      machineCount: machines.size
+    }
   },
 
   async exportToPDF(records, totals, notify) {
@@ -66,16 +88,17 @@ export const dashboardService = {
       r.moduloId || '-',
       r.trabajadorNombre || '-',
       r.cantidad ? `${r.cantidad.toLocaleString()} ${this.isMillar(r) ? 'mil.' : 'u.'}` : '-',
+      r.outputMaquina !== null && r.outputMaquina !== undefined ? r.outputMaquina : '-',
       r.maquinaId || '-'
     ])
 
     autoTable(doc, {
       startY: summaryY + 30,
-      head: [['#', 'FECHA', 'PRODUCTO', 'ÁREA', 'TRABAJADOR', 'CANTIDAD', 'MÁQUINA']],
+      head: [['#', 'FECHA', 'PRODUCTO', 'ÁREA', 'TRABAJADOR', 'CANTIDAD', 'P.MÁQUINA', 'MÁQUINA']],
       body: tableData,
       theme: 'grid',
-      headStyles: { fillColor: COLORS.dark, fontSize: 8 },
-      styles: { fontSize: 7 }
+      headStyles: { fillColor: COLORS.dark, fontSize: 7 },
+      styles: { fontSize: 6, cellPadding: 1.5 }
     })
 
     doc.save(`ISD-Report-${format(today, 'yyyy-MM-dd')}.pdf`)

@@ -46,6 +46,7 @@ export function normalizeRecords(records) {
       area: area,
       moduloId: area, // Sincronizamos moduloId con área para consistencia
       maquinaId: maquina,
+      outputMaquina: r.outputMaquina ?? null,
       tipoJornada: r.tiempo?.tipo || 'Estándar',
       metadata: {
         originalId: r.id,

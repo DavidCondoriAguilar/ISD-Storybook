@@ -95,6 +95,7 @@ export const AuditJournal = memo(({
         <table className="history-table">
           <thead>
             <tr>
+              <th style={{ width: '40px' }}>#</th>
               <th>Centro de Operación</th>
               <th>Producto & SKU</th>
               <th>Operador Especialista</th>
@@ -119,6 +120,9 @@ export const AuditJournal = memo(({
                 : `${uphValue.toFixed(1)} u/h`;
               return (
                 <tr key={r.idLocal || i}>
+                  <td className="row-num-cell" style={{ fontSize: '10px', opacity: 0.5, fontWeight: 'bold' }}>
+                    {(paginationProps?.currentPage - 1) * paginationProps?.itemsPerPage + i + 1}
+                  </td>
                   <td style={{ width: '18%' }}>
                     <div className="cell-column">
                       <span className="module-name">{getModuleName(r.moduloId)}</span>

@@ -1,5 +1,6 @@
-import { useMemo, useState, useCallback } from 'react'
+import { useMemo, useState, useCallback, useEffect } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { subDays } from 'date-fns'
 import { db } from '../../../data/db'
 
 export const useDashboardRecords = () => {
@@ -7,6 +8,12 @@ export const useDashboardRecords = () => {
   const [sortOrder, setSortOrder] = useState('desc')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(25)
+  
+  // Date Filtering State
+  const [timeRange, setTimeRange] = useState(30)
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
 
   const rawRecords = useLiveQuery(() => db.records.toArray(), []) || []
 
@@ -15,27 +22,47 @@ export const useDashboardRecords = () => {
   }, [])
 
   const filteredRecords = useMemo(() => {
+    let filtered = rawRecords
+
+    // 1. Date Range Filtering
+    if (timeRange === 'custom' && startDate && endDate) {
+      const start = new Date(startDate).getTime()
+      const end = new Date(endDate).setHours(23, 59, 59, 999)
+      filtered = filtered.filter(r => r.fechaTimestamp >= start && r.fechaTimestamp <= end)
+    } else if (timeRange !== 'all' && timeRange !== 'custom') {
+      const cutoff = subDays(new Date(), timeRange)
+      filtered = filtered.filter(r => r.fechaTimestamp >= cutoff.getTime())
+    }
+
+    // 2. Text Filtering
     const search = filterText.toLowerCase()
-    const filtered = filterText
-      ? rawRecords.filter(r => 
-          (r.trabajadorNombre || '').toLowerCase().includes(search) ||
-          (r.productoNombre || '').toLowerCase().includes(search) ||
-          (r.moduloId || '').toLowerCase().includes(search) ||
-          (r.maquinaId || '').toLowerCase().includes(search)
-        )
-      : rawRecords
+    if (filterText) {
+      filtered = filtered.filter(r => 
+        (r.trabajadorNombre || '').toLowerCase().includes(search) ||
+        (r.productoNombre || '').toLowerCase().includes(search) ||
+        (r.moduloId || '').toLowerCase().includes(search) ||
+        (r.maquinaId || '').toLowerCase().includes(search)
+      )
+    }
     
+    // 3. Sorting
     return [...filtered].sort((a, b) => {
       const dateA = a.fechaTimestamp || 0
       const dateB = b.fechaTimestamp || 0
       return sortOrder === 'desc' ? dateB - dateA : dateA - dateB
     })
-  }, [rawRecords, filterText, sortOrder])
+  }, [rawRecords, filterText, sortOrder, timeRange, startDate, endDate])
 
-  // No slicing since pagination is hidden for now
+  // Implement slicing for pagination
   const displayRecords = useMemo(() => {
-    return filteredRecords
-  }, [filteredRecords])
+    const start = (currentPage - 1) * itemsPerPage
+    return filteredRecords.slice(start, start + itemsPerPage)
+  }, [filteredRecords, currentPage, itemsPerPage])
+
+  // Reset page when filter changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filterText, itemsPerPage, timeRange, startDate, endDate])
 
   const totalPages = Math.ceil(filteredRecords.length / itemsPerPage) || 1
 
@@ -47,6 +74,14 @@ export const useDashboardRecords = () => {
     setFilterText,
     sortOrder,
     toggleSort,
+    timeRange,
+    setTimeRange,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    isFilterOpen,
+    setIsFilterOpen,
     pagination: {
       currentPage,
       totalPages,

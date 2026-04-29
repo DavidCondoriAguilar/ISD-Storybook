@@ -25,6 +25,8 @@ const ExecutiveDashboard = memo(() => {
   const [activeIndex, setActiveIndex] = useState(0);
   const {
     timeRange, setTimeRange,
+    startDate, setStartDate,
+    endDate, setEndDate,
     searchTerm, setSearchTerm,
     isFilterOpen, setIsFilterOpen,
     stats, advStats, trendData,
@@ -43,6 +45,10 @@ const ExecutiveDashboard = memo(() => {
       <ExecutiveHeader 
         timeRange={timeRange}
         setTimeRange={setTimeRange}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         isFilterOpen={isFilterOpen}
@@ -51,14 +57,13 @@ const ExecutiveDashboard = memo(() => {
 
       {/* Primary KPI Grid */}
       <div className="stats-grid">
-        <KPICard title="Producción Total" value={formatMetric(stats.totalUnits)} icon={<Activity />} color="blue" />
-        <KPICard title="Operarios Activos" value={stats.uniqueWorkers} icon={<Users />} color="green" />
-        <KPICard title="Utilización Máq." value={stats.activeMachines} icon={<Cpu />} color="orange" />
-        <KPICard title="Audit Log" value={stats.totalRecords} icon={<TrendingUp />} color="purple" />
+        <KPICard title="Producción Paneles" value={formatMetric(stats.totalPaneles)} icon={<Activity />} color="blue" subtitle="Total en Unidades (MP)" />
+        <KPICard title="Producción Resortes" value={formatMetric(stats.totalResortes)} icon={<Layers />} color="green" subtitle="Total en Millares (MR)" />
+        <KPICard title="Fuerza Laboral" value={stats.uniqueWorkers} icon={<Users />} color="orange" subtitle="Operarios especialistas" />
+        <KPICard title="Registros Auditados" value={stats.totalRecords} icon={<TrendingUp />} color="purple" subtitle="Total histórico" />
       </div>
 
-      {/* Advanced Metrics (Commented out as per previous request) */}
-      {/* 
+      {/* Advanced Metrics (Restored as per request) */}
       <div className="advanced-stats-row">
         <AdvMetricCard 
           label="Cierre Hoy (Día)" 
@@ -71,10 +76,9 @@ const ExecutiveDashboard = memo(() => {
             </span>
           }
         />
-        <AdvMetricCard label="Promedio U/H" value={`${advStats.avgUnitsPerHour} u.`} icon={<Clock size={18} />} sub="Eficiencia Plant-Wide" />
-        <AdvMetricCard label="MVP Operario" value={advStats.topWorkerName} icon={<Star size={18} />} sub="Líder de Producción" isHighlight />
+        <AdvMetricCard label="Promedio U/H" value={`${advStats.avgUnitsPerHour} u.`} icon={<Clock size={18} />} sub="Eficiencia General de Planta" />
+        <AdvMetricCard label="Operario Destacado" value={advStats.topWorkerName} icon={<Star size={18} />} sub={advStats.topWorkerReason} isHighlight />
       </div>
-      */}
 
       <div className="charts-main-grid">
         <ChartCard title="Dinámica de Planta (MP vs MR)" icon={<Layers size={20} />} span={2}>

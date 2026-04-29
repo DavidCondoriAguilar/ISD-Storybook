@@ -6,6 +6,8 @@ import { analyticsService } from '../services/analyticsService'
 
 export const useExecutiveData = () => {
   const [timeRange, setTimeRange] = useState(30)
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
@@ -14,7 +16,11 @@ export const useExecutiveData = () => {
   const filteredRecords = useMemo(() => {
     let filtered = rawRecords
 
-    if (timeRange !== 'all') {
+    if (timeRange === 'custom' && startDate && endDate) {
+      const start = new Date(startDate).getTime()
+      const end = new Date(endDate).setHours(23, 59, 59, 999)
+      filtered = filtered.filter(r => r.fechaTimestamp >= start && r.fechaTimestamp <= end)
+    } else if (timeRange !== 'all' && timeRange !== 'custom') {
       const cutoff = subDays(new Date(), timeRange)
       filtered = filtered.filter(r => r.fechaTimestamp >= cutoff.getTime())
     }
@@ -29,7 +35,7 @@ export const useExecutiveData = () => {
     }
 
     return filtered
-  }, [rawRecords, timeRange, searchTerm])
+  }, [rawRecords, timeRange, startDate, endDate, searchTerm])
 
   const stats = useMemo(() => analyticsService.getExecutiveKPIs(filteredRecords), [filteredRecords])
   const advStats = useMemo(() => analyticsService.getAdvancedMetrics(filteredRecords), [filteredRecords])
@@ -41,6 +47,10 @@ export const useExecutiveData = () => {
   return {
     timeRange,
     setTimeRange,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
     searchTerm,
     setSearchTerm,
     isFilterOpen,

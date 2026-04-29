@@ -47,7 +47,10 @@
 
 .kpi-group {
   display: flex;
-  gap: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 900px;
 }
 
 .kpi-card-premium {
@@ -383,6 +386,75 @@
     display: block;
     overflow-x: auto;
   }
+}
+
+.dashboard-elite-view .pagination-wrapper {
+  margin-top: 16px;
+}
+
+.manager-info-bar {
+  background: var(--primary-light);
+  border-left: 4px solid var(--primary);
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.manager-info-bar p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.output-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.eff-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  min-width: 32px;
+  text-align: center;
+}
+
+.eff-high {
+  background: var(--success-glow);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.eff-mid {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  border: 1px solid #f59e0b;
+}
+
+.eff-low {
+  background: var(--danger-glow);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.machine-output-cell {
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+}
+
+.output-val {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.empty-val {
+  opacity: 0.2;
+  font-weight: 400;
 }
 
 .dashboard-elite-view .pagination-wrapper {

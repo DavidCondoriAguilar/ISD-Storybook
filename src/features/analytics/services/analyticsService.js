@@ -6,16 +6,28 @@ export const analyticsService = {
 
     const workers = new Set();
     const machines = new Set();
-    let totalUnits = 0;
+    let totalPaneles = 0;
+    let totalResortes = 0;
 
     records.forEach(r => {
-      totalUnits += (r.cantidad || 0);
+      const mId = String(r.maquinaId || '').toUpperCase();
+      const pName = String(r.productoNombre || '').toUpperCase();
+      const isResorte = mId.includes('MR') || mId.includes('RESORTE') || pName.includes('RESORTE');
+
+      if (isResorte) {
+        totalResortes += (r.cantidad || 0);
+      } else {
+        totalPaneles += (r.cantidad || 0);
+      }
+      
       if (r.trabajadorNombre) workers.add(r.trabajadorNombre);
       if (r.maquinaId && r.maquinaId !== 'Sin Máquina') machines.add(r.maquinaId);
     });
 
     return {
-      totalUnits,
+      totalUnits: totalPaneles + totalResortes,
+      totalPaneles,
+      totalResortes,
       uniqueWorkers: workers.size,
       activeMachines: machines.size,
       totalRecords: records.length
@@ -41,28 +53,55 @@ export const analyticsService = {
     let todayUnits = 0;
     let yesterdayUnits = 0;
     let totalHours = 0;
-    const workerTotals = {};
+    const workerStats = {};
 
     records.forEach(r => {
       const rDate = new Date(r.fechaTimestamp);
       rDate.setHours(0,0,0,0);
 
-      // 1. Totals for Today & Yesterday
       if (isSameDay(rDate, today)) todayUnits += r.cantidad;
       if (isSameDay(rDate, yesterday)) yesterdayUnits += r.cantidad;
 
-      // 2. Efficiency (U/H) - Using all records to get a global average
       totalHours += parseFloat(r.jornadaTotalHoras || 8.75);
 
-      // 3. Top Worker Logic
       const name = r.trabajadorNombre || 'Sin Nombre';
-      if (!workerTotals[name]) workerTotals[name] = 0;
-      workerTotals[name] += r.cantidad;
+      if (!workerStats[name]) {
+        workerStats[name] = { panels: 0, springs: 0, effSum: 0, effCount: 0 };
+      }
+
+      const mId = String(r.maquinaId || '').toUpperCase();
+      const isResorte = mId.includes('MR') || mId.includes('RESORTE');
+
+      if (isResorte) workerStats[name].springs += r.cantidad;
+      else workerStats[name].panels += r.cantidad;
+
+      if (r.outputMaquina > 0) {
+        workerStats[name].effSum += (r.cantidad / r.outputMaquina);
+        workerStats[name].effCount++;
+      }
     });
 
-    const topWorkerEntry = Object.entries(workerTotals).sort((a,b) => b[1] - a[1])[0];
+    // Expert Criteria: Weighted Score
+    // 1 Panel (MP) = High Complexity
+    // 1 Millar (MR) = High Volume
+    const candidates = Object.entries(workerStats).map(([name, stat]) => {
+      const avgEff = stat.effCount > 0 ? (stat.effSum / stat.effCount) : 0.8; // Default to 80% if no machine data
+      
+      // Score = (Panels * 50) + (Springs/Millares * 1) * Efficiency
+      // We give 50x weight to a Panel unit vs a single Resorte unit (if Resorte is unit)
+      // If Resorte is Millares, 1 Millar is roughly equivalent to a set of panels.
+      const productivityScore = (stat.panels * 1.5 + stat.springs * 0.5) * (0.5 + avgEff);
+      
+      let reason = '';
+      if (avgEff > 0.95) reason = `Máxima Eficiencia (${(avgEff * 100).toFixed(0)}%)`;
+      else if (stat.panels > stat.springs) reason = 'Líder en Ensamblaje';
+      else reason = 'Alto Volumen de Flujo';
+
+      return { name, score: productivityScore, reason };
+    });
+
+    const topWorker = candidates.sort((a, b) => b.score - a.score)[0];
     
-    // Variation Calculation
     let variation = 0;
     if (yesterdayUnits > 0) {
       variation = ((todayUnits - yesterdayUnits) / yesterdayUnits) * 100;
@@ -70,8 +109,9 @@ export const analyticsService = {
 
     return {
       todayTotal: todayUnits,
-      avgUnitsPerHour: (todayUnits / (totalHours / (records.length / 5))).toFixed(1), // Normalized U/H
-      topWorkerName: topWorkerEntry ? topWorkerEntry[0] : 'N/A',
+      avgUnitsPerHour: (todayUnits / (totalHours / (records.length / 5))).toFixed(1),
+      topWorkerName: topWorker ? topWorker.name : 'N/A',
+      topWorkerReason: topWorker ? topWorker.reason : 'N/A',
       variationVsYesterday: variation.toFixed(1)
     };
   },
