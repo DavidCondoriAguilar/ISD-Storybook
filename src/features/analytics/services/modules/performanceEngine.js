@@ -43,9 +43,16 @@ export const calculatePerformance = (records) => {
     .slice(0, 5)
     .map(w => ({ ...w, total: w.total / 1000 })); // Mostrar en millares
 
-  const machineStats = Object.values(machineMap)
+  const machineStatsMP = Object.values(machineMap)
+    .filter(m => !m.name.toUpperCase().includes('MR'))
     .sort((a, b) => b.total - a.total)
-    .slice(0, 8);
+    .slice(0, 5);
+
+  const machineStatsMR = Object.values(machineMap)
+    .filter(m => m.name.toUpperCase().includes('MR'))
+    .map(m => ({ ...m, total: m.total / 1000 }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 5);
 
   // Líderes destacados para tarjetas
   const leaderPaneles = topPaneleros[0] || null;
@@ -56,7 +63,8 @@ export const calculatePerformance = (records) => {
   return {
     topPaneleros,
     topResorteros,
-    machineStats,
+    machineStatsMP,
+    machineStatsMR,
     allWorkers,
     leaders: {
       topPanelero: leaderPaneles ? { name: leaderPaneles.name, reason: `${leaderPaneles.total.toLocaleString()} u. producidas` } : null,

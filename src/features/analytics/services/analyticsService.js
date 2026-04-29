@@ -38,7 +38,8 @@ export const analyticsService = {
       topResorteros: performance.topResorteros,
       allWorkers: performance.allWorkers,
       productMix,
-      machineStats: performance.machineStats
+      machineStatsMP: performance.machineStatsMP,
+      machineStatsMR: performance.machineStatsMR
     };
   },
 

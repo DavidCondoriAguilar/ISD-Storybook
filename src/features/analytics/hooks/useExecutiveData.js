@@ -51,7 +51,8 @@ export const useExecutiveData = () => {
   const topResorteros = dashboardData.topResorteros || []
   const allWorkers = dashboardData.allWorkers || []
   const productMix = dashboardData.productMix || []
-  const machineStats = dashboardData.machineStats || []
+  const machineStatsMP = dashboardData.machineStatsMP || []
+  const machineStatsMR = dashboardData.machineStatsMR || []
 
   return {
     timeRange,
@@ -71,6 +72,7 @@ export const useExecutiveData = () => {
     topResorteros,
     allWorkers,
     productMix,
-    machineStats
+    machineStatsMP,
+    machineStatsMR
   }
 }

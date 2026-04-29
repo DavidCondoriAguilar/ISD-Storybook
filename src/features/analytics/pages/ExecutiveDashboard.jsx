@@ -32,7 +32,7 @@ const ExecutiveDashboard = memo(() => {
     isFilterOpen, setIsFilterOpen,
     stats, advStats, trendData,
     topPaneleros, topResorteros, allWorkers,
-    productMix, machineStats
+    productMix, machineStatsMP, machineStatsMR
   } = useExecutiveData();
 
   const onPieEnter = (_, index) => setActiveIndex(index);
@@ -78,20 +78,6 @@ const ExecutiveDashboard = memo(() => {
 
       {/* Advanced Metrics (Restored as per request) */}
       <div className="advanced-stats-row">
-        {/* 
-        <AdvMetricCard 
-          label="Cierre Hoy (Día)" 
-          value={formatMetric(advStats.todayTotal)} 
-          icon={<Zap size={18} />} 
-          sub={
-            <span className={advStats.variationVsYesterday >= 0 ? 'up' : 'down'}>
-              {advStats.variationVsYesterday >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-              {Math.abs(advStats.variationVsYesterday)}% vs ayer
-            </span>
-          }
-        />
-        <AdvMetricCard label="Promedio U/H" value={`${advStats.avgUnitsPerHour} u.`} icon={<Clock size={18} />} sub="Eficiencia General de Planta" />
-        */}
         <AdvMetricCard label="Líder Paneles" value={advStats.topPanelero?.name || 'N/A'} icon={<Award size={18} />} sub={advStats.topPanelero?.reason || 'Sin Datos'} isHighlight />
         <AdvMetricCard label="Líder Resortes" value={advStats.topResortero?.name || 'N/A'} icon={<Star size={18} />} sub={advStats.topResortero?.reason || 'Sin Datos'} isHighlight />
       </div>
@@ -174,80 +160,26 @@ const ExecutiveDashboard = memo(() => {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Mix de Productos" icon={<PieIcon size={18} />} height={550}>
-          <div className="pro-chart-layout" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-            {/* Zona Visual: Círculo Compacto */}
-            <div className="visual-zone" style={{ height: '350px', width: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    activeIndex={activeIndex}
-                    activeShape={renderActiveShape}
-                    data={productMix.map(item => ({
-                      ...item,
-                      visualValue: Math.log10(item.value + 10) 
-                    }))}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={80}
-                    outerRadius={110}
-                    dataKey="visualValue"
-                    onMouseEnter={onPieEnter}
-                    stroke="none"
-                  >
-                    {productMix.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            
-            {/* Zona de Datos: Densidad Máxima */}
-            <div className="data-zone" style={{ flex: 1, width: '100%', padding: '12px 24px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 15px' }}>
-                {productMix.map((item, index) => {
-                  const isSpring = item.name.toLowerCase().includes('resorte') || item.name.toLowerCase().includes('millar');
-                  return (
-                    <div 
-                      key={index} 
-                      style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: '8px', 
-                        padding: '2px 0',
-                        opacity: activeIndex === index ? 1 : 0.6,
-                        transition: '0.2s',
-                        cursor: 'pointer'
-                      }} 
-                      onMouseEnter={() => setActiveIndex(index)}
-                    >
-                      <div style={{ width: '6px', height: '6px', borderRadius: '1px', background: COLORS[index % COLORS.length] }}></div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ color: '#f1f5f9', fontSize: '10px', fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</div>
-                        <div style={{ color: COLORS[index % COLORS.length], fontSize: '10px', fontWeight: '700' }}>
-                          {isSpring ? formatMetric(item.value / 1000) : formatMetric(item.value)} 
-                          <span style={{ color: '#475569', fontWeight: '400', fontSize: '8px', marginLeft: '3px' }}>
-                            {isSpring ? 'mil.' : 'u.'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </ChartCard>
-
-        <ChartCard title="Rendimiento de Máquinas" icon={<Settings size={18} />} height={550}>
+        <ChartCard title="Performance MP (Paneleras)" icon={<Settings size={18} style={{ color: '#3b82f6' }} />} height={250}>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={machineStats}>
+            <BarChart data={machineStatsMP}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
               <XAxis dataKey="name" stroke="#64748b" fontSize={9} tickLine={false} axisLine={false} />
-              <YAxis stroke="#64748b" fontSize={9} tickLine={false} axisLine={false} tickFormatter={(val) => formatMetric(val)} />
-              <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', fontSize: '10px' }} />
-              <Bar dataKey="total" fill="#f59e0b" radius={[3, 3, 0, 0]} barSize={30} />
+              <YAxis stroke="#3b82f6" fontSize={9} tickLine={false} axisLine={false} tickFormatter={(val) => `${val}u`} />
+              <Tooltip cursor={{ fill: 'rgba(255,255,255,0.02)' }} contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', fontSize: '10px' }} />
+              <Bar dataKey="total" fill="#3b82f6" radius={[3, 3, 0, 0]} barSize={30} />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartCard>
+
+        <ChartCard title="Performance MR (Resorteras)" icon={<Settings size={18} style={{ color: '#10b981' }} />} height={250}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={machineStatsMR}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+              <XAxis dataKey="name" stroke="#64748b" fontSize={9} tickLine={false} axisLine={false} />
+              <YAxis stroke="#10b981" fontSize={9} tickLine={false} axisLine={false} tickFormatter={(val) => formatMetric(val)} />
+              <Tooltip cursor={{ fill: 'rgba(255,255,255,0.02)' }} contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', fontSize: '10px' }} />
+              <Bar dataKey="total" fill="#10b981" radius={[3, 3, 0, 0]} barSize={30} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
