@@ -1,25 +1,10 @@
 import { Search } from 'lucide-react'
-import { DateRangePicker } from '../../../components/ui/DateRangePicker/DateRangePicker'
 
 export const ExecutiveHeader = ({
-  timeRange,
-  setTimeRange,
-  startDate,
-  setStartDate,
-  endDate,
-  setEndDate,
   searchTerm,
   setSearchTerm,
-  isFilterOpen,
-  setIsFilterOpen
+  children
 }) => {
-  const dateRangeProps = {
-    timeRange, setTimeRange,
-    startDate, setStartDate,
-    endDate, setEndDate,
-    isFilterOpen, setIsFilterOpen
-  }
-
   return (
     <header className="exec-header">
       <div className="header-left">
@@ -39,7 +24,8 @@ export const ExecutiveHeader = ({
           />
         </div>
 
-        <DateRangePicker {...dateRangeProps} />
+        {/* Aquí es donde se inyectan el Selector de Módulo y el DateRangePicker */}
+        {children}
 
         <div className="live-indicator">
           <span className="dot"></span> EN VIVO

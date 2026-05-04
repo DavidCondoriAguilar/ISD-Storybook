@@ -10,7 +10,7 @@
   top: 0;
   z-index: 1000;
   padding: 16px 12px;
-  overflow: hidden;
+  /* overflow: hidden; <-- Esto ocultaba el sub-menú */
 }
 
 .sidebar-brand {
@@ -51,15 +51,15 @@
   height: 48px;
   border-radius: 12px;
   color: var(--text-muted);
-  transition: all 0.2s ease;
+  transition: var(--transition-theme);
   position: relative;
   text-decoration: none;
   margin: 0 auto;
 }
 
 .nav-item:hover {
-  color: var(--text-main);
-  background: var(--bg-app);
+  color: var(--primary);
+  background: var(--primary-light);
 }
 
 .nav-item.active {
@@ -71,20 +71,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  transition: transform 0.2s ease;
 }
 
-.nav-item.active .nav-icon-wrapper {
-  background: var(--primary);
-  color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px var(--primary-glow);
+.nav-item:active .nav-icon-wrapper {
+  transform: scale(0.9);
 }
 
 .active-indicator {
   position: absolute;
-  left: -12px;
+  left: -8px;
   width: 4px;
   height: 20px;
   background: var(--primary-gradient);
@@ -106,24 +102,79 @@
   white-space: nowrap;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border);
-  z-index: 1001;
+  z-index: 2001;
   pointer-events: none;
-}
-
-.nav-tooltip::before {
-  content: '';
-  position: absolute;
-  left: -5px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 5px solid transparent;
-  border-right-color: var(--bg-card);
 }
 
 .sidebar-footer {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding-top: 12px;
+  gap: 12px;
+  padding-top: 16px;
   border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
+/* Dropdown & Submenu Styles */
+.dropdown-chevron {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  transition: transform 0.3s ease;
+  opacity: 0.5;
+}
+
+.dropdown-chevron.open {
+  transform: rotate(90deg);
+  opacity: 1;
+}
+
+.sidebar-submenu {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 0;
+  width: 180px;
+  padding: 8px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 2000;
+}
+
+.submenu-header {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 4px 8px 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+.submenu-item {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.submenu-item:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.submenu-item.active {
+  background: var(--primary-gradient);
+  color: white;
+}
+
+.nav-item.dropdown-active {
+  background: var(--bg-card);
+  border: 1px solid var(--primary-glow);
 }

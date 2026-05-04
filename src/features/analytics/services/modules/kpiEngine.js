@@ -44,16 +44,20 @@ export const calculateKPIs = (records) => {
     if (r.maquinaId && r.maquinaId !== 'Sin Máquina') machines.add(r.maquinaId);
   });
 
-  // Variaciones DoD
+  // Variaciones sobre datos reales disponibles (no necesariamente días consecutivos)
   const sortedDates = Object.keys(dailyTotals).sort();
   const lastDate = sortedDates[sortedDates.length - 1];
   const prevDate = sortedDates[sortedDates.length - 2];
-  const calculateVar = (curr, prev) => prev > 0 ? ((curr - prev) / prev) * 100 : 0;
+  
+  const calculateVar = (curr, prev) => {
+    if (!prev || prev === 0) return null; // Retornar null si no hay con qué comparar
+    return ((curr - prev) / prev) * 100;
+  };
 
   const variations = {
-    paneles: prevDate ? calculateVar(dailyTotals[lastDate].p, dailyTotals[prevDate].p) : 0,
-    resortes: prevDate ? calculateVar(dailyTotals[lastDate].r, dailyTotals[prevDate].r) : 0,
-    procesos: prevDate ? calculateVar(dailyTotals[lastDate].pr, dailyTotals[prevDate].pr) : 0
+    paneles: calculateVar(dailyTotals[lastDate]?.p, dailyTotals[prevDate]?.p),
+    resortes: calculateVar(dailyTotals[lastDate]?.r, dailyTotals[prevDate]?.r),
+    procesos: calculateVar(dailyTotals[lastDate]?.pr, dailyTotals[prevDate]?.pr)
   };
 
   const uniqueDays = sortedDates.length || 1;

@@ -46,14 +46,14 @@ export const normalizeLocation = (r) => {
 
   let modulo = r.area || r.ubicacion?.modulo || r.modulo;
 
-  // Lógica Senior: Si no viene área, la deducimos por contexto industrial
-  if (!modulo || modulo === 'General' || modulo === 'Paneles') {
+  // Lógica Senior: Solo deducimos el área si viene vacía o como 'General'
+  if (!modulo || modulo === 'General') {
     if (mId.includes('MR') || producto.includes('RESORTE')) {
       modulo = 'Resortes';
     } else if (mId.includes('MP') || producto.includes('PANEL') || producto.includes('PLZ')) {
       modulo = 'Paneles';
     } else {
-      modulo = modulo || 'Paneles';
+      modulo = 'Paneles'; // Fallback por defecto
     }
   }
 

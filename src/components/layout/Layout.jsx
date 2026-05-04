@@ -1,7 +1,7 @@
 import { useCallback, memo, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
-import { LayoutDashboard, FileUp, Presentation } from 'lucide-react'
+import { LayoutDashboard, FileUp, Presentation, Factory } from 'lucide-react'
 
 import { Sidebar } from './Sidebar'
 import { TopBar } from './TopBar'
@@ -14,8 +14,19 @@ import { useAppStore } from '../../store/useAppStore'
 import './Layout.css'
 
 const NAV_ITEMS = [
-  { id: 'dashboard', label: 'Monitor Planta', icon: LayoutDashboard, path: '/dashboard' },
-  { id: 'analytics', label: 'Dashboard Senior', icon: Presentation, path: '/analytics' },
+  { id: 'dashboard', label: 'Centro de Control', icon: LayoutDashboard, path: '/dashboard' },
+  { 
+    id: 'factory', 
+    label: 'Módulos Fábrica', 
+    icon: Factory, 
+    subItems: [
+      { id: 'paneles', label: 'Paneles', path: '/factory/paneles' },
+      { id: 'telas', label: 'Telas', path: '/factory/telas' },
+      { id: 'pegado', label: 'Pegado', path: '/factory/pegado' },
+      { id: 'sellado', label: 'Sellado', path: '/factory/sellado' },
+      { id: 'quimicos', label: 'Químicos', path: '/factory/quimicos' },
+    ]
+  },
   { id: 'import', label: 'Importar', icon: FileUp, path: '/import' }
 ]
 

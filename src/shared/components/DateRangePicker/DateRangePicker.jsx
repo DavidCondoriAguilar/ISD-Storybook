@@ -20,7 +20,7 @@ export const DateRangePicker = memo(({
       if (startDate && endDate) return `${startDate} → ${endDate}`
       return 'Rango Personalizado'
     }
-    return `Últimos ${timeRange} días`
+    return `Últimos ${timeRange || '7'} días`
   }
 
   return (
@@ -50,6 +50,18 @@ export const DateRangePicker = memo(({
                 onClick={() => setTimeRange('custom')}
               >
                 Rango personalizado...
+              </button>
+              <button 
+                className={timeRange === '7' ? 'active' : ''} 
+                onClick={() => { setTimeRange('7'); setIsFilterOpen(false); }}
+              >
+                Últimos 7 días
+              </button>
+              <button 
+                className={timeRange === '30' ? 'active' : ''} 
+                onClick={() => { setTimeRange('30'); setIsFilterOpen(false); }}
+              >
+                Últimos 30 días
               </button>
               <button 
                 className={timeRange === 'all' ? 'active' : ''} 

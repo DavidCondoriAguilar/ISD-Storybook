@@ -1,13 +1,13 @@
 import { useState, memo } from 'react'
 import { motion } from 'framer-motion'
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, PieChart, Pie, Cell, RadialBarChart, RadialBar
 } from 'recharts'
-import { 
-  TrendingUp, Users, Cpu, Activity, Award, Layers, 
-  PieChart as PieIcon, Settings, Zap, Clock, Star, 
-  ArrowUpRight, ArrowDownRight 
+import {
+  TrendingUp, Users, Cpu, Activity, Award, Layers,
+  PieChart as PieIcon, Settings, Zap, Clock, Star,
+  ArrowUpRight, ArrowDownRight
 } from 'lucide-react'
 
 import { formatMetric } from '../../../utils/formatters'
@@ -17,6 +17,7 @@ import { ExecutiveHeader } from '../components/ExecutiveHeader'
 import { ChartCard } from '../components/ChartCard'
 import { KPICard, AdvMetricCard } from '../components/StatCards'
 import { EmployeeMatrix } from '../components/EmployeeMatrix'
+import { DataTable, ErrorBoundary, DateRangePicker } from '../../../shared'
 
 import '../styles/ExecutiveDashboard.css'
 
@@ -29,32 +30,63 @@ const ExecutiveDashboard = memo(() => {
     startDate, setStartDate,
     endDate, setEndDate,
     searchTerm, setSearchTerm,
+    selectedArea, setSelectedArea,
     isFilterOpen, setIsFilterOpen,
     stats, advStats, trendData,
     topPaneleros, topResorteros, allWorkers,
-    productMix, machineStatsMP, machineStatsMR
+    productMix, machineStatsMP, machineStatsMR,
+    filteredRecords
   } = useExecutiveData();
 
   const onPieEnter = (_, index) => setActiveIndex(index);
 
   return (
-    <motion.div 
+    <motion.div
       className="exec-dashboard"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <ExecutiveHeader 
-        timeRange={timeRange}
-        setTimeRange={setTimeRange}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
+      <ExecutiveHeader
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        isFilterOpen={isFilterOpen}
-        setIsFilterOpen={setIsFilterOpen}
-      />
+      >
+        <div className="header-actions" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {/* Selector de Módulo Estratégico */}
+          <select
+            className="exec-select glass"
+            value={selectedArea}
+            onChange={(e) => setSelectedArea(e.target.value)}
+            style={{
+              padding: '10px 16px',
+              borderRadius: '12px',
+              border: '1px solid var(--border)',
+              background: 'var(--bg-card)',
+              color: 'var(--text-main)',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            <option value="all">Todas las Áreas</option>
+            <option value="paneles">Paneles</option>
+            <option value="telas">Telas</option>
+            <option value="pegado">Pegado</option>
+            <option value="sellado">Sellado</option>
+            <option value="quimicos">Químicos</option>
+          </select>
+
+          <DateRangePicker
+            timeRange={timeRange}
+            setTimeRange={setTimeRange}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+            isFilterOpen={isFilterOpen}
+            setIsFilterOpen={setIsFilterOpen}
+          />
+        </div>
+      </ExecutiveHeader>
 
       {/* Primary KPI Grid */}
       <div className="stats-grid">
@@ -64,6 +96,8 @@ const ExecutiveDashboard = memo(() => {
           icon={<Activity />} 
           color="blue" 
           trend={stats.variations?.paneles}
+          progress={stats.cumplimientoPaneles || 0}
+          subtitle="Auditado vs Máquina"
         />
         <KPICard 
           title="Producción Resortes" 
@@ -71,6 +105,8 @@ const ExecutiveDashboard = memo(() => {
           icon={<Layers />} 
           color="green" 
           trend={stats.variations?.resortes}
+          progress={stats.cumplimientoResortes || 0}
+          subtitle="Auditado vs Máquina"
         />
         <KPICard title="Fuerza Laboral" value={stats.uniqueWorkers} icon={<Users />} color="cyan" />
         <KPICard title="Registros Auditados" value={stats.totalRecords} icon={<TrendingUp />} color="purple" />
@@ -96,43 +132,43 @@ const ExecutiveDashboard = memo(() => {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
               <XAxis dataKey="date" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
-              <YAxis 
+              <YAxis
                 yAxisId="left"
-                stroke="#3b82f6" 
-                fontSize={10} 
-                tickLine={false} 
-                axisLine={false} 
-                tickFormatter={(val) => `${val}u`} 
+                stroke="#3b82f6"
+                fontSize={10}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(val) => `${val}u`}
               />
-              <YAxis 
+              <YAxis
                 yAxisId="right"
                 orientation="right"
-                stroke="#10b981" 
-                fontSize={10} 
-                tickLine={false} 
-                axisLine={false} 
-                tickFormatter={(val) => formatMetric(val)} 
+                stroke="#10b981"
+                fontSize={10}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(val) => formatMetric(val)}
               />
               <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: '11px' }} />
-              <Area 
+              <Area
                 yAxisId="left"
-                type="monotone" 
-                dataKey="paneles" 
-                name="Paneles (u.)" 
-                stroke="#3b82f6" 
-                fillOpacity={1} 
-                fill="url(#colorPaneles)" 
-                strokeWidth={2} 
+                type="monotone"
+                dataKey="paneles"
+                name="Paneles (u.)"
+                stroke="#3b82f6"
+                fillOpacity={1}
+                fill="url(#colorPaneles)"
+                strokeWidth={2}
               />
-              <Area 
+              <Area
                 yAxisId="right"
-                type="monotone" 
-                dataKey="resortes" 
-                name="Resortes (mil.)" 
-                stroke="#10b981" 
-                fillOpacity={1} 
-                fill="url(#colorResortes)" 
-                strokeWidth={2} 
+                type="monotone"
+                dataKey="resortes"
+                name="Resortes (mil.)"
+                stroke="#10b981"
+                fillOpacity={1}
+                fill="url(#colorResortes)"
+                strokeWidth={2}
               />
             </AreaChart>
           </ResponsiveContainer>

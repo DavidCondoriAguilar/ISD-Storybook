@@ -1,5 +1,5 @@
 import { Search, Download, Trash2 } from 'lucide-react'
-import { DateRangePicker } from '../../../components/ui/DateRangePicker/DateRangePicker'
+import { DateRangePicker } from '../../../shared/components/DateRangePicker/DateRangePicker'
 
 export const DashboardHeader = ({ 
   filterText, onFilterChange, onExport, onClear,

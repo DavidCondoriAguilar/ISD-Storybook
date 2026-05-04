@@ -9,6 +9,7 @@ export const useExecutiveData = () => {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedArea, setSelectedArea] = useState('all')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
   const rawRecords = useLiveQuery(() => db.records.toArray()) || []
@@ -24,10 +25,20 @@ export const useExecutiveData = () => {
       const end = new Date(eYear, eMonth - 1, eDay, 23, 59, 59, 999).getTime()
       
       filtered = filtered.filter(r => r.fechaTimestamp >= start && r.fechaTimestamp <= end)
-    } else if (timeRange !== 'all' && timeRange !== 'custom') {
-      const cutoff = subDays(new Date(), timeRange)
-      cutoff.setHours(0, 0, 0, 0);
-      filtered = filtered.filter(r => r.fechaTimestamp >= cutoff.getTime())
+    } else if (timeRange !== 'all' && timeRange !== 'custom' && timeRange !== 'day') {
+      const days = parseInt(timeRange);
+      if (!isNaN(days)) {
+        const cutoff = subDays(new Date(), days)
+        cutoff.setHours(0, 0, 0, 0);
+        filtered = filtered.filter(r => r.fechaTimestamp >= cutoff.getTime())
+      }
+    }
+
+    if (selectedArea !== 'all') {
+      filtered = filtered.filter(r => 
+        r.area?.toLowerCase() === selectedArea.toLowerCase() ||
+        r.moduloId?.toLowerCase() === selectedArea.toLowerCase()
+      )
     }
 
     if (searchTerm) {
@@ -40,7 +51,7 @@ export const useExecutiveData = () => {
     }
 
     return filtered
-  }, [rawRecords, timeRange, startDate, endDate, searchTerm])
+  }, [rawRecords, timeRange, startDate, endDate, searchTerm, selectedArea])
 
   const dashboardData = useMemo(() => analyticsService.getExecutiveDashboardData(filteredRecords), [filteredRecords])
 
@@ -63,6 +74,8 @@ export const useExecutiveData = () => {
     setEndDate,
     searchTerm,
     setSearchTerm,
+    selectedArea,
+    setSelectedArea,
     isFilterOpen,
     setIsFilterOpen,
     stats,
@@ -73,6 +86,7 @@ export const useExecutiveData = () => {
     allWorkers,
     productMix,
     machineStatsMP,
-    machineStatsMR
+    machineStatsMR,
+    filteredRecords
   }
 }

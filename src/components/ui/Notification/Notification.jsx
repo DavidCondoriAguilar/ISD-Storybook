@@ -30,14 +30,14 @@ export function Notification() {
             padding: '12px 20px',
             minWidth: '280px',
             maxWidth: '450px',
-            background: 'rgba(15, 23, 42, 0.9)',
+            background: 'var(--bg-glass)',
             backdropFilter: 'blur(16px)',
-            color: 'white',
+            color: 'var(--text-main)',
             borderRadius: '16px',
             fontSize: '0.85rem',
             fontWeight: 700,
-            boxShadow: '0 20px 40px -12px rgba(0,0,0,0.4)',
-            border: '1px solid rgba(255,255,255,0.1)',
+            boxShadow: 'var(--shadow-md)',
+            border: '1px solid var(--border-glass)',
             lineHeight: 1.4
           }}
         >

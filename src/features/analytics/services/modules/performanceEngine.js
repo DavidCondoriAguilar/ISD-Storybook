@@ -1,3 +1,5 @@
+import { filterPanelesRecords } from '../../../../modules/paneles';
+
 /**
  * MOTOR DE RENDIMIENTO (Rankings y Líderes)
  */
@@ -33,15 +35,15 @@ export const calculatePerformance = (records) => {
   });
 
   const topPaneleros = Object.values(workerMap)
-    .filter(w => w.area === 'Paneles')
+    .filter(w => w.paneles > 0 || w.procesos > 0)
     .sort((a, b) => b.total - a.total)
     .slice(0, 5);
 
   const topResorteros = Object.values(workerMap)
-    .filter(w => w.area === 'Resortes')
-    .sort((a, b) => b.total - a.total)
+    .filter(w => w.resortes > 0)
+    .sort((a, b) => b.resortes - a.resortes)
     .slice(0, 5)
-    .map(w => ({ ...w, total: w.total / 1000 })); // Mostrar en millares
+    .map(w => ({ ...w, total: w.resortes / 1000 })); // Mostrar en millares
 
   const machineStatsMP = Object.values(machineMap)
     .filter(m => !m.name.toUpperCase().includes('MR'))

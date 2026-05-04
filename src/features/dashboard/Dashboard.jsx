@@ -1,4 +1,5 @@
 import { memo, useCallback, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Layers, Hash, TrendingUp, Calendar, Package, Factory, User as UserIcon, Cpu
@@ -12,10 +13,14 @@ import { useNotification } from '../../context/NotificationContext'
 import { StatCard } from './components/StatCard'
 import { DashboardHeader } from './components/DashboardHeader'
 import { Pagination } from './components/common/Pagination/Pagination'
+import { DataTable } from '../../shared/components/DataTable'
+import { useState } from 'react'
 
 import './Dashboard.css'
 
 const Dashboard = memo(function Dashboard() {
+  const navigate = useNavigate()
+  const [selectedModule, setSelectedModule] = useState('Todos')
   const { notify } = useNotification()
   const {
     records,
@@ -118,69 +123,45 @@ const Dashboard = memo(function Dashboard() {
         dateRangeProps={dateRangeProps}
       />
 
-      <div className="table-viewport">
-        <table className="elite-table">
-          <thead>
-            <tr>
-              <th className="th-elite" style={{ width: '40px' }}>#</th>
-              <th onClick={toggleSort} className="th-elite th-sortable">
-                <Calendar size={12} /> FECHA {sortOrder === 'desc' ? '▼' : '▲'}
-              </th>
-              <th className="th-elite"><Package size={12} /> PRODUCTO</th>
-              <th className="th-elite"><Factory size={12} /> ÁREA</th>
-              <th className="th-elite"><UserIcon size={12} /> TRABAJADOR</th>
-              <th className="th-elite text-right"><TrendingUp size={12} /> TOTAL (TRA)</th>
-              <th className="th-elite text-right"><Cpu size={12} /> PROD. MÁQUINA</th>
-              <th className="th-elite"><Factory size={12} /> MÁQUINA</th>
-            </tr>
-          </thead>
-          <tbody>
-            <AnimatePresence mode="popLayout">
-              {records.length === 0 ? (
-                <tr>
-                  <td colSpan="8" className="empty-state">No se encontraron registros</td>
-                </tr>
-              ) : (
-                records.map((r, i) => {
-                  return (
-                    <motion.tr 
-                      key={r.idLocal || i}
-                      className={`audit-row ${(!r.outputMaquina && r.cantidad > 0) ? 'row-alert' : ''}`}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      title={(!r.outputMaquina && r.cantidad > 0) ? 'Alerta: Sin lectura de máquina' : ''}
-                    >
-                      <td className="td-elite row-num-cell" style={{ opacity: 0.5, fontSize: '10px', fontWeight: 'bold' }}>
-                        {i + 1}
-                        {(!r.outputMaquina && r.cantidad > 0) && <span className="alert-dot">!</span>}
-                      </td>
-                      <td className="td-elite date-cell">
-                        {new Date(r.fechaTimestamp).toLocaleDateString('es-ES')}
-                      </td>
-                      <td className="td-elite product-cell">{r.productoNombre}</td>
-                      <td className="td-elite"><span className="area-badge">{r.area || 'General'}</span></td>
-                      <td className="td-elite worker-cell">{r.trabajadorNombre}</td>
-                      <td className="td-elite text-right total-cell">
-                        {r.cantidad?.toLocaleString()} <span className="unit">{r.unidad || 'u.'}</span>
-                      </td>
-                      <td className="td-elite text-right machine-output-cell">
-                        <div className="output-container">
-                          {r.outputMaquina !== null && r.outputMaquina !== undefined ? (
-                            <span className="output-val">{r.outputMaquina}</span>
-                          ) : (
-                            <span className="empty-val">-</span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="td-elite"><code className="machine-chip">{r.maquinaId}</code></td>
-                    </motion.tr>
-                  )
-                })
-              )}
-            </AnimatePresence>
-          </tbody>
-        </table>
+      {/* Filtro de Módulos Estratégico */}
+      <div className="filter-container-executive glass" style={{ marginTop: '2rem', padding: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <span className="filter-label" style={{ fontWeight: '700', fontSize: '0.9rem' }}>Filtrar Vista:</span>
+        {['Todos', 'Paneles', 'Telas', 'Pegado', 'Sellado'].map(mod => (
+          <button 
+            key={mod}
+            className={`filter-chip ${selectedModule === mod ? 'active' : ''}`}
+            onClick={() => setSelectedModule(mod)}
+          >
+            {mod}
+          </button>
+        ))}
+      </div>
+
+      <div className="audit-preview-section" style={{ marginTop: '2rem' }}>
+        <h2 className="section-title">Vista Consolidada: {selectedModule}</h2>
+        <p className="section-subtitle">Movimientos más recientes registrados en el sistema.</p>
+        
+        <DataTable 
+          columns={[
+            { 
+              key: 'fechaTimestamp', 
+              label: 'Fecha', 
+              render: (v) => v ? new Date(v).toLocaleDateString('es-ES') : 'N/A' 
+            },
+            { key: 'trabajadorNombre', label: 'Operador' },
+            { key: 'area', label: 'Área' },
+            { 
+              key: 'cantidad', 
+              label: 'Total',
+              render: (v, row) => `${v?.toLocaleString() ?? 0} ${row.unidad ?? 'u.'}`
+            }
+          ]}
+          data={records
+            .filter(r => selectedModule === 'Todos' || r.area?.toLowerCase() === selectedModule.toLowerCase())
+            .slice(0, 20)
+          } 
+          isLoading={false}
+        />
       </div>
 
       <div className="pagination-wrapper">
