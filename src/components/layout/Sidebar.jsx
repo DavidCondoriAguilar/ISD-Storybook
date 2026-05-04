@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLocation, NavLink } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sun, Moon, ChevronRight, Factory } from 'lucide-react'
+import { Sun, Moon, ChevronRight, User } from 'lucide-react'
 import { useAppStore } from '../../store/useAppStore'
 import './Sidebar.css'
 
+/**
+ * 🛸 Sidebar Dock v2 - La experiencia de navegación 2026.
+ */
 export const Sidebar = ({ navItems }) => {
   const location = useLocation()
   const { theme, toggleTheme, activeTooltip, setActiveTooltip } = useAppStore()
@@ -25,13 +28,6 @@ export const Sidebar = ({ navItems }) => {
     setOpenDropdown(openDropdown === id ? null : id)
   }
 
-  // Función para determinar el color del icono
-  const getIconColor = (item, isActive) => {
-    if (isActive) return 'var(--primary)';
-    if (item.id === 'factory') return '#2dd4bf'; // Cyan vibrante para Fábrica
-    return 'var(--text-muted)';
-  };
-
   return (
     <aside className="sidebar" ref={sidebarRef}>
       <div className="sidebar-brand">
@@ -49,7 +45,6 @@ export const Sidebar = ({ navItems }) => {
           const isActive = location.pathname === item.path || (item.subItems?.some(s => location.pathname === s.path))
           const hasSubItems = item.subItems && item.subItems.length > 0
           const isDropdownOpen = openDropdown === item.id
-          const iconColor = getIconColor(item, isActive)
 
           return (
             <div key={item.id} className="nav-item-wrapper">
@@ -61,7 +56,7 @@ export const Sidebar = ({ navItems }) => {
                   onMouseLeave={() => setActiveTooltip(null)}
                 >
                   <div className="nav-icon-wrapper">
-                    <item.icon size={20} color={iconColor} strokeWidth={isActive ? 2.5 : 2} />
+                    <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
                   </div>
                   <ChevronRight size={12} className={`dropdown-chevron ${isDropdownOpen ? 'open' : ''}`} />
                 </button>
@@ -73,7 +68,7 @@ export const Sidebar = ({ navItems }) => {
                   onMouseLeave={() => setActiveTooltip(null)}
                 >
                   <div className="nav-icon-wrapper">
-                    <item.icon size={20} color={iconColor} strokeWidth={isActive ? 2.5 : 2} />
+                    <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
                   </div>
                 </NavLink>
               )}
@@ -81,7 +76,7 @@ export const Sidebar = ({ navItems }) => {
               <AnimatePresence>
                 {hasSubItems && isDropdownOpen && (
                   <motion.div 
-                    className="sidebar-submenu glass"
+                    className="sidebar-submenu"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -10 }}
@@ -114,19 +109,28 @@ export const Sidebar = ({ navItems }) => {
       </nav>
 
       <div className="sidebar-footer">
+        {/* Theme Toggle */}
         <button
           className="nav-item"
           onClick={toggleTheme}
-          onMouseEnter={() => setActiveTooltip(theme === 'light' ? 'Modo oscuro' : 'Modo claro')}
+          onMouseEnter={() => setActiveTooltip(theme === 'light' ? 'Modo Oscuro' : 'Modo Claro')}
           onMouseLeave={() => setActiveTooltip(null)}
         >
           <div className="nav-icon-wrapper">
-            {theme === 'light' ? 
-              <Moon size={20} color="var(--primary)" /> : 
-              <Sun size={20} color="#fbbf24" style={{ filter: 'drop-shadow(0 0 5px rgba(251, 191, 36, 0.4))' }} />
-            }
+            {theme === 'light' ? <Moon size={20} /> : <Sun size={20} color="#fbbf24" />}
           </div>
         </button>
+
+        {/* Perfil de Usuario Premium */}
+        <div 
+          className="user-avatar-dock"
+          onMouseEnter={() => setActiveTooltip('Mi Perfil')}
+          onMouseLeave={() => setActiveTooltip(null)}
+        >
+          <div style={{ background: 'var(--exec-bg-card)', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--exec-accent)' }}>
+            <User size={20} />
+          </div>
+        </div>
       </div>
     </aside>
   )

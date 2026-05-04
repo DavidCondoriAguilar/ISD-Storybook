@@ -1,0 +1,89 @@
+/**
+ * 🛰️ Dashboard Component: KPI Cards & Honor Wall
+ */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.kpi-card-exec {
+  background: var(--exec-bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--exec-border);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.kpi-card-exec:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Muro de Honor (Líderes Avanzados) */
+.advanced-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.adv-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 1.8rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.adv-card.highlight {
+  border-left: 5px solid var(--exec-accent);
+  box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.3);
+}
+
+.adv-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: var(--exec-accent);
+}
+
+.adv-icon-box {
+  width: 60px;
+  height: 60px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--exec-accent);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.adv-content .label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.adv-content .value {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.adv-content .sub {
+  font-size: 0.85rem;
+  color: var(--exec-accent);
+  font-weight: 600;
+  opacity: 0.9;
+}

@@ -50,21 +50,6 @@ export const ModuleView = () => {
       align: 'right',
       render: (v) => <div style={{ textAlign: 'right', opacity: 0.6 }} className="mono-data">{v?.toLocaleString() || '0'}</div>
     },
-    {
-      key: 'diferencia',
-      label: 'Dif.',
-      align: 'right',
-      render: (_, row) => {
-        const diff = (row.outputMaquina || 0) - (row.cantidad || 0);
-        const hasAlert = Math.abs(diff) > (row.cantidad * 0.1);
-        return (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end', color: hasAlert ? 'var(--error)' : 'var(--success)' }}>
-            <span className="mono-data" style={{ fontWeight: 700, fontSize: '0.8rem' }}>{diff > 0 ? `+${diff}` : diff}</span>
-            {hasAlert && <AlertTriangle size={10} />}
-          </div>
-        );
-      }
-    },
     { key: 'maquinaId', label: 'Máq.', align: 'center', render: (v) => <div className="machine-chip" style={{ scale: '0.85' }}>{v}</div> },
   ], []);
 
@@ -132,21 +117,18 @@ const DailyStatsGrid = ({ stats }) => (
             <Users size={12} /> <span>{day.workers} ops.</span>
           </div>
         </div>
-        <StatRow label="📦 PANELES (MP)" total={day.mp.total} diff={day.mp.machine - day.mp.total} unit="u." color="var(--text-muted)" />
-        <StatRow label="🌀 RESORTES (MR)" total={day.mr.total} diff={day.mr.machine - day.mr.total} unit="mil." color="var(--secondary)" />
+        <StatRow label="📦 PANELES (MP)" total={day.mp.total} unit="u." color="var(--text-muted)" />
+        <StatRow label="🌀 RESORTES (MR)" total={day.mr.total} unit="mil." color="var(--secondary)" />
       </div>
     ))}
   </div>
 );
 
-const StatRow = ({ label, total, diff, unit, color }) => (
-  <div style={{ paddingBottom: '12px', borderBottom: label.includes('MP') ? '1px solid var(--border)' : 'none', marginBottom: label.includes('MP') ? '12px' : '0' }}>
-    <span style={{ display: 'block', fontSize: '0.6rem', fontWeight: 800, color: color, marginBottom: '4px' }}>{label}</span>
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-      <span className="mono-data" style={{ fontSize: '1.2rem', fontWeight: 900, color: color === 'var(--text-muted)' ? 'inherit' : color }}>
-        {total.toLocaleString()} <small style={{ fontSize: '0.6rem', opacity: 0.5 }}>{unit}</small>
-      </span>
-      <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>Δ {Math.abs(diff).toLocaleString()}</span>
+const StatRow = ({ label, total, unit, color }) => (
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '8px' }}>
+    <span style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-dim)' }}>{label}</span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <span style={{ fontWeight: 800, color, fontSize: '0.9rem' }}>{total.toLocaleString()} {unit}</span>
     </div>
   </div>
 );

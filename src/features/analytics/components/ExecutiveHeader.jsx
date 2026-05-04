@@ -1,34 +1,38 @@
-import { Search } from 'lucide-react'
+import { motion } from 'framer-motion'
 
+/**
+ * ExecutiveHeader - Versión Ultra-Limpia.
+ * Sin búsqueda y con alineación horizontal de filtros.
+ */
 export const ExecutiveHeader = ({
-  searchTerm,
-  setSearchTerm,
   children
 }) => {
+  const currentMonth = new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+
   return (
-    <header className="exec-header">
-      <div className="header-left">
-        <h1 className="exec-title">Dashboard <span className="highlight">Estratégico ISD</span></h1>
-        <p className="exec-subtitle">Inteligencia Operativa • {new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</p>
+    <header className="exec-header-v2">
+      <div className="header-left-v2">
+        <div className="badges-row">
+          <span className="badge-primary">Planta Central</span>
+          <span className="badge-outline">Centro de Control</span>
+        </div>
+        <h1 className="title-v2">Dashboard <span className="blue-text">Estratégico ISD</span></h1>
+        <p className="subtitle-v2">Inteligencia Operativa • {currentMonth}</p>
       </div>
 
-      <div className="header-actions">
-        {/* Global Search */}
-        <div className="exec-search">
-          <Search size={16} className="search-icon" />
-          <input
-            type="text"
-            placeholder="Filtrar por trabajador, producto..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+      <div className="header-right-v2">
+        {/* Aquí se inyectan los selectores (Áreas y Calendario) */}
+        <div className="filters-group-v2">
+          {children}
         </div>
 
-        {/* Aquí es donde se inyectan el Selector de Módulo y el DateRangePicker */}
-        {children}
-
-        <div className="live-indicator">
-          <span className="dot"></span> EN VIVO
+        <div className="status-badge-v2">
+          <motion.span 
+            className="dot-v2"
+            animate={{ opacity: [1, 0.4, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          />
+          EN VIVO
         </div>
       </div>
     </header>

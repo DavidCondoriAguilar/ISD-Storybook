@@ -1,36 +1,42 @@
+/**
+ * 🛰️ DateRangePicker - Theme-Aware Styles
+ */
+
 .filter-dropdown {
   position: relative;
 }
 
 .filter-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #f1f5f9;
-  padding: 8px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  color: var(--text-main);
+  padding: 10px 16px;
   border-radius: 12px;
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.3s ease;
 }
 
 .filter-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-app);
+  border-color: var(--exec-accent);
 }
 
 .filter-menu {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
   border-radius: 12px;
   padding: 8px;
   width: 200px;
   z-index: 1000;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 .filter-menu button {
@@ -39,7 +45,7 @@
   padding: 8px 12px;
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--text-muted);
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.85rem;
@@ -48,14 +54,14 @@
 
 .filter-menu button:hover,
 .filter-menu button.active {
-  background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+  background: var(--primary-light);
+  color: var(--primary);
 }
 
 .custom-range-selector {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -68,29 +74,29 @@
 }
 
 .date-input-group label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #64748b;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-dim);
   text-transform: uppercase;
 }
 
 .date-input-group input {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-app);
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
-  padding: 6px 10px;
-  color: #f1f5f9;
+  padding: 8px 10px;
+  color: var(--text-main);
   font-size: 0.8rem;
   outline: none;
   width: 100%;
 }
 
 .date-input-group input:focus {
-  border-color: #3b82f6;
+  border-color: var(--exec-accent);
 }
 
 .apply-btn {
-  background: #3b82f6 !important;
+  background: var(--exec-accent) !important;
   color: white !important;
   text-align: center !important;
   font-weight: 700 !important;

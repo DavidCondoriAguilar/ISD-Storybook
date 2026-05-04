@@ -1,0 +1,84 @@
+/**
+ * 🛰️ Dashboard Component: Employee Matrix
+ */
+
+.employee-matrix {
+  margin-top: 2rem;
+}
+
+.matrix-header {
+  margin-bottom: 2rem;
+}
+
+.matrix-header h3 {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.matrix-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.worker-profile-card {
+  background: var(--exec-bg-card);
+  border: 1px solid var(--exec-border);
+  border-radius: 16px;
+  padding: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.worker-profile-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-3px);
+}
+
+.worker-avatar {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--exec-accent) 0%, #1e40af 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.worker-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.worker-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.worker-stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.stat-pill.resortes { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.stat-pill.paneles { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
