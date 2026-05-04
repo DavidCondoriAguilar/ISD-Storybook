@@ -2,9 +2,11 @@ import React, { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Search, TrendingUp, Users, Target, AlertTriangle } from 'lucide-react';
 
-import { useProductionData, DataTable, ErrorBoundary, DateRangePicker } from '../shared';
+import { DataTable, ErrorBoundary, DateRangePicker } from '../shared';
 import { Pagination } from '../features/dashboard/components/common/Pagination/Pagination';
 import { useModuleLogic } from '../features/factory/hooks/useModuleLogic';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../data/db';
 
 import '../features/factory/styles/ModuleView.css';
 
@@ -14,7 +16,8 @@ import '../features/factory/styles/ModuleView.css';
  */
 export const ModuleView = () => {
   const { moduleId } = useParams();
-  const { records, isLoading } = useProductionData();
+  const records = useLiveQuery(() => db.records.toArray()) || [];
+  const isLoading = !records.length;
   
   // Custom Hook con toda la lógica de filtrado y estadísticas
   const logic = useModuleLogic(records, moduleId);

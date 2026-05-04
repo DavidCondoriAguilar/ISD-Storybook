@@ -1,5 +1,3 @@
-import { filterPanelesRecords } from '../../../../modules/paneles';
-
 /**
  * MOTOR DE RENDIMIENTO (Rankings y Líderes)
  */

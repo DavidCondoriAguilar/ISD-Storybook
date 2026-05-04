@@ -11,4 +11,3 @@ export * from './components/DateRangePicker/DateRangePicker';
 export { default as ErrorBoundary } from './components/ErrorBoundary';
 
 // Hooks
-export * from './hooks/useProductionData';

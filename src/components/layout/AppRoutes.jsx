@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { ImportProduction } from '../../features/import'
-import { Dashboard } from '../../features/dashboard'
 import ExecutiveDashboard from '../../features/analytics/pages/ExecutiveDashboard'
 import { ComingSoon } from '../../shared'
 import ModuleView from '../../pages/ModuleView'

@@ -12,8 +12,11 @@ export const useModuleLogic = (records, moduleId) => {
   const [itemsPerPage, setItemsPerPage] = useState(25);
 
   const { processedData, dailyStats } = useMemo(() => {
+    // Salvaguarda Senior: Asegurar que records sea un array antes de operar
+    const safeRecords = Array.isArray(records) ? records : [];
+
     // 1. Filtro por Módulo
-    let filtered = records.filter(r => 
+    let filtered = safeRecords.filter(r => 
       r.area?.toLowerCase() === moduleId?.toLowerCase() || 
       r.moduloId?.toLowerCase() === moduleId?.toLowerCase()
     );
