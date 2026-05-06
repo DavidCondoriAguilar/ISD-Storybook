@@ -6,6 +6,7 @@ import {
 import { Layers, Activity, Cpu, Zap, Settings, Award } from 'lucide-react';
 import { ChartCard } from '../components/ChartCard';
 import { formatMetric } from '../../../utils/formatters';
+import '../styles/DashboardCharts.css';
 
 /**
  * Tooltip Personalizado de Alta Visibilidad
@@ -13,22 +14,14 @@ import { formatMetric } from '../../../utils/formatters';
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="custom-chart-tooltip" style={{
-        background: 'rgba(15, 23, 42, 0.9)',
-        backdropFilter: 'blur(8px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        padding: '10px 14px',
-        borderRadius: '12px',
-        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)'
-      }}>
-        <p style={{ margin: 0, fontSize: '0.7rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '4px' }}>
-          {label}
-        </p>
+      <div className="custom-chart-tooltip">
+        <p className="tooltip-label">{label}</p>
         {payload.map((p, i) => (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: p.color }} />
-            <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#f8fafc' }}>
-              {p.value.toLocaleString()} <small style={{ fontWeight: 500, opacity: 0.7 }}>{p.name}</small>
+          <div key={i} className="tooltip-row">
+            <div className="tooltip-dot" style={{ background: p.color, color: p.color }} />
+            <span className="tooltip-value">
+              {p.value.toLocaleString()} 
+              <span className="tooltip-unit">{p.name}</span>
             </span>
           </div>
         ))}
@@ -37,6 +30,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   }
   return null;
 };
+
 
 export const DashboardCharts = memo(({ trendData, topPaneleros, topResorteros, machineStatsMP, machineStatsMR }) => (
   <div className="charts-main-grid">

@@ -7,6 +7,7 @@ import { Pagination } from '../features/dashboard/components/common/Pagination/P
 import { useModuleLogic } from '../features/factory/hooks/useModuleLogic';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../data/db';
+import { isResorte, getUnitLabel } from '../domain/production/predicates';
 
 import '../features/factory/styles/ModuleView.css';
 
@@ -16,7 +17,30 @@ import '../features/factory/styles/ModuleView.css';
  */
 export const ModuleView = () => {
   const { moduleId } = useParams();
-  const records = useLiveQuery(() => db.records.toArray()) || [];
+  
+  // Consulta optimizada: Usamos índices para no traer toda la DB a memoria
+  const records = useLiveQuery(async () => {
+    if (!moduleId) return [];
+    
+    // Normalización de búsqueda (Case-Insensitive Mock)
+    // Buscamos la versión original y la versión capitalizada (Ej: paneles -> Paneles)
+    const capitalized = moduleId.charAt(0).toUpperCase() + moduleId.slice(1);
+    const lowercase = moduleId.toLowerCase();
+    
+    const searchTerms = Array.from(new Set([moduleId, capitalized, lowercase]));
+    
+    // Buscamos por moduloId o por area usando los índices de Dexie
+    const byModulo = await db.records.where('moduloId').anyOf(searchTerms).toArray();
+    const byArea = await db.records.where('area').anyOf(searchTerms).toArray();
+    
+    // Unimos y eliminamos duplicados por ID
+    const merged = [...byModulo, ...byArea];
+    const uniqueMap = new Map();
+    merged.forEach(r => uniqueMap.set(r.id || r.idLocal, r));
+    
+    return Array.from(uniqueMap.values());
+  }, [moduleId]) || [];
+
   const isLoading = !records.length;
   
   // Custom Hook con toda la lógica de filtrado y estadísticas
@@ -29,31 +53,41 @@ export const ModuleView = () => {
     { 
       key: 'fechaTimestamp', 
       label: 'Fecha', 
-      render: (v) => <span className="mono-data" style={{ fontSize: '0.75rem' }}>{v ? new Date(v).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' }) : '---'}</span>
+      render: (v) => <span className="mono-data-small">{v ? new Date(v).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' }) : '---'}</span>
     },
-    { key: 'trabajadorNombre', label: 'Operador', render: (v) => <span style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '0.85rem' }}>{v}</span> },
-    { key: 'productoNombre', label: 'Producto', render: (v) => <div style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.8rem' }}>{v}</div> },
+    { 
+      key: 'trabajadorNombre', 
+      label: 'Operador', 
+      render: (v) => <span className="operator-name">{v}</span> 
+    },
+    { 
+      key: 'productoNombre', 
+      label: 'Producto', 
+      render: (v) => <div className="product-name">{v}</div> 
+    },
     { 
       key: 'cantidad', 
       label: 'Producción', 
       align: 'right',
-      render: (v, row) => {
-        const isResorte = (row.maquinaId || '').includes('MR') || (row.unidad || '').includes('mil');
-        return (
-          <div style={{ textAlign: 'right' }}>
-            <span className="mono-data" style={{ fontWeight: 800, color: isResorte ? 'var(--secondary)' : 'var(--text-main)' }}>{v?.toLocaleString()}</span>
-            <span style={{ fontSize: '0.6rem', marginLeft: '4px', opacity: 0.6, fontWeight: 700 }}>{isResorte ? 'mil.' : 'u.'}</span>
-          </div>
-        );
-      }
+      render: (v, row) => (
+        <div className="production-cell">
+          <span className={`production-value ${isResorte(row) ? 'resorte' : 'panel'}`}>{v?.toLocaleString()}</span>
+          <span className="unit-label">{getUnitLabel(row)}</span>
+        </div>
+      )
     },
     { 
       key: 'outputMaquina', 
       label: 'Output Máq.', 
       align: 'right',
-      render: (v) => <div style={{ textAlign: 'right', opacity: 0.6 }} className="mono-data">{v?.toLocaleString() || '0'}</div>
+      render: (v) => <div className="output-cell mono-data">{v?.toLocaleString() || '0'}</div>
     },
-    { key: 'maquinaId', label: 'Máq.', align: 'center', render: (v) => <div className="machine-chip" style={{ scale: '0.85' }}>{v}</div> },
+    { 
+      key: 'maquinaId', 
+      label: 'Máq.', 
+      align: 'center', 
+      render: (v) => <div className="machine-chip small-scale">{v}</div> 
+    },
   ], []);
 
   const totalPages = Math.ceil(logic.processedData.length / logic.itemsPerPage) || 1;
@@ -91,14 +125,14 @@ export const ModuleView = () => {
 // --- SUB-COMPONENTES INTERNOS (Para Clean Code) ---
 
 const ModuleHeader = ({ moduleName, logic }) => (
-  <header style={{ marginBottom: '2rem' }}>
+  <header className="module-view-header">
     <Link to="/dashboard" className="back-link-modern">
       <ArrowLeft size={14} /> Centro de Control
     </Link>
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+    <div className="header-main-row">
       <div>
-        <h1 className="exec-title" style={{ fontSize: '2rem', margin: 0 }}>Área: <span className="highlight">{moduleName}</span></h1>
-        <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', margin: '4px 0 0 0' }}>Análisis Dual: Unidades (MP) vs Millares (MR)</p>
+        <h1 className="exec-title">Área: <span className="highlight">{moduleName}</span></h1>
+        <p className="header-subtitle">Análisis Dual: Unidades (MP) vs Millares (MR)</p>
       </div>
       <DateRangePicker 
         timeRange={logic.timeRange} setTimeRange={logic.setTimeRange}
@@ -113,25 +147,25 @@ const ModuleHeader = ({ moduleName, logic }) => (
 const DailyStatsGrid = ({ stats }) => (
   <div className="daily-stats-grid">
     {stats.map(day => (
-      <div key={day.date} className="glass glow-card" style={{ padding: '1.25rem', borderRadius: '16px', border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--primary)' }}>{day.date}</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', color: 'var(--text-dim)' }}>
+      <div key={day.date} className="glass glow-card stat-card">
+        <div className="stat-card-header">
+          <span className="stat-date">{day.date}</span>
+          <div className="stat-ops-count">
             <Users size={12} /> <span>{day.workers} ops.</span>
           </div>
         </div>
-        <StatRow label="📦 PANELES (MP)" total={day.mp.total} unit="u." color="var(--text-muted)" />
-        <StatRow label="🌀 RESORTES (MR)" total={day.mr.total} unit="mil." color="var(--secondary)" />
+        <StatRow label="📦 PANELES (MP)" total={day.mp.total} unit="u." type="panel" />
+        <StatRow label="🌀 RESORTES (MR)" total={day.mr.total} unit="mil." type="resorte" />
       </div>
     ))}
   </div>
 );
 
-const StatRow = ({ label, total, unit, color }) => (
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '8px' }}>
-    <span style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-dim)' }}>{label}</span>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <span style={{ fontWeight: 800, color, fontSize: '0.9rem' }}>{total.toLocaleString()} {unit}</span>
+const StatRow = ({ label, total, unit, type }) => (
+  <div className="stat-row">
+    <span className="stat-label">{label}</span>
+    <div className="stat-value-container">
+      <span className={`stat-value ${type}`}>{total.toLocaleString()} {unit}</span>
     </div>
   </div>
 );

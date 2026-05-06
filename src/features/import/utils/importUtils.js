@@ -1,3 +1,5 @@
+import { isResorte as checkIsResorte } from '../../../../domain/production/predicates';
+
 /**
  * UTILIDADES DE IMPORTACIÓN (Mapping Exacto para produccion_completa.json)
  */
@@ -14,12 +16,13 @@ export function normalizeRecords(records) {
     
     // 3. Cantidad y Clasificación MP/MR
     const cantidad = Number(r.produccion?.cantidad ?? r.cantidad ?? 0);
-    const isResorte = productoNombre.toUpperCase().includes('RESORTE');
     
     // 4. Mapeo de Ubicación (ÁREA y MÁQUINA)
-    // Usamos EXACTAMENTE lo que viene en tu JSON: ubicacion.modulo y ubicacion.maquina
-    const area = r.ubicacion?.modulo || (isResorte ? 'Resortería' : 'Panelería');
-    const maquina = r.ubicacion?.maquina || (isResorte ? 'Máquina Resortera' : 'Máquina Panelera');
+    const area = r.ubicacion?.modulo || r.area || 'General';
+    const maquina = r.ubicacion?.maquina || r.maquinaId || 'Máquina Genérica';
+    
+    // Usamos el dominio para clasificar
+    const isResorte = checkIsResorte({ maquinaId: maquina, unidad: r.unidad || (productoNombre.toUpperCase().includes('RESORTE') ? 'mil' : 'u') });
     
     // 5. Gestión de FECHA (Respetando fechaLegible del JSON)
     let finalTimestamp;

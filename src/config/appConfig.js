@@ -10,7 +10,7 @@ export const APP_CONFIG = {
   },
   STORAGE: {
     DB_NAME: 'ProductionHubDB',
-    DB_VERSION: 1,
+    DB_VERSION: 2,
     HISTORY_KEY: 'import_production_history',
   },
   IMPORT: {

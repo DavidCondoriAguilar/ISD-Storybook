@@ -1,4 +1,4 @@
-
+import { isResorte as checkIsResorte } from '../../../../domain/production/predicates';
 
 /**
  * MOTOR DE KPIs (Core de métricas de producción)
@@ -23,11 +23,16 @@ export const calculateKPIs = (records) => {
     const date = new Date(r.fechaTimestamp).toLocaleDateString('en-CA');
     if (!dailyTotals[date]) dailyTotals[date] = { p: 0, r: 0, pr: 0 };
 
-    const mId = String(r.maquinaId || '').toUpperCase();
     const pName = String(r.productoNombre || '').toUpperCase();
     
-    const isResorte = mId.includes('MR') || mId.includes('RESORTE') || pName.includes('RESORTE');
-    const isProceso = pName.includes('EMBARILLADO') || pName.includes('CORTADO') || pName.includes('DOBLADO') || pName.includes('VARILLA');
+    // Clasificación Unificada (Dominio)
+    const isResorte = checkIsResorte(r);
+    
+    // Identificación de Procesos (Lógica específica de analítica)
+    const isProceso = pName.includes('EMBARILLADO') || 
+                      pName.includes('CORTADO') || 
+                      pName.includes('DOBLADO') || 
+                      pName.includes('VARILLA');
 
     if (isResorte) {
       totalResortes += (r.cantidad || 0);
@@ -43,6 +48,7 @@ export const calculateKPIs = (records) => {
     if (r.trabajadorNombre) workers.add(r.trabajadorNombre);
     if (r.maquinaId && r.maquinaId !== 'Sin Máquina') machines.add(r.maquinaId);
   });
+
 
   // Variaciones sobre datos reales disponibles (no necesariamente días consecutivos)
   const sortedDates = Object.keys(dailyTotals).sort();

@@ -89,3 +89,150 @@
   border-radius: 12px;
   border: 1px solid var(--border);
 }
+
+/* Nuevas Clases Semánticas */
+
+.mono-data-small {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.operator-name {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 0.85rem;
+}
+
+.product-name {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  color: var(--text-main);
+}
+
+.production-cell {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.production-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.production-value.panel {
+  color: var(--text-main);
+}
+
+.production-value.resorte {
+  color: var(--secondary);
+}
+
+.unit-label {
+  font-size: 0.6rem;
+  opacity: 0.6;
+  font-weight: 700;
+  margin-top: -2px;
+}
+
+.output-cell {
+  text-align: right;
+  opacity: 0.6;
+  font-size: 0.75rem;
+}
+
+.small-scale {
+  transform: scale(0.85);
+}
+
+/* Header & Stats */
+
+.module-view-header {
+  margin-bottom: 2rem;
+}
+
+.header-main-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.exec-title {
+  font-size: 2rem;
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.header-subtitle {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin: 4px 0 0 0;
+}
+
+.stat-card {
+  padding: 1.25rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 8px;
+}
+
+.stat-date {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.stat-ops-count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.stat-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.stat-value {
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.stat-value.panel {
+  color: var(--text-muted);
+}
+
+.stat-value.resorte {
+  color: var(--secondary);
+}

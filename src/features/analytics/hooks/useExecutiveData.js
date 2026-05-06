@@ -12,46 +12,56 @@ export const useExecutiveData = () => {
   const [selectedArea, setSelectedArea] = useState('all')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
-  const rawRecords = useLiveQuery(() => db.records.toArray()) || []
-
-  const filteredRecords = useMemo(() => {
-    let filtered = rawRecords
+  // Consulta optimizada: Usamos índices para filtrar por tiempo directamente en IndexedDB
+  const rawRecords = useLiveQuery(async () => {
+    let query;
 
     if ((timeRange === 'custom' || timeRange === 'day') && startDate && endDate) {
-      const [sYear, sMonth, sDay] = startDate.split('-').map(Number)
-      const [eYear, eMonth, eDay] = endDate.split('-').map(Number)
+      const [sYear, sMonth, sDay] = startDate.split('-').map(Number);
+      const [eYear, eMonth, eDay] = endDate.split('-').map(Number);
+      const start = new Date(sYear, sMonth - 1, sDay, 0, 0, 0, 0).getTime();
+      const end = new Date(eYear, eMonth - 1, eDay, 23, 59, 59, 999).getTime();
       
-      const start = new Date(sYear, sMonth - 1, sDay, 0, 0, 0, 0).getTime()
-      const end = new Date(eYear, eMonth - 1, eDay, 23, 59, 59, 999).getTime()
-      
-      filtered = filtered.filter(r => r.fechaTimestamp >= start && r.fechaTimestamp <= end)
-    } else if (timeRange !== 'all' && timeRange !== 'custom' && timeRange !== 'day') {
+      query = db.records.where('fechaTimestamp').between(start, end);
+    } else if (timeRange !== 'all') {
       const days = parseInt(timeRange);
       if (!isNaN(days)) {
-        const cutoff = subDays(new Date(), days)
-        cutoff.setHours(0, 0, 0, 0);
-        filtered = filtered.filter(r => r.fechaTimestamp >= cutoff.getTime())
+        const cutoff = subDays(new Date(), days).getTime();
+        query = db.records.where('fechaTimestamp').aboveOrEqual(cutoff);
+      } else {
+        query = db.records;
       }
+    } else {
+      query = db.records;
     }
 
+    return await query.toArray();
+  }, [timeRange, startDate, endDate]) || [];
+
+  const filteredRecords = useMemo(() => {
+    let filtered = rawRecords;
+
+    // Filtros secundarios (en memoria sobre el set ya reducido)
     if (selectedArea !== 'all') {
+      const area = selectedArea.toLowerCase();
       filtered = filtered.filter(r => 
-        r.area?.toLowerCase() === selectedArea.toLowerCase() ||
-        r.moduloId?.toLowerCase() === selectedArea.toLowerCase()
-      )
+        r.area?.toLowerCase() === area ||
+        r.moduloId?.toLowerCase() === area
+      );
     }
 
     if (searchTerm) {
-      const search = searchTerm.toLowerCase()
+      const search = searchTerm.toLowerCase();
       filtered = filtered.filter(r => 
         (r.trabajadorNombre || '').toLowerCase().includes(search) ||
         (r.productoNombre || '').toLowerCase().includes(search) ||
         (r.maquinaId || '').toLowerCase().includes(search)
-      )
+      );
     }
 
-    return filtered
-  }, [rawRecords, timeRange, startDate, endDate, searchTerm, selectedArea])
+    return filtered;
+  }, [rawRecords, searchTerm, selectedArea]);
+
 
   const dashboardData = useMemo(() => analyticsService.getExecutiveDashboardData(filteredRecords), [filteredRecords])
 

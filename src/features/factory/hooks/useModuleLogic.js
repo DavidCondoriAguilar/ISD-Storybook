@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { subDays } from 'date-fns';
+import { filterRecords, calculateDailyStats } from '../../../domain/production/transformations';
 
 export const useModuleLogic = (records, moduleId) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -12,39 +12,16 @@ export const useModuleLogic = (records, moduleId) => {
   const [itemsPerPage, setItemsPerPage] = useState(25);
 
   const { processedData, dailyStats } = useMemo(() => {
-    // Salvaguarda Senior: Asegurar que records sea un array antes de operar
-    const safeRecords = Array.isArray(records) ? records : [];
+    // 1. Filtrado (Delegado al dominio)
+    const filtered = filterRecords(records, { 
+      moduleId, 
+      timeRange, 
+      startDate, 
+      endDate, 
+      searchTerm 
+    });
 
-    // 1. Filtro por Módulo
-    let filtered = safeRecords.filter(r => 
-      r.area?.toLowerCase() === moduleId?.toLowerCase() || 
-      r.moduloId?.toLowerCase() === moduleId?.toLowerCase()
-    );
-
-    // 2. Filtros Temporales
-    if ((timeRange === 'custom' || timeRange === 'day') && startDate && endDate) {
-      const [sYear, sMonth, sDay] = startDate.split('-').map(Number);
-      const [eYear, eMonth, eDay] = endDate.split('-').map(Number);
-      const start = new Date(sYear, sMonth - 1, sDay, 0, 0, 0, 0).getTime();
-      const end = new Date(eYear, eMonth - 1, eDay, 23, 59, 59, 999).getTime();
-      filtered = filtered.filter(r => r.fechaTimestamp >= start && r.fechaTimestamp <= end);
-    } else if (timeRange !== 'all' && timeRange !== 'custom' && timeRange !== 'day') {
-      const cutoff = subDays(new Date(), parseInt(timeRange));
-      cutoff.setHours(0, 0, 0, 0);
-      filtered = filtered.filter(r => r.fechaTimestamp >= cutoff.getTime());
-    }
-
-    // 3. Filtro de Búsqueda
-    if (searchTerm) {
-      const s = searchTerm.toLowerCase();
-      filtered = filtered.filter(r => 
-        (r.trabajadorNombre || '').toLowerCase().includes(s) ||
-        (r.productoNombre || '').toLowerCase().includes(s) ||
-        (r.maquinaId || '').toLowerCase().includes(s)
-      );
-    }
-
-    // 4. Ordenamiento Dinámico
+    // 2. Ordenamiento (Lógica de UI se queda aquí, pero es genérica)
     const sorted = [...filtered].sort((a, b) => {
       const valA = a[sortConfig.key];
       const valB = b[sortConfig.key];
@@ -53,30 +30,10 @@ export const useModuleLogic = (records, moduleId) => {
       return sortConfig.direction === 'asc' ? comparison : -comparison;
     });
 
-    // 5. Estadísticas Diarias Segmentadas (MP vs MR)
-    const dailyMap = filtered.reduce((acc, r) => {
-      const dateKey = new Date(r.fechaTimestamp).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
-      if (!acc[dateKey]) {
-        acc[dateKey] = { date: dateKey, mp: { total: 0, machine: 0 }, mr: { total: 0, machine: 0 }, workerCount: new Set(), timestamp: r.fechaTimestamp };
-      }
-      const isResorte = (r.maquinaId || '').includes('MR') || (r.unidad || '').includes('mil');
-      if (isResorte) {
-        acc[dateKey].mr.total += (r.cantidad || 0);
-        acc[dateKey].mr.machine += (r.outputMaquina || 0);
-      } else {
-        acc[dateKey].mp.total += (r.cantidad || 0);
-        acc[dateKey].mp.machine += (r.outputMaquina || 0);
-      }
-      if (r.trabajadorNombre) acc[dateKey].workerCount.add(r.trabajadorNombre);
-      return acc;
-    }, {});
+    // 3. Estadísticas (Delegado al dominio)
+    const stats = calculateDailyStats(filtered);
 
-    const dailyArray = Object.values(dailyMap)
-      .sort((a, b) => b.timestamp - a.timestamp)
-      .map(d => ({ ...d, workers: d.workerCount.size }))
-      .slice(0, 5);
-
-    return { processedData: sorted, dailyStats: dailyArray };
+    return { processedData: sorted, dailyStats: stats };
   }, [records, moduleId, searchTerm, timeRange, startDate, endDate, sortConfig]);
 
   const handleSort = (key) => {
@@ -86,7 +43,9 @@ export const useModuleLogic = (records, moduleId) => {
     }));
   };
 
-  useEffect(() => { setCurrentPage(1); }, [searchTerm, moduleId, timeRange, processedData.length, sortConfig]);
+  useEffect(() => { 
+    setCurrentPage(1); 
+  }, [searchTerm, moduleId, timeRange, processedData.length, sortConfig]);
 
   return {
     searchTerm, setSearchTerm,
@@ -100,3 +59,4 @@ export const useModuleLogic = (records, moduleId) => {
     processedData, dailyStats
   };
 };
+

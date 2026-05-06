@@ -2,10 +2,9 @@ import { motion } from 'framer-motion'
 
 export const ChartCard = ({ title, icon, children, span = 1, height = 300 }) => (
   <motion.div 
-    className="chart-container glass" 
+    className={`chart-container glass ${span > 1 ? 'span-2' : ''}`} 
     initial={{ opacity: 0, y: 15 }}
     animate={{ opacity: 1, y: 0 }}
-    style={{ gridColumn: span > 1 ? `span ${span}` : 'auto' }}
   >
     <div className="chart-header">
       {icon}
