@@ -45,17 +45,17 @@ export const useExecutiveData = () => {
     if (selectedArea !== 'all') {
       const area = selectedArea.toLowerCase();
       filtered = filtered.filter(r => 
-        r.area?.toLowerCase() === area ||
-        r.moduloId?.toLowerCase() === area
+        (r.area || r.ubicacion?.modulo || '').toLowerCase() === area ||
+        (r.moduloId || '').toLowerCase() === area
       );
     }
 
     if (searchTerm) {
       const search = searchTerm.toLowerCase();
       filtered = filtered.filter(r => 
-        (r.trabajadorNombre || '').toLowerCase().includes(search) ||
-        (r.productoNombre || '').toLowerCase().includes(search) ||
-        (r.maquinaId || '').toLowerCase().includes(search)
+        (r.trabajadorNombre || r.trabajador?.nombre || '').toLowerCase().includes(search) ||
+        (r.productoNombre || r.producto?.nombre || '').toLowerCase().includes(search) ||
+        (r.maquinaId || r.ubicacion?.maquina || '').toLowerCase().includes(search)
       );
     }
 

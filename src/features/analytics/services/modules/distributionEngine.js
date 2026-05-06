@@ -5,8 +5,9 @@ export const calculateDistribution = (records) => {
   const productMap = {};
 
   records.forEach(r => {
-    const name = r.productoNombre || 'Sin Producto';
+    const name = r.producto?.nombre || r.productoNombre || 'Sin Producto';
     const nameUpper = name.toUpperCase();
+    const qty = Number(r.produccion?.cantidad || r.cantidad || 0);
     
     // Ignorar tareas administrativas
     if (nameUpper.includes('PERMISO') || nameUpper.includes('LIMPIEZA') || nameUpper.includes('NO TRABAJÓ')) {
@@ -14,7 +15,7 @@ export const calculateDistribution = (records) => {
     }
 
     if (!productMap[name]) productMap[name] = 0;
-    productMap[name] += (r.cantidad || 0);
+    productMap[name] += qty;
   });
 
   const sortedProducts = Object.entries(productMap)

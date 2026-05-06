@@ -10,25 +10,34 @@
  */
 export const isResorte = (record) => {
   if (!record) return false;
-  const maquinaId = record.maquinaId || '';
-  const unidad = record.unidad || '';
+  const mId = String(record.maquinaId || record.ubicacion?.maquina || '').toUpperCase();
+  const unidad = String(record.unidad || record.produccion?.unidad || '').toLowerCase();
   
-  return maquinaId.includes('MR') || unidad.includes('mil');
+  return mId.includes('MR') || unidad.includes('mil');
+};
+
+export const isProceso = (record) => {
+  if (!record) return false;
+  const mId = String(record.maquinaId || record.ubicacion?.maquina || '').toUpperCase();
+  
+  const isRes = isResorte(record);
+  const isPanelMachine = ['MP1', 'MP2', 'MP3', 'MP4'].some(m => mId.includes(m));
+
+  return !isRes && !isPanelMachine;
 };
 
 /**
  * Determina si un registro pertenece a la categoría de Paneles (MP).
- * @param {Object} record 
- * @returns {boolean}
  */
 export const isPanel = (record) => {
-  return !isResorte(record);
+  if (!record) return false;
+  const mId = String(record.maquinaId || record.ubicacion?.maquina || '').toUpperCase();
+  
+  return ['MP1', 'MP2', 'MP3', 'MP4'].some(m => mId.includes(m));
 };
 
 /**
  * Formatea la unidad según el tipo de producto.
- * @param {Object} record 
- * @returns {string}
  */
 export const getUnitLabel = (record) => {
   return isResorte(record) ? 'mil.' : 'u.';

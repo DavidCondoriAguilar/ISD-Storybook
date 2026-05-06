@@ -62,7 +62,7 @@ export const DashboardCharts = memo(({ trendData, topPaneleros, topResorteros, m
           <XAxis type="number" hide />
           <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={10} width={90} axisLine={false} tickLine={false} />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
-          <Bar dataKey="total" name="u." fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={16} />
+          <Bar dataKey="paneles" name="u." fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={16} />
         </BarChart>
       </ResponsiveContainer>
     </ChartCard>

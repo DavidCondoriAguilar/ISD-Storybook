@@ -55,7 +55,7 @@ export function Dropzone({ onFileSelect }) {
         id="input-file-upload" 
         multiple={false} 
         onChange={handleChange}
-        accept=".json"
+        accept=".json,.xlsx,.xls"
         style={{ display: 'none' }}
       />
       <motion.div 
@@ -80,7 +80,7 @@ export function Dropzone({ onFileSelect }) {
           {isDragActive ? <FileType size={36} /> : <UploadCloud size={36} />}
         </div>
         <p className="dropzone-text" style={{ fontSize: '1.25rem', fontWeight: 800 }}>
-          {isDragActive ? 'Suelta el archivo para cargar' : 'Arrastra un archivo JSON'}
+          {isDragActive ? 'Suelta el archivo para cargar' : 'Arrastra un archivo JSON o Excel'}
         </p>
         <p className="dropzone-hint" style={{ marginTop: '8px', color: 'var(--text-muted)', fontWeight: 600 }}>
           o selecciona desde tu dispositivo (máx. 10MB)

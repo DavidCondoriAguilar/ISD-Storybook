@@ -1,4 +1,4 @@
-import { isResorte as checkIsResorte } from '../../../../domain/production/predicates';
+import { isResorte as checkIsResorte } from '../../../domain/production/predicates';
 
 /**
  * UTILIDADES DE IMPORTACIÓN (Mapping Exacto para produccion_completa.json)
@@ -8,52 +8,52 @@ export function normalizeRecords(records) {
   if (!records || !Array.isArray(records)) return [];
   
   return records.map(r => {
-    // 1. Identificación del Trabajador
+    // 1. Identificación del Trabajador (Soporte Dual)
     const trabajadorNombre = r.trabajador?.nombre || r.trabajadorNombre || 'Desconocido';
     
     // 2. Identificación del Producto
     const productoNombre = r.producto?.nombre || r.productoNombre || r.producto || 'Sin Producto';
     
-    // 3. Cantidad y Clasificación MP/MR
+    // 3. Cantidad (Soporte Dual)
     const cantidad = Number(r.produccion?.cantidad ?? r.cantidad ?? 0);
     
     // 4. Mapeo de Ubicación (ÁREA y MÁQUINA)
     const area = r.ubicacion?.modulo || r.area || 'General';
-    const maquina = r.ubicacion?.maquina || r.maquinaId || 'Máquina Genérica';
+    const maquina = r.ubicacion?.maquina || r.maquinaId || 'N/A';
     
-    // Usamos el dominio para clasificar
-    const isResorte = checkIsResorte({ maquinaId: maquina, unidad: r.unidad || (productoNombre.toUpperCase().includes('RESORTE') ? 'mil' : 'u') });
-    
-    // 5. Gestión de FECHA (Respetando fechaLegible del JSON)
+    // 5. Gestión de FECHA (Crítico para evitar el 01/01)
     let finalTimestamp;
-    if (r.fechaLegible) {
-      // Si existe fechaLegible, la usamos (Formato YYYY-MM-DD)
-      finalTimestamp = new Date(r.fechaLegible + 'T12:00:00').getTime();
-    } else if (r.metadatosFecha) {
-      // Backup: Usar metadatosFecha si no hay fechaLegible
-      const { anio, mes, dia } = r.metadatosFecha;
-      finalTimestamp = new Date(anio, mes - 1, dia, 12, 0, 0).getTime();
+    const fLegible = r.fechaLegible || (r.fechaTimestamp ? new Date(r.fechaTimestamp).toISOString().split('T')[0] : null);
+    
+    if (fLegible) {
+      // Forzamos mediodía para evitar saltos de día por Timezone
+      const [year, month, day] = fLegible.split('-').map(Number);
+      finalTimestamp = new Date(year, month - 1, day, 12, 0, 0).getTime();
+    } else if (r.fechaTimestamp) {
+      finalTimestamp = r.fechaTimestamp;
     } else {
       finalTimestamp = Date.now();
     }
 
+    const isRes = checkIsResorte({ maquinaId: maquina, unidad: r.produccion?.unidad || r.unidad || '' });
+    
     return {
-      idLocal: r.id || `rec_${Math.random().toString(36).substr(2, 9)}`,
+      idLocal: r.id || `rec_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
       timestamp: finalTimestamp,
       fechaTimestamp: finalTimestamp,
-      fechaLegible: r.fechaLegible || new Date(finalTimestamp).toISOString().split('T')[0],
+      fechaLegible: new Date(finalTimestamp).toISOString().split('T')[0],
       trabajadorNombre,
       productoNombre,
       cantidad,
-      unidad: isResorte ? 'mil.' : 'u.',
+      unidad: isRes ? 'mil.' : 'u.',
       area: area,
-      moduloId: area, // Sincronizamos moduloId con área para consistencia
+      moduloId: area,
       maquinaId: maquina,
-      outputMaquina: r.outputMaquina ?? null,
+      outputMaquina: r.outputMaquina ?? r.produccion?.output ?? 0,
       tipoJornada: r.tiempo?.tipo || 'Estándar',
       metadata: {
         originalId: r.id,
-        version: r.version || '1.0'
+        version: r.version || '1.1-fixed'
       }
     };
   });

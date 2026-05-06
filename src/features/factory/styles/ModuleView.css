@@ -25,10 +25,26 @@
 }
 
 .daily-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  display: flex;
   gap: 1.25rem;
   margin-bottom: 2.5rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
+}
+
+.daily-stats-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.daily-stats-grid::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+.daily-stats-grid > * {
+  flex: 0 0 280px;
 }
 
 .stat-tag {

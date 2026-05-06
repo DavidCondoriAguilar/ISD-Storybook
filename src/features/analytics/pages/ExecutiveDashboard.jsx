@@ -8,7 +8,7 @@ import { formatMetric } from '../../../utils/formatters'
 
 // Components
 import { ExecutiveHeader } from '../components/ExecutiveHeader'
-import { KPICard, AdvMetricCard } from '../components/StatCards'
+import { KPICard, AdvMetricCard, SuccessScoreCard } from '../components/StatCards'
 import { EmployeeMatrix } from '../components/EmployeeMatrix'
 import { DashboardCharts } from '../components/DashboardCharts'
 import { DateRangePicker } from '../../../shared'
@@ -80,27 +80,49 @@ const ExecutiveDashboard = memo(() => {
         <span>Lectura de Producción: <strong>{periodLabel}</strong></span>
       </div>
 
+      {/* Métrica Maestra de Éxito - Comentada temporalmente por feedback gerente */}
+      {/* 
+      <section style={{ marginBottom: '24px' }}>
+        <SuccessScoreCard score={stats.cumplimiento?.global || 0} />
+      </section> 
+      */}
+
       <section className="stats-grid">
         <KPICard 
           title="Producción Paneles" 
           value={`${formatMetric(stats.totalPaneles)} u.`} 
           color="blue" 
+          icon={Layers}
           trend={stats.variations?.paneles}
-          progress={stats.cumplimientoPaneles}
-          goalUnits={1500}
+          progress={stats.cumplimiento?.paneles}
+          goalUnits={stats.metas?.paneles}
           periodLabel={periodLabel}
         />
         <KPICard 
           title="Producción Resortes" 
           value={`${formatMetric(stats.totalResortes)} mil.`} 
           color="green" 
+          icon={Activity}
           trend={stats.variations?.resortes}
-          progress={stats.cumplimientoResortes}
-          goalUnits={1000}
+          progress={stats.cumplimiento?.resortes}
+          goalUnits={stats.metas?.resortes}
           periodLabel={periodLabel}
         />
-        <KPICard title="Fuerza Laboral" value={stats.uniqueWorkers} color="cyan" periodLabel={periodLabel} />
-        <KPICard title="Registros Auditados" value={stats.totalRecords} color="purple" periodLabel={periodLabel} />
+        {/* Ocultando Procesos temporalmente para enfoque neta en Producción */}
+        {/* 
+        <KPICard 
+          title="Tareas Proceso" 
+          value={`${formatMetric(stats.totalProcesos)} u.`} 
+          color="purple" 
+          icon={Activity}
+          trend={stats.variations?.procesos}
+          progress={stats.cumplimiento?.procesos}
+          goalUnits={stats.metas?.procesos}
+          periodLabel={periodLabel}
+        /> 
+        */}
+        <KPICard title="Fuerza Laboral" value={stats.uniqueWorkers} color="cyan" icon={Users} periodLabel={periodLabel} />
+        <KPICard title="Registros Auditados" value={stats.totalRecords} color="purple" icon={Activity} periodLabel={periodLabel} />
       </section>
 
       <section className="advanced-stats-row">

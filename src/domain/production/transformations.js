@@ -73,12 +73,10 @@ export const calculateDailyStats = (records) => {
 
   try {
     const dailyMap = records.reduce((acc, r) => {
-      // Validar existencia de timestamp
-      if (!r.fechaTimestamp) return acc;
-
-      const dateObj = new Date(r.fechaTimestamp);
-      if (isNaN(dateObj.getTime())) return acc;
-
+      // Prioridad Senior: Usamos fechaLegible para la clave de agrupación
+      const dateStr = r.fechaLegible || (r.fechaTimestamp ? new Date(r.fechaTimestamp).toISOString().split('T')[0] : '2026-01-01');
+      
+      const dateObj = new Date(dateStr + 'T12:00:00'); // Evitar problemas de timezone
       const dateKey = dateObj.toLocaleDateString('es-ES', { 
         day: '2-digit', 
         month: 'short' 
@@ -90,26 +88,29 @@ export const calculateDailyStats = (records) => {
           mp: { total: 0, machine: 0 }, 
           mr: { total: 0, machine: 0 }, 
           workerCount: new Set(), 
-          timestamp: r.fechaTimestamp 
+          timestamp: dateObj.getTime()
         };
       }
 
+      const qty = Number(r.produccion?.cantidad || r.cantidad || 0);
+      const output = Number(r.outputMaquina || 0);
+
       if (isResorte(r)) {
-        acc[dateKey].mr.total += (r.cantidad || 0);
-        acc[dateKey].mr.machine += (r.outputMaquina || 0);
-      } else {
-        acc[dateKey].mp.total += (r.cantidad || 0);
-        acc[dateKey].mp.machine += (r.outputMaquina || 0);
+        acc[dateKey].mr.total += qty;
+        acc[dateKey].mr.machine += output;
+      } else if (isPanel(r)) {
+        acc[dateKey].mp.total += qty;
+        acc[dateKey].mp.machine += output;
       }
 
-      if (r.trabajadorNombre) acc[dateKey].workerCount.add(r.trabajadorNombre);
+      const workerName = r.trabajador?.nombre || r.trabajadorNombre;
+      if (workerName) acc[dateKey].workerCount.add(workerName);
       return acc;
     }, {});
 
     return Object.values(dailyMap)
       .sort((a, b) => b.timestamp - a.timestamp)
-      .map(d => ({ ...d, workers: d.workerCount.size }))
-      .slice(0, 5);
+      .map(d => ({ ...d, workers: d.workerCount.size }));
   } catch (error) {
     console.error("[Domain Error] calculateDailyStats failed:", error);
     return [];

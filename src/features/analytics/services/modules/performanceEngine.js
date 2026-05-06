@@ -1,3 +1,5 @@
+import { isResorte, isPanel, isProceso } from '../../../../domain/production/predicates';
+
 /**
  * MOTOR DE RENDIMIENTO (Rankings y Líderes)
  */
@@ -6,29 +8,32 @@ export const calculatePerformance = (records) => {
   const machineMap = {};
 
   records.forEach(r => {
-    // Definir tipo de producto
-    const mId = String(r.maquinaId || '').toUpperCase();
-    const pName = String(r.productoNombre || '').toUpperCase();
-    const isResorte = mId.includes('MR') || mId.includes('RESORTE') || pName.includes('RESORTE');
-    const isProceso = pName.includes('EMBARILLADO') || pName.includes('CORTADO') || pName.includes('DOBLADO') || pName.includes('VARILLA');
+    const qty = Number(r.cantidad || r.produccion?.cantidad || 0);
+    const workerName = r.trabajadorNombre || r.trabajador?.nombre || 'Sin Nombre';
+    const mId = r.maquinaId || r.ubicacion?.maquina || 'Sin Máquina';
 
     // Workers
-    const name = r.trabajadorNombre || 'Sin Nombre';
-    if (!workerMap[name]) {
-      workerMap[name] = { name, total: 0, paneles: 0, procesos: 0, resortes: 0, area: r.area || 'General' };
+    if (!workerMap[workerName]) {
+      workerMap[workerName] = { 
+        name: workerName, 
+        total: 0, 
+        paneles: 0, 
+        procesos: 0, 
+        resortes: 0, 
+        area: r.area || r.ubicacion?.modulo || 'General' 
+      };
     }
     
-    workerMap[name].total += (r.cantidad || 0);
+    workerMap[workerName].total += qty;
     
-    if (isResorte) workerMap[name].resortes += (r.cantidad || 0);
-    else if (isProceso) workerMap[name].procesos += (r.cantidad || 0);
-    else workerMap[name].paneles += (r.cantidad || 0);
+    if (isResorte(r)) workerMap[workerName].resortes += qty;
+    else if (isProceso(r)) workerMap[workerName].procesos += qty;
+    else if (isPanel(r)) workerMap[workerName].paneles += qty;
 
     // Machines
-    const mName = r.maquinaId || 'Sin Máquina';
-    if (mName !== 'Sin Máquina') {
-      if (!machineMap[mName]) machineMap[mName] = { name: mName, total: 0 };
-      machineMap[mName].total += (r.cantidad || 0);
+    if (mId !== 'Sin Máquina') {
+      if (!machineMap[mId]) machineMap[mId] = { name: mId, total: 0 };
+      machineMap[mId].total += qty;
     }
   });
 
