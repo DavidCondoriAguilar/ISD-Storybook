@@ -4,7 +4,7 @@
  */
 
 // Componentes
-export * from './components/DataTable';
+export * from './components/DataTable/index';
 export * from './components/MetricCard';
 export * from './components/ComingSoon';
 export * from './components/DateRangePicker/DateRangePicker';

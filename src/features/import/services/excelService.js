@@ -45,67 +45,79 @@ export const excelService = {
    * Mapeo Inteligente con Corrección de Fechas Excel
    */
   mapRowsToRecords: (rows, sheetName) => {
+    console.log('[ExcelService] v1.6 - Iniciando mapeo');
+    
     const hasHeader = rows[0] && rows[0].some(cell => {
       const s = String(cell || '').toLowerCase();
       return s.includes('fecha') || s.includes('trabajador') || s.includes('producto');
     });
     
     const dataRows = hasHeader ? rows.slice(1) : rows;
-
-    return dataRows.map((row, index) => {
+    
+    console.log(`[ExcelService] 🗺️ Mapeando ${dataRows?.length || 0} filas a registros...`);
+    const records = dataRows.map((row, index) => {
       if (!row || row.length < 3) return null;
 
       try {
-        // [0] Fecha, [1] Producto, [2] Area, [3] Trabajador, [4] Output?, [5] Cantidad, [6] Maquina
+        // 1. ANALISIS DE CONTENIDO DINAMICO
+        let producto = String(row[1] || 'Sin Producto').trim();
+        let area = String(row[2] || 'General').trim();
+        let trabajador = String(row[3] || 'Desconocido').trim();
+        
+        let output = 0;
+        let cantidad = 0;
+        let maquina = 'N/A';
+
+        // Recorremos las celdas de datos (de la 4 en adelante)
+        for (let i = 4; i < row.length; i++) {
+          const val = row[i];
+          const num = Number(val);
+
+          if (!isNaN(num) && val !== '' && typeof val !== 'boolean') {
+            // Lógica de magnitudes:
+            if (num > 500 && output === 0) {
+              output = num; // Es un contador de máquina
+            } else if (num > 0 && cantidad === 0) {
+              cantidad = num; // Es producción neta
+            }
+          } else if (typeof val === 'string' && val.length > 0) {
+            maquina = val.trim();
+          }
+        }
+
+        // 2. PARSEO DE FECHA REFORZADO
         let fechaRaw = row[0];
-        let timestamp;
+        let timestamp = Date.now();
         
         if (fechaRaw instanceof Date) {
           timestamp = fechaRaw.getTime();
         } else if (typeof fechaRaw === 'number') {
-          // Convertir número de serie de Excel (basado en 1899-12-30)
-          const date = new Date(Math.round((fechaRaw - 25569) * 86400 * 1000));
-          timestamp = date.getTime();
+          timestamp = new Date(Math.round((fechaRaw - 25569) * 86400 * 1000)).getTime();
         } else if (typeof fechaRaw === 'string') {
-          const parts = fechaRaw.split(/[\/\-]/);
-          if (parts.length === 3) {
-            const d = new Date(parts[2], parts[1] - 1, parts[0], 12, 0, 0);
-            timestamp = d.getTime();
-          }
+          const p = fechaRaw.split(/[\/\-]/);
+          if (p.length === 3) timestamp = new Date(p[2], p[1] - 1, p[0], 12, 0, 0).getTime();
         }
 
-        if (!timestamp || isNaN(timestamp)) return null;
-
-        const isLongRow = row.length >= 7;
-        const cantidadIdx = isLongRow ? 5 : 4;
-        const maquinaIdx = isLongRow ? 6 : 5;
-        
-        // Generar fechaLegible ISO segura
         const fLegible = new Date(timestamp + 6 * 3600 * 1000).toISOString().split('T')[0];
 
         return {
-          id: `xl-${timestamp}-${index}`,
-          trabajador: {
-            nombre: String(row[3] || 'Desconocido').trim()
-          },
-          ubicacion: {
-            modulo: String(row[2] || 'General').trim(),
-            maquina: String(row[maquinaIdx] || 'N/A').trim()
-          },
-          producto: {
-            nombre: String(row[1] || 'Sin Producto').trim()
-          },
-          produccion: {
-            cantidad: Number(row[cantidadIdx] || 0)
-          },
+          id: `xl-${timestamp}-${index}-${Math.random().toString(36).substr(2, 5)}`,
+          trabajador: { nombre: trabajador },
+          ubicacion: { modulo: area, maquina: maquina },
+          producto: { nombre: producto },
+          produccion: { cantidad: cantidad },
           fechaTimestamp: timestamp,
           fechaLegible: fLegible,
-          outputMaquina: isLongRow ? Number(row[4] || 0) : 0,
-          version: '1.4-XL-Fixed'
+          outputMaquina: output,
+          version: '2.0-XL-Robust'
         };
       } catch (e) {
+        console.error(`[ExcelService] ❌ Error en fila ${index + 1}:`, e);
         return null;
       }
     }).filter(r => r !== null);
+
+    console.log(`[ExcelService] ✅ Mapeo finalizado. ${records.length} registros válidos.`);
+    return records;
   }
 };

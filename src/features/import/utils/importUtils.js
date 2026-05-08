@@ -22,17 +22,21 @@ export function normalizeRecords(records) {
     const maquina = r.ubicacion?.maquina || r.maquinaId || 'N/A';
     
     // 5. Gestión de FECHA (Crítico para evitar el 01/01)
-    let finalTimestamp;
-    const fLegible = r.fechaLegible || (r.fechaTimestamp ? new Date(r.fechaTimestamp).toISOString().split('T')[0] : null);
+    let finalTimestamp = null;
+    const fLegible = r.fechaLegible || (r.fechaTimestamp ? new Date(Number(r.fechaTimestamp)).toISOString().split('T')[0] : null);
     
-    if (fLegible) {
-      // Forzamos mediodía para evitar saltos de día por Timezone
-      const [year, month, day] = fLegible.split('-').map(Number);
-      finalTimestamp = new Date(year, month - 1, day, 12, 0, 0).getTime();
-    } else if (r.fechaTimestamp) {
-      finalTimestamp = r.fechaTimestamp;
-    } else {
-      finalTimestamp = Date.now();
+    if (fLegible && String(fLegible).includes('-')) {
+      const parts = String(fLegible).split('-').map(Number);
+      if (parts.length === 3 && !parts.some(isNaN)) {
+        // Forzamos mediodía para evitar saltos de día por Timezone
+        finalTimestamp = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0).getTime();
+      }
+    } 
+    
+    if (!finalTimestamp || isNaN(finalTimestamp)) {
+      finalTimestamp = r.fechaTimestamp ? Number(r.fechaTimestamp) : Date.now();
+      // Si sigue siendo inválido, fallback final
+      if (isNaN(finalTimestamp)) finalTimestamp = Date.now();
     }
 
     const isRes = checkIsResorte({ maquinaId: maquina, unidad: r.produccion?.unidad || r.unidad || '' });

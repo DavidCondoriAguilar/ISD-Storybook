@@ -29,13 +29,13 @@
   },
 
   "fieldMappings": {
-    "trabajador": { "aliases": ["trabajador", "worker", "nombre", "name", "empleado"] },
-    "dni": { "aliases": ["dni", "cedula", "ci", "id"] },
-    "turno": { "aliases": ["turno", "shift", "jornada"] },
-    "fecha": { "aliases": ["fecha", "date", "dia"] },
-    "producto": { "aliases": ["producto", "tipo", "name", "articulo", "item"] },
+    "trabajador": { "aliases": ["trabajador", "worker", "nombre", "name", "empleado", "trabajadorNombre"] },
+    "dni": { "aliases": ["dni", "cedula", "ci", "id", "trabajadorDni"] },
+    "turno": { "aliases": ["turno", "shift", "jornada", "tipoJornada"] },
+    "fecha": { "aliases": ["fecha", "date", "dia", "fechaLegible", "fechaTimestamp", "timestamp"] },
+    "producto": { "aliases": ["producto", "tipo", "name", "articulo", "item", "productoNombre"] },
     "cantidad": { "aliases": ["cantidad", "qty", "units", "cant", "piezas"] },
-    "maquina": { "aliases": ["maquina", "machine", "equipo", "maq"] },
+    "maquina": { "aliases": ["maquina", "machine", "equipo", "maq", "maquinaId"] },
     "observaciones": { "aliases": ["obs", "notas", "notes", "comentarios"] }
   },
 

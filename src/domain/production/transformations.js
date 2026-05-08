@@ -1,5 +1,5 @@
 import { subDays } from 'date-fns';
-import { isResorte } from './predicates';
+import { isResorte, isPanel, isProceso } from './predicates';
 
 /**
  * Filtra registros según criterios de módulo, tiempo y búsqueda.
@@ -13,9 +13,8 @@ export const filterRecords = (records, { moduleId, timeRange, startDate, endDate
   try {
     let filtered = records;
 
-    // 1. Filtro por Módulo (Solo si es necesario y los registros no vienen ya filtrados)
-    // Nota Senior: En entornos de alto rendimiento, esto se hace en la DB (Dexie)
-    if (moduleId && records.length > 0) {
+    // 1. Filtro por Módulo (Bypass para Auditoría Máster en Paneles)
+    if (moduleId && moduleId.toLowerCase() !== 'paneles' && records.length > 0) {
       const firstRecord = records[0];
       const isAlreadyFiltered = (firstRecord.area === moduleId || firstRecord.moduloId === moduleId);
       
@@ -95,6 +94,7 @@ export const calculateDailyStats = (records) => {
       const qty = Number(r.produccion?.cantidad || r.cantidad || 0);
       const output = Number(r.outputMaquina || 0);
 
+      // FILTRO PT: Solo sumamos si es Producto Terminado (Paneles o Resortes)
       if (isResorte(r)) {
         acc[dateKey].mr.total += qty;
         acc[dateKey].mr.machine += output;
@@ -102,6 +102,7 @@ export const calculateDailyStats = (records) => {
         acc[dateKey].mp.total += qty;
         acc[dateKey].mp.machine += output;
       }
+      // Los procesos intermedios (isProceso) se ignoran en el cálculo de totales PT
 
       const workerName = r.trabajador?.nombre || r.trabajadorNombre;
       if (workerName) acc[dateKey].workerCount.add(workerName);

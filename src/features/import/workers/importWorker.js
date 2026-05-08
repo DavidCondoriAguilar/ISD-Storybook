@@ -15,10 +15,12 @@ self.onmessage = async (e) => {
   const { json } = e.data;
 
   try {
+    console.log('[Worker] 🔍 Iniciando validación de datos...');
     // 1. Validación pesada
     const validation = validateProductionData(json);
     
     if (!validation.success) {
+      console.error('[Worker] ❌ Error de Validación:', validation.errors);
       const firstErr = (validation.errors && validation.errors[0]) || { message: 'Error de formato desconocido' };
       self.postMessage({ 
         success: false, 
@@ -27,6 +29,7 @@ self.onmessage = async (e) => {
       return;
     }
 
+    console.log('[Worker] ✅ Validación exitosa. Normalizando...');
     // 2. Normalización masiva
     const normalized = normalizeRecords(validation.data);
     if (!normalized || normalized.length === 0) {

@@ -53,7 +53,7 @@ const normalizeRecord = (record, index, moduleName, fileName) => {
   const { cantidadNeta, lecturaMaquina, unidadOriginal } = normalizeProduction(mapped)
   const { jornadaHoras, minutos, horasExtra, tipoJornada } = normalizeTime(mapped)
   
-  const generatedId = record.id || record.idLocal || generateRecordId(workerKey, normalizedTimestamp, index, record)
+  const generatedId = generateRecordId(workerKey, normalizedTimestamp, index, record)
   
   return {
     idLocal: generatedId,

@@ -1,0 +1,209 @@
+/**
+ * DataTable v5.0 - ULTRA COMPACT INDUSTRIAL
+ * Diseñada para máxima densidad de datos y cero desbordamientos.
+ */
+
+.dt-master-wrapper {
+  width: 100%;
+  max-width: 1190px;
+  overflow-x: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.dt-table {
+  width: 100%;          /* 100% del contenedor de 900px */
+  table-layout: fixed;  /* colgroup manda los anchos */
+  border-collapse: collapse;
+  font-size: 0.75rem;   /* Un poco más pequeño para mayor densidad */
+}
+
+.dt-thead {
+  background: var(--bg-app);
+  border-bottom: 2px solid var(--border);
+}
+
+/* Col index siempre compacto */
+.dt-col-idx {
+  width: 36px;
+  min-width: 36px;
+  max-width: 36px;
+  text-align: center;
+}
+
+.dt-th {
+  padding: 0.55rem 0.5rem;
+  font-weight: 800;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  border-right: 1px solid var(--border);
+  background: var(--bg-app);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.dt-th:last-child { border-right: none; }
+
+.dt-th-content {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dt-sort-wrapper { opacity: 0.4; }
+
+.dt-tr {
+  border-bottom: 1px solid var(--border);
+}
+
+.dt-td {
+  padding: 0.45rem 0.5rem;
+  color: var(--text-main);
+  border-right: 1px solid var(--border);
+  vertical-align: middle;
+  overflow: hidden;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.dt-td:last-child { border-right: none; }
+
+.dt-td-inner {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dt-idx-cell {
+  background: var(--bg-app);
+  font-weight: 700;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+/* ALINEACIONES ESTRICTAS */
+.dt-th.align-right, .dt-td.align-right { text-align: right; }
+.dt-th.align-center, .dt-td.align-center { text-align: center; }
+
+/* Scrollbar fina para no molestar */
+.dt-master-wrapper::-webkit-scrollbar { height: 6px; }
+.dt-master-wrapper::-webkit-scrollbar-thumb { 
+  background: var(--primary); 
+  border-radius: 10px; 
+}
+
+.dt-empty {
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-dim);
+}
+
+/* PAGINACIÓN PREMIUM 2026 */
+.dt-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+}
+
+.dt-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.dt-results-count {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.dt-results-count strong {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.dt-page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dt-page-size-label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.dt-select {
+  background: var(--bg-app);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 0.75rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.dt-pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dt-pg-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-dim);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dt-pg-btn:hover:not(:disabled) {
+  background: var(--primary-glow);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.dt-pg-btn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.dt-pg-indicator {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.dt-pg-current {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.dt-pg-sep {
+  color: var(--border);
+}
+
+.dt-pg-total {
+  color: var(--text-dim);
+}
