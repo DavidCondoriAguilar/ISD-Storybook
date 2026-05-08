@@ -1,0 +1,189 @@
+{
+  "version": "1.0.0",
+  "description": "JSON Schemas para diferentes tipos de producción ISD",
+  "lastUpdated": "2025-01-15",
+
+  "schemas": {
+    "tela": {
+      "description": "Producción de telas (corte, ribete, panelado)",
+      "example": {
+        "trabajador": "Maria García",
+        "dni": "12345678",
+        "turno": "Mañana",
+        "fecha": "2025-01-15",
+        "productos": [
+          {
+            "tipo": "Banda",
+            "nombre": "Splendido Topacio BB",
+            "cantidad": 50,
+            "maquina": "CORT-01",
+            "口岸": "Corte"
+          },
+          {
+            "tipo": "Pestañas",
+            "nombre": "Pestañas basic",
+            "cantidad": 30,
+            "maquina": "RIB-02",
+            "口岸": "Ribete"
+          }
+        ],
+        "horasExtra": 0,
+        "observaciones": ""
+      },
+
+      "required": ["trabajador", "dni", "turno", "fecha", "productos"],
+      "productTypes": [
+        "Banda",
+        "Pestañas",
+        "PillowQ",
+        "Memoris",
+        "Riveteado",
+        "Protectores",
+        "Almohadas",
+        "Cunas",
+        "Corte",
+        "Tela Box",
+        "Colchonetas",
+        "Cabeceras"
+      ]
+    },
+
+    "paneles": {
+      "description": "Producción de paneles (ensamble, terminado)",
+      "example": {
+        "trabajador": "Carlos López",
+        "dni": "87654321",
+        "turno": "Tarde",
+        "fecha": "2025-01-15",
+        "producto": "Panel Visco",
+        "cantidad": 45,
+        "maquina": "ENS-03",
+        "outputMaquina": 180,
+        "eficiencia": 92,
+        "defectos": 0
+      },
+
+      "required": ["trabajador", "dni", "turno", "fecha", "producto", "cantidad", "maquina"],
+      "productTypes": [
+        "Panel Visco",
+        "Panel Espuma",
+        "Panel Latex",
+        "Panel Gel"
+      ]
+    },
+
+    "resortes": {
+      "description": "Producción de resortes (bobinado, ensamble)",
+      "example": {
+        "trabajador": "Juan Pérez",
+        "dni": "11223344",
+        "turno": "Noche",
+        "fecha": "2025-01-15",
+        "producto": "Resorte Bonnell",
+        "cantidad": 120,
+        "maquina": "BOB-05",
+        "outputMaquina": 450,
+        "calidad": "A"
+      },
+
+      "required": ["trabajador", "dni", "turno", "fecha", "producto", "cantidad", "maquina"],
+      "productTypes": [
+        "Resorte Bonnell",
+        "Resorte Continuous",
+        "Resorte Pocket"
+      ]
+    },
+
+    "ensamble": {
+      "description": "Ensamble general",
+      "example": {
+        "trabajador": "Ana Díaz",
+        "dni": "55667788",
+        "turno": "Mañana",
+        "fecha": "2025-01-15",
+        "areas": ["ensamble", "terminado"],
+        "unidades": 25,
+        "tiempo": "8h",
+        "supervisor": "Roberto"
+      },
+
+      "required": ["trabajador", "dni", "turno", "fecha", "areas", "unidades"]
+    },
+
+    "mantenimiento": {
+      "description": "Registros de mantenimiento de máquinas",
+      "example": {
+        "fecha": "2025-01-15",
+        "maquina": "ENS-03",
+        "tipo": "Preventivo",
+        "tecnico": "Pedro Martinez",
+        "horas": 2,
+        "descripcion": "Cambio de rodamientos",
+        "refacciones": ["Rodamiento 6205", "Grasa"],
+        "proximoMantenimiento": "2025-02-15"
+      },
+
+      "required": ["fecha", "maquina", "tipo", "tecnico", "descripcion"]
+    }
+  },
+
+  "commonFields": {
+    "trabajador": {
+      "type": "string",
+      "description": "Nombre completo del trabajador"
+    },
+    "dni": {
+      "type": "string",
+      "description": "Documento de identidad",
+      "pattern": "^[0-9]{8}$"
+    },
+    "turno": {
+      "type": "enum",
+      "values": ["Mañana", "Tarde", "Noche"]
+    },
+    "fecha": {
+      "type": "string",
+      "format": "date",
+      "description": "Fecha en formato ISO o DD/MM/YYYY"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "datetime",
+      "auto": true
+    }
+  },
+
+  "offlineCapabilities": {
+    "description": "La app mobile debe funcionar sin internet",
+    "sync": {
+      "method": "queue",
+      "conflictResolution": "lastWriteWins",
+      "maxQueueSize": 1000
+    }
+  },
+
+  "kotlinModels": {
+    "ProductionRecord": {
+      "import": "com.isd.production.model.ProductionRecord",
+      "fields": [
+        "val id: Long = 0",
+        "val workerId: String",
+        "val workerName: String", 
+        "val shift: String",
+        "val date: Long",
+        "val products: List<ProductEntry>",
+        "val createdAt: Long = System.currentTimeMillis()"
+      ]
+    },
+    "ProductEntry": {
+      "import": "com.isd.production.model.ProductEntry",
+      "fields": [
+        "val productType: String",
+        "val productName: String",
+        "val quantity: Int",
+        "val machineId: String",
+        "val station: String"
+      ]
+    }
+  }
+}

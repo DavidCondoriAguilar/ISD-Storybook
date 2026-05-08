@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, memo } from 'react'
 import { useLocation, NavLink } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sun, Moon, ChevronRight, User } from 'lucide-react'
@@ -8,7 +8,7 @@ import './Sidebar.css'
 /**
  * 🛸 Sidebar Dock v2 - La experiencia de navegación 2026.
  */
-export const Sidebar = ({ navItems }) => {
+const Sidebar = memo(function Sidebar({ navItems }) {
   const location = useLocation()
   const { theme, toggleTheme, activeTooltip, setActiveTooltip } = useAppStore()
   const [openDropdown, setOpenDropdown] = useState(null)
@@ -134,4 +134,6 @@ export const Sidebar = ({ navItems }) => {
       </div>
     </aside>
   )
-}
+})
+
+export { Sidebar }

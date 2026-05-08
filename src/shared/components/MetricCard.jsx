@@ -1,48 +1,94 @@
-import React from 'react';
+import React, { createContext, use } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
-/**
- * Tarjeta de métrica premium para el dashboard ejecutivo.
- */
-export const MetricCard = ({ title, value, unit, trend, icon: Icon, color = 'primary' }) => {
-  const isPositive = trend > 0;
+const MetricCardContext = createContext(null);
 
+/**
+ * MetricCard Compound Component
+ * Pattern: architecture-compound-components
+ */
+export function MetricCard({ children, color = 'primary', className = '', ...props }) {
+  const value = { color };
+  
   return (
-    <motion.div 
-      className={`metric-card glass glow-card color-${color}`}
-      whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-    >
-      <div className="metric-header">
-        <div className="metric-icon-wrapper">
-          <Icon size={24} />
-        </div>
-        {trend !== undefined && (
-          <div className={`metric-trend ${isPositive ? 'positive' : 'negative'}`}>
-            {isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-            <span>{Math.abs(trend)}%</span>
-          </div>
-        )}
-      </div>
-      
-      <div className="metric-content">
-        <h3 className="metric-value">
-          {typeof value === 'number' ? value.toLocaleString() : value}
-          <span className="metric-unit">{unit}</span>
-        </h3>
-        <p className="metric-title">{title}</p>
-      </div>
-      
-      <div className="metric-progress-bg">
-        <motion.div 
-          className="metric-progress-fill"
-          initial={{ width: 0 }}
-          animate={{ width: '70%' }} // Simulado o basado en meta
-          transition={{ duration: 1, delay: 0.5 }}
-        />
-      </div>
-    </motion.div>
+    <MetricCardContext.Provider value={value}>
+      <motion.div 
+        className={`metric-card glass glow-card color-${color} ${className}`}
+        whileHover={{ y: -5, transition: { duration: 0.2 } }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        {...props}
+      >
+        {children}
+      </motion.div>
+    </MetricCardContext.Provider>
+  );
+}
+
+// Sub-components
+
+MetricCard.Header = function MetricCardHeader({ children, className = '' }) {
+  return (
+    <div className={`metric-header ${className}`}>
+      {children}
+    </div>
+  );
+};
+
+MetricCard.Icon = function MetricCardIcon({ icon: Icon, size = 24, className = '' }) {
+  return (
+    <div className={`metric-icon-wrapper ${className}`}>
+      <Icon size={size} />
+    </div>
+  );
+};
+
+MetricCard.Trend = function MetricCardTrend({ value, className = '' }) {
+  const isPositive = value > 0;
+  return (
+    <div className={`metric-trend ${isPositive ? 'positive' : 'negative'} ${className}`}>
+      {isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+      <span>{Math.abs(value)}%</span>
+    </div>
+  );
+};
+
+MetricCard.Content = function MetricCardContent({ children, className = '' }) {
+  return (
+    <div className={`metric-content ${className}`}>
+      {children}
+    </div>
+  );
+};
+
+MetricCard.Value = function MetricCardValue({ value, unit, className = '' }) {
+  const displayValue = typeof value === 'number' ? value.toLocaleString() : value;
+  return (
+    <h3 className={`metric-value ${className}`}>
+      {displayValue}
+      {unit && <span className="metric-unit">{unit}</span>}
+    </h3>
+  );
+};
+
+MetricCard.Title = function MetricCardTitle({ children, className = '' }) {
+  return (
+    <p className={`metric-title ${className}`}>
+      {children}
+    </p>
+  );
+};
+
+MetricCard.Progress = function MetricCardProgress({ value = 0, delay = 0.5, className = '' }) {
+  return (
+    <div className={`metric-progress-bg ${className}`}>
+      <motion.div 
+        className="metric-progress-fill"
+        initial={{ width: 0 }}
+        animate={{ width: `${Math.min(100, Math.max(0, value))}%` }}
+        transition={{ duration: 1, delay }}
+      />
+    </div>
   );
 };

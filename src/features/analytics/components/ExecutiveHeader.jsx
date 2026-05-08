@@ -1,13 +1,31 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { FileDown, Loader2 } from 'lucide-react'
+import { reportService } from '../services/reportService'
 
 /**
  * ExecutiveHeader - Versión Ultra-Limpia.
  * Sin búsqueda y con alineación horizontal de filtros.
  */
 export const ExecutiveHeader = ({
-  children
+  children,
+  analyticsData,
+  dateRange
 }) => {
   const currentMonth = new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportPDF = async () => {
+    if (!analyticsData) return;
+    setExporting(true);
+    try {
+      await reportService.generateExecutiveReport(analyticsData, dateRange);
+    } catch (error) {
+      console.error('Error exportando PDF:', error);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   return (
     <header className="exec-header-v2">
@@ -21,10 +39,28 @@ export const ExecutiveHeader = ({
       </div>
 
       <div className="header-right-v2">
-        {/* Aquí se inyectan los selectores (Áreas y Calendario) */}
         <div className="filters-group-v2">
           {children}
         </div>
+
+        <button
+          className="btn-export-pdf"
+          onClick={handleExportPDF}
+          disabled={exporting || !analyticsData}
+          title="Exportar reporte PDF"
+        >
+          {exporting ? (
+            <>
+              <Loader2 size={16} className="spin" />
+              Generando...
+            </>
+          ) : (
+            <>
+              <FileDown size={16} />
+              Exportar PDF
+            </>
+          )}
+        </button>
 
         <div className="status-badge-v2">
           <motion.span 

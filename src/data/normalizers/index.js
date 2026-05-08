@@ -9,6 +9,79 @@ import {
   normalizeTime,
   generateRecordId
 } from './recordNormalizer'
+import { getSchema, detectAndGetSchema, mapFields } from '../schemaRegistry'
+
+/**
+ * Genera una key única para detección de duplicados.
+ * Usa: id + máquina + módulo para evitar falsos positivos.
+ */
+const generateDuplicateKey = (record, moduleName) => {
+  const id = record.idLocal || record.id || ''
+  const machine = record.maquinaId || record.maquina || ''
+  const module = moduleName || 'default'
+  return `${module}-${id}-${machine}`
+}
+
+/**
+ * Extrae las keys únicas de registros existentes.
+ */
+const extractExistingKeys = (records, moduleName) => {
+  return new Set(records.map(r => generateDuplicateKey(r, moduleName)))
+}
+
+/**
+ * Filtra registros nuevos, evitando duplicados basados en id + máquina.
+ */
+const filterUniqueRecords = (records, existingKeys, moduleName) => {
+  return records.filter(record => {
+    const key = generateDuplicateKey(record, moduleName)
+    return !existingKeys.has(key)
+  })
+}
+
+/**
+ * Normaliza un registro según el tipo de módulo
+ */
+const normalizeRecord = (record, index, moduleName, fileName) => {
+  const schema = getSchema(moduleName)
+  const mapped = mapFields(record, moduleName)
+  
+  const normalizedTimestamp = mapped.fechaTimestamp || normalizeTimestamp(mapped)
+  const { workerKey, workerName } = normalizeWorker(mapped)
+  const { modulo, maquina } = normalizeLocation(mapped)
+  const { name: prodName, code: prodCode } = normalizeProduct(mapped)
+  const { cantidadNeta, lecturaMaquina, unidadOriginal } = normalizeProduction(mapped)
+  const { jornadaHoras, minutos, horasExtra, tipoJornada } = normalizeTime(mapped)
+  
+  const generatedId = record.id || record.idLocal || generateRecordId(workerKey, normalizedTimestamp, index, record)
+  
+  return {
+    idLocal: generatedId,
+    trabajadorDni: workerKey,
+    trabajadorNombre: workerName,
+    moduloId: modulo,
+    area: modulo,
+    maquinaId: maquina,
+    productoId: prodCode,
+    productoNombre: sanitizarNombre(prodName || mapped.producto || mapped.tipo),
+    cantidad: cantidadNeta,
+    cantidadOriginal: cantidadNeta,
+    unidad: unidadOriginal,
+    unidadOriginal: unidadOriginal,
+    outputMaquina: lecturaMaquina,
+    tiempoMinutos: minutos,
+    fechaTimestamp: normalizedTimestamp,
+    fechaLegible: mapped.fecha || new Date(normalizedTimestamp).toISOString().split('T')[0],
+    esHoraExtra: horasExtra > 0,
+    horasExtraCantidad: horasExtra,
+    jornadaTotalHoras: jornadaHoras,
+    status: 'ok',
+    tipoJornada: tipoJornada,
+    module: moduleName,
+    fileName: fileName,
+    importTimestamp: new Date().toISOString()
+  }
+}
 
 export const normalizeImportPayload = (importPayload) => {
   let validatedPayload;
@@ -21,61 +94,34 @@ export const normalizeImportPayload = (importPayload) => {
   return validatedPayload
 }
 
-export const normalizeRecords = (validatedPayload, existingRecords = []) => {
-  const normalizedRecords = (validatedPayload.rawRecords || []).map((r, i) => {
-    // Si el registro ya viene normalizado por el Worker de Excel, respetamos sus campos clave
-    const normalizedTimestamp = r.fechaTimestamp || normalizeTimestamp(r);
-    const { workerKey, workerName } = normalizeWorker(r);
-    const { modulo, maquina } = normalizeLocation(r);
-    const { name: prodName, code: prodCode } = normalizeProduct(r);
-    const { cantidadNeta, lecturaMaquina, unidadOriginal } = normalizeProduction(r);
-    const { jornadaHoras, minutos, horasExtra, tipoJornada } = normalizeTime(r);
-    
-    const generatedId = r.id || r.idLocal || generateRecordId(workerKey, normalizedTimestamp, i, r);
-    
-    return {
-      idLocal: generatedId,
-      trabajadorDni: workerKey,
-      trabajadorNombre: workerName,
-      moduloId: modulo,
-      area: modulo,
-      maquinaId: maquina,
-      productoId: prodCode,
-      productoNombre: sanitizarNombre(prodName),
-      cantidad: cantidadNeta,
-      cantidadOriginal: cantidadNeta,
-      unidad: unidadOriginal,
-      unidadOriginal: unidadOriginal,
-      outputMaquina: lecturaMaquina,
-      tiempoMinutos: minutos,
-      fechaTimestamp: normalizedTimestamp,
-      fechaLegible: r.fechaLegible || new Date(normalizedTimestamp).toISOString().split('T')[0], // PRESERVAMOS FECHA LEGIBLE
-      esHoraExtra: horasExtra > 0,
-      horasExtraCantidad: horasExtra,
-      jornadaTotalHoras: jornadaHoras,
-      status: 'ok',
-      tipoJornada: tipoJornada,
-      fileName: validatedPayload.fileName,
-      importTimestamp: r.importTimestamp || new Date().toISOString()
-    };
-  });
+export const normalizeRecords = (validatedPayload, existingRecords = [], moduleName = 'paneles') => {
+  const { schema, detected } = detectAndGetSchema(validatedPayload.fileName, validatedPayload.rawRecords)
+  const activeModule = moduleName || detected || 'paneles'
+  
+  const normalizedRecords = (validatedPayload.rawRecords || []).map((r, i) => 
+    normalizeRecord(r, i, activeModule, validatedPayload.fileName)
+  )
 
-  // Detección de Duplicados (Mejorada para no borrar registros válidos)
-  const existingKeys = new Set(existingRecords.map(r => `${r.idLocal}-${r.fechaTimestamp}-${r.cantidad}`));
-  const newRawRecords = normalizedRecords.filter(r => {
-    const key = `${r.idLocal}-${r.fechaTimestamp}-${r.cantidad}`;
-    return !existingKeys.has(key);
-  });
+  const existingKeys = extractExistingKeys(existingRecords, activeModule)
+  const newRawRecords = filterUniqueRecords(normalizedRecords, existingKeys, activeModule)
   const duplicatesFound = (validatedPayload.rawRecords || []).length - newRawRecords.length
 
-  return { newRawRecords, duplicatesFound }
+  return { 
+    newRawRecords, 
+    duplicatesFound,
+    module: activeModule,
+    schema: schema?.module
+  }
 }
 
-export const buildImportRecord = (validatedPayload, newRawRecords, duplicatesFound) => ({
+export const buildImportRecord = (validatedPayload, newRawRecords, duplicatesFound, moduleName = 'paneles') => ({
   timestamp: new Date().toISOString(),
   ...validatedPayload,
+  module: moduleName,
   success: newRawRecords.length,
-  units: newRawRecords.reduce((s, r) => s + (Number(r.cantidad || 0)), 0),
+  units: newRawRecords.reduce((sum, r) => sum + (Number(r.cantidad || 0)), 0),
   rawRecords: newRawRecords,
   duplicatesDetected: duplicatesFound
 })
+
+export { getSchema, detectAndGetSchema, mapFields }

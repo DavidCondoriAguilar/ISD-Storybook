@@ -1,0 +1,106 @@
+{
+  "$schema": "https://isd-colchones.com/schemas/tela-v1.json",
+  "version": "1.0.0",
+  "module": "telas",
+  "description": "Producción de telas y accesorios para colchones",
+  "lastUpdated": "2025-01-15",
+
+  "allowedProductTypes": [
+    { "id": "banda", "name": "Banda", "examples": ["Splendido Topacio BB", "BB Descanso", "Splendido Básico"] },
+    { "id": "pestanias", "name": "Pestañas", "examples": ["Pestañas basic", "Pestañas premium"] },
+    { "id": "pillowq", "name": "PillowQ", "examples": ["PillowQ Standard", "PillowQ Visco"] },
+    { "id": "memoris", "name": "Memoris", "examples": ["Memoris 5cm", "Memoris 10cm"] },
+    { "id": "riveteado", "name": "Riveteado", "examples": ["Riveteado 2*8", "Riveteado 2*10", "Riveteado 2*12"] },
+    { "id": "protectores", "name": "Protectores", "examples": ["Protector almohadado", "Protector simple"] },
+    { "id": "almohadas", "name": "Almohadas", "examples": ["Almohada viagem", "Almohada cervical"] },
+    { "id": "cunas", "name": "Cunas", "examples": ["Cuna ribete acolchada", "Cuna básica"] },
+    { "id": "corte", "name": "Corte", "examples": ["Corte notexilo", "Corte match"] },
+    { "id": "telabox", "name": "Tela Box", "examples": ["Tela box 2", "Tela box 4"] },
+    { "id": "colchonetas", "name": "Colchonetas", "examples": ["Colchoneta 2", "Colchoneta 4"] },
+    { "id": "cabeceras", "name": "Cabeceras", "examples": ["Cabecera tapizada", "Cabecera madera"] },
+    { "id": "funda", "name": "Fundas", "examples": ["Funda pillow", "Funda normal"] },
+    { "id": "otro", "name": "Otro", "examples": [] }
+  ],
+
+  "validation": {
+    "required": ["trabajador", "dni", "turno", "fecha", "producto", "cantidad"],
+    "numeric": ["cantidad"],
+    "dateFormat": "YYYY-MM-DD"
+  },
+
+  "fieldMappings": {
+    "trabajador": { "aliases": ["trabajador", "worker", "nombre", "name", "empleado"] },
+    "dni": { "aliases": ["dni", "cedula", "ci", "id"] },
+    "turno": { "aliases": ["turno", "shift", "jornada"] },
+    "fecha": { "aliases": ["fecha", "date", "dia"] },
+    "producto": { "aliases": ["producto", "tipo", "name", "articulo", "item"] },
+    "cantidad": { "aliases": ["cantidad", "qty", "units", "cant", "piezas"] },
+    "maquina": { "aliases": ["maquina", "machine", "equipo", "maq"] },
+    "observaciones": { "aliases": ["obs", "notas", "notes", "comentarios"] }
+  },
+
+  "turnos": ["Mañana", "Tarde", "Noche"],
+
+  "sampleRecords": [
+    {
+      "trabajador": "María García",
+      "dni": "12345678",
+      "turno": "Mañana",
+      "fecha": "2025-01-15",
+      "producto": "Banda Splendido Topacio BB",
+      "cantidad": 50,
+      "maquina": "TEL-01",
+      "observaciones": "Primera producción"
+    },
+    {
+      "trabajador": "Carlos López",
+      "dni": "87654321", 
+      "turno": "Tarde",
+      "fecha": "2025-01-15",
+      "producto": "Riveteado 2*8",
+      "cantidad": 30,
+      "maquina": "TEL-02",
+      "observaciones": ""
+    },
+    {
+      "trabajador": "Ana Pérez",
+      "dni": "11223344",
+      "turno": "Noche",
+      "fecha": "2025-01-15",
+      "producto": "PillowQ Standard",
+      "cantidad": 25,
+      "maquina": "TEL-03",
+      "observaciones": ""
+    }
+  ],
+
+  "db": {
+    "tableName": "produccion_telas",
+    "indexes": ["dni", "fecha", "maquina", "producto"]
+  },
+
+  "metrics": {
+    "kpis": ["produccion_total", "eficiencia_promedio", "top_trabajadores", "produccion_por_maquina"],
+    "aggregations": [
+      { "field": "producto", "operation": "sum", "target": "cantidad" },
+      { "field": "maquina", "operation": "avg", "target": "eficiencia" },
+      { "field": "trabajador", "operation": "count", "target": "turnos" }
+    ]
+  },
+
+  "kotlinModel": {
+    "className": "ProduccionTela",
+    "fields": [
+      { "name": "id", "type": "Long", "primary": true },
+      { "name": "trabajadorId", "type": "String" },
+      { "name": "trabajadorNombre", "type": "String" },
+      { "name": "turno", "type": "String" },
+      { "name": "fecha", "type": "Long" },
+      { "name": "productoTipo", "type": "String" },
+      { "name": "productoNombre", "type": "String" },
+      { "name": "cantidad", "type": "Int" },
+      { "name": "maquinaId", "type": "String" },
+      { "name": "createdAt", "type": "Long" }
+    ]
+  }
+}

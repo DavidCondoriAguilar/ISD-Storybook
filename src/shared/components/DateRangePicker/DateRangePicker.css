@@ -1,61 +1,82 @@
-/**
- * 🛰️ DateRangePicker - Theme-Aware Styles
- */
+/* Premium Date Range Picker Design */
 
 .filter-dropdown {
   position: relative;
 }
 
 .filter-btn {
-  background: var(--bg-card);
-  border: 1px solid var(--border-strong);
-  color: var(--text-main);
-  padding: 10px 16px;
-  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  gap: 12px;
+  padding: 10px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px -4px rgba(0,0,0,0.05);
 }
 
 .filter-btn:hover {
+  border-color: var(--primary);
   background: var(--bg-app);
-  border-color: var(--exec-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -6px rgba(var(--primary-rgb), 0.15);
+}
+
+.filter-btn svg:last-child {
+  color: var(--text-dim);
+  transition: transform 0.3s ease;
+}
+
+.filter-btn .rotate-180 {
+  transform: rotate(180deg);
 }
 
 .filter-menu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 12px);
   right: 0;
+  width: 260px;
   background: var(--bg-card);
-  border: 1px solid var(--border-strong);
-  border-radius: 12px;
-  padding: 8px;
-  width: 200px;
-  z-index: 1000;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+  padding: 12px;
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.2), 0 18px 36px -18px rgba(0, 0, 0, 0.1);
+  z-index: 100;
 }
 
-.filter-menu button {
-  width: 100%;
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-options button {
+  padding: 10px 14px;
   text-align: left;
-  padding: 8px 12px;
-  background: transparent;
   border: none;
+  background: transparent;
+  border-radius: 12px;
   color: var(--text-muted);
-  border-radius: 8px;
-  cursor: pointer;
+  font-weight: 600;
   font-size: 0.85rem;
-  transition: 0.2s;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.filter-menu button:hover,
-.filter-menu button.active {
+.filter-options button:hover {
   background: var(--primary-light);
   color: var(--primary);
+}
+
+.filter-options button.active {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: 0 4px 12px -4px rgba(var(--primary-rgb), 0.4);
 }
 
 .custom-range-selector {
@@ -64,43 +85,59 @@
   border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .date-input-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .date-input-group label {
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 800;
   color: var(--text-dim);
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-left: 4px;
 }
 
 .date-input-group input {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
   background: var(--bg-app);
-  border: 1px solid var(--border-strong);
-  border-radius: 8px;
-  padding: 8px 10px;
   color: var(--text-main);
-  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
   outline: none;
-  width: 100%;
+  transition: all 0.2s ease;
 }
 
 .date-input-group input:focus {
-  border-color: var(--exec-accent);
+  border-color: var(--primary);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 4px var(--primary-glow);
 }
 
 .apply-btn {
-  background: var(--exec-accent) !important;
-  color: white !important;
-  text-align: center !important;
-  font-weight: 700 !important;
   margin-top: 4px;
+  padding: 12px;
+  border: none;
+  background: var(--primary-gradient);
+  color: white;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.apply-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 8px 20px -4px rgba(var(--primary-rgb), 0.3);
 }
 
 .apply-btn:disabled {

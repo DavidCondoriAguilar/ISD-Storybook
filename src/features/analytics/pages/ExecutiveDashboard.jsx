@@ -29,7 +29,7 @@ const ExecutiveDashboard = memo(() => {
     isFilterOpen, setIsFilterOpen,
     stats, advStats, trendData,
     topPaneleros, topResorteros, allWorkers,
-    machineStatsMP, machineStatsMR
+    machineStatsMP, machineStatsMR, productMix
   } = useExecutiveData();
 
   // Etiqueta de periodo dinámica
@@ -43,12 +43,21 @@ const ExecutiveDashboard = memo(() => {
   }, [timeRange, startDate, endDate]);
 
   return (
-    <motion.div
-      className="exec-dashboard"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
-      <ExecutiveHeader>
+<motion.div
+        className="exec-dashboard"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+      <ExecutiveHeader
+        analyticsData={{
+          stats,
+          topPaneleros,
+          topResorteros,
+          machineStats: [...(machineStatsMP || []), ...(machineStatsMR || [])],
+          productMix: productMix
+        }}
+        dateRange={startDate && endDate ? { start: startDate, end: endDate } : null}
+      >
         {/* Los filtros ahora se inyectan en una sola línea horizontal */}
         <select 
           className="exec-select-v2"

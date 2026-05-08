@@ -7,6 +7,7 @@
   
   /* Imperial Purple Palette */
   --primary: #6366f1;
+  --primary-rgb: 99, 102, 241;
   --primary-dark: #4f46e5;
   --primary-deep: #3730a3;
   --primary-light: #eef2ff;
@@ -14,12 +15,15 @@
   --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
   
   --secondary: #06b6d4;
+  --secondary-rgb: 6, 182, 212;
   --secondary-soft: #ecfeff;
   
   --success: #10b981;
+  --success-rgb: 16, 185, 129;
   --success-glow: rgba(16, 185, 129, 0.12);
   --warning: #f59e0b;
   --danger: #ef4444;
+  --danger-rgb: 239, 68, 68;
   --danger-glow: rgba(239, 68, 68, 0.1);
   
   /* Light Theme Variables */

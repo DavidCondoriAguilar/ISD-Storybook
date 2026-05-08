@@ -6,8 +6,19 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--exec-border);
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.exec-header-v2::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100px;
+  height: 2px;
+  background: var(--primary-gradient);
 }
 
 .header-left-v2 .badges-row {
@@ -38,13 +49,20 @@
 }
 
 .title-v2 {
-  font-size: 2.2rem;
-  font-weight: 900;
-  letter-spacing: -0.05em;
-  line-height: 1;
+  font-size: 2.8rem;
+  font-weight: 950;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+  color: var(--text-main);
+  font-family: var(--font-heading);
 }
 
-.blue-text { color: var(--exec-accent); }
+.blue-text { 
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
 
 .subtitle-v2 {
   font-size: 0.95rem;
@@ -134,4 +152,38 @@
   background: var(--exec-success);
   border-radius: 50%;
   box-shadow: 0 0 10px var(--exec-success);
+}
+
+.btn-export-pdf {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--exec-accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-export-pdf:hover:not(:disabled) {
+  background: var(--exec-accent-hover);
+  transform: translateY(-1px);
+}
+
+.btn-export-pdf:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-export-pdf .spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { STEPS, FileStatus, ProcessingStatus, ImportResult } from '../types/importTypes'
 import { validateFile } from '../services/importService'
 import { storageService } from '../../../data/storageService'
+import { db } from '../../../data/db'
 
 const initialFile = null
 
@@ -12,6 +13,9 @@ const initialSummary = {
   units: 0,
   errors: []
 }
+
+const DEFAULT_WORKER = 'trabajador_default'
+const DEFAULT_SHIFT = 'turno_default'
 
 export function useImportProduction() {
   const [step, setStep] = useState(STEPS.IMPORT)
@@ -25,6 +29,30 @@ export function useImportProduction() {
   
   const [summary, setSummary] = useState(initialSummary)
   const [result, setResult] = useState(null)
+
+  const [lastWorker, setLastWorker] = useState(null)
+  const [lastShift, setLastShift] = useState('Mañana')
+
+  useEffect(() => {
+    const loadDefaults = async () => {
+      try {
+        const worker = localStorage.getItem(DEFAULT_WORKER)
+        const shift = localStorage.getItem(DEFAULT_SHIFT)
+        if (worker) setLastWorker(worker)
+        if (shift) setLastShift(shift)
+      } catch (e) {
+        console.error('Error loading defaults:', e)
+      }
+    }
+    loadDefaults()
+  }, [])
+
+  const saveDefaults = useCallback((worker, shift) => {
+    localStorage.setItem(DEFAULT_WORKER, worker)
+    localStorage.setItem(DEFAULT_SHIFT, shift)
+    setLastWorker(worker)
+    setLastShift(shift)
+  }, [])
 
   const addProcessingStep = useCallback((step) => {
     setProcessingSteps(prev => [...prev, step])
@@ -156,6 +184,7 @@ export function useImportProduction() {
     progress, processingStatus, processingSteps,
     summary, result, setValidateBeforeImport,
     handleFileSelect, handleRemoveFile, startImport, retry, reset,
-    clearAllHistory
+    clearAllHistory,
+    lastWorker, lastShift, saveDefaults
   }
 }
