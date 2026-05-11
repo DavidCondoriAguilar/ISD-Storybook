@@ -1,0 +1,10 @@
+# ISD Industrial Dashboard - Robots.txt
+User-agent: *
+Allow: /
+
+# Prevent indexing of sensitive internal data if they were accessible via URL
+Disallow: /api/
+Disallow: /admin/
+Disallow: /temp/
+
+Sitemap: https://isd-industrial.com/sitemap.xml
