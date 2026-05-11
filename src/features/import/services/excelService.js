@@ -64,6 +64,18 @@ export const excelService = {
         let producto = String(row[1] || 'Sin Producto').trim();
         let area = String(row[2] || 'General').trim();
         let trabajador = String(row[3] || 'Desconocido').trim();
+
+        // FILTRO DE RUIDO: Si el producto o área parecen ser una leyenda/nota del Excel, descartar.
+        const noiseKeywords = ['LO QUE ESTA', 'RESALTADO', 'FORMA PARTE', 'PRODUCTO TERMINADO'];
+        const isNoise = noiseKeywords.some(key => 
+          producto.toUpperCase().includes(key) || 
+          area.toUpperCase().includes(key)
+        );
+        
+        if (isNoise) {
+          console.warn('[ExcelService] 🛑 Fila de ruido/leyenda descartada:', producto);
+          return null;
+        }
         
         let output = 0;
         let cantidad = 0;

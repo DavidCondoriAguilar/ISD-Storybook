@@ -7,7 +7,15 @@ import { parse, format, isValid } from 'date-fns';
 export const transformProductionData = (rawRecords) => {
   if (!Array.isArray(rawRecords)) return [];
 
-  return rawRecords.map((record) => {
+  // FILTRO GLOBAL DE INTEGRIDAD: Eliminar ruidos, leyendas y notas de texto del Excel
+  const cleanRecords = rawRecords.filter(record => {
+    const p = String(record.productoNombre || record.producto?.nombre || record.producto || '').toUpperCase();
+    const a = String(record.moduloId || record.area || record.ubicacion?.modulo || '').toUpperCase();
+    const noise = ['LO QUE ESTA', 'RESALTADO', 'FORMA PARTE', 'PRODUCTO TERMINADO', 'PANELES DE PT'];
+    return !noise.some(key => p.includes(key) || a.includes(key));
+  });
+
+  return cleanRecords.map((record) => {
     let date = new Date();
     const rawFecha = record.fechaTimestamp || record.fecha;
     

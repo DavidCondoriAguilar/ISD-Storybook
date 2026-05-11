@@ -13,4 +13,7 @@
 
 .page-content {
   padding: 0;
+  min-height: calc(100vh - var(--header-h));
+  display: flex;
+  flex-direction: column;
 }

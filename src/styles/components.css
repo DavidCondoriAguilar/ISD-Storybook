@@ -1,0 +1,278 @@
+/* Premium Table Styles */
+.premium-table-container {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-top: 1.5rem;
+}
+
+.premium-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.premium-table th {
+  text-align: left;
+  padding: 1.25rem 1rem;
+  background: var(--bg-sidebar);
+  color: var(--text-dim);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+}
+
+.premium-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.table-row {
+  transition: var(--transition-smooth);
+}
+
+.table-row:hover {
+  background: var(--primary-glow);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem;
+  color: var(--text-muted);
+}
+
+.table-row-skeleton {
+  height: 50px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+/* Metric Card Premium Styles */
+.metric-card {
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 240px;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metric-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.color-secondary .metric-icon-wrapper {
+  background: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+.metric-trend {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.metric-trend.positive {
+  background: var(--success-glow);
+  color: var(--success);
+}
+
+.metric-trend.negative {
+  background: var(--danger-glow);
+  color: var(--danger);
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  margin-bottom: 0.25rem;
+}
+
+.metric-unit {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  margin-left: 0.5rem;
+}
+
+.metric-title {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.metric-progress-bg {
+  height: 4px;
+  background: var(--border);
+  border-radius: var(--radius-full);
+  margin-top: 0.5rem;
+}
+
+.metric-progress-fill {
+  height: 100%;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-full);
+}
+
+.color-secondary .metric-progress-fill {
+  background: linear-gradient(135deg, var(--secondary) 0%, #0891b2 100%);
+}
+
+/* Modules Vision Grid */
+.module-section {
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  position: relative;
+  transition: var(--transition-smooth);
+}
+
+.module-section.active {
+  border: 1px solid var(--primary-glow);
+  box-shadow: var(--shadow-purple);
+}
+
+.module-status-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-full);
+  background: var(--border-strong);
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.module-status-badge.active {
+  background: var(--success-glow);
+  color: var(--success);
+  animation: pulse-green 2s infinite;
+}
+
+/* Area Status Card Styles */
+@keyframes pulse-green {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.area-status-card {
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: var(--transition-smooth);
+}
+
+.area-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.area-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.status-indicator {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.status-indicator.online {
+  background: var(--success-glow);
+  color: var(--success);
+}
+
+.area-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mini-stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.mini-stat .label {
+  color: var(--text-dim);
+}
+
+.mini-stat .value {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.view-detail-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  transition: all 0.2s ease;
+}
+
+.view-detail-btn:hover {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+/* Executive Filter Chips */
+.filter-chip {
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.filter-chip.active {
+  background: var(--primary-gradient);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px var(--primary-glow);
+}

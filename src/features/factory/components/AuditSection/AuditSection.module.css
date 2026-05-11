@@ -1,0 +1,21 @@
+.auditSection {
+  width: 100%;
+  min-height: 700px;
+}
+
+.auditCard {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  overflow: hidden;
+}
+
+.tableWrapper {
+  padding: 1rem;
+  min-height: 500px;
+  background: var(--bg-card);
+}

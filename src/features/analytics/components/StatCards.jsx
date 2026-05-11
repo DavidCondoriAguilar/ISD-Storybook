@@ -28,18 +28,6 @@ export const KPICard = ({ title, value, color, progress, trend, periodLabel, ico
           </div>
           {periodLabel && <span className="kpi-period">{periodLabel}</span>}
         </div>
-        <div 
-          className="kpi-status-badge"
-          style={{ 
-            background: `${status.color}15`, 
-            color: status.color, 
-            borderColor: `${status.color}40`,
-            filter: 'brightness(0.9)' /* Oscurece ligeramente el conjunto para mejor contraste */
-          }}
-        >
-          {status.icon}
-          <span style={{ fontWeight: 800 }}>{status.label}</span>
-        </div>
       </MetricCard.Header>
 
       <MetricCard.Content>
