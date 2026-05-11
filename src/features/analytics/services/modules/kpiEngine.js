@@ -14,6 +14,11 @@ export const calculateKPIs = (records) => {
     metas: { paneles: 0, resortes: 0, procesos: 0 }
   };
 
+  console.log('[KPI v12] Registros recibidos:', records.length);
+  if (records.length > 0) {
+    console.log('[KPI v12] Sample:', JSON.stringify(records[0], null, 2));
+  }
+  
   const workers = new Set();
   const machines = new Set();
   let totalPaneles = 0;
@@ -24,19 +29,17 @@ export const calculateKPIs = (records) => {
 
   // 2. Procesamiento de registros (Single Pass Architecture)
   records.forEach(r => {
-    const date = r.fechaLegible || (r.fechaTimestamp ? new Date(r.fechaTimestamp).toISOString().split('T')[0] : '2026-01-01');
+    const date = r.fechaLegible || '2026-01-01';
+    
     if (!dailyTotals[date]) dailyTotals[date] = { p: 0, r: 0, pr: 0 };
 
     const qty = Number(r.cantidad || r.produccion?.cantidad || 0);
     const workerName = r.trabajadorNombre || r.trabajador?.nombre;
-
-    if (isResorte(r)) {
+    
+    if (r.esMillar === true) {
       totalResortesRaw += qty;
       dailyTotals[date].r += qty;
-    } else if (isProceso(r)) {
-      totalProcesos += qty;
-      dailyTotals[date].pr += qty;
-    } else if (isPanel(r)) {
+    } else {
       totalPaneles += qty;
       dailyTotals[date].p += qty;
     }

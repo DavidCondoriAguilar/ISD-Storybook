@@ -33,7 +33,10 @@ const ProductionV2Schema = z.object({
     anio: z.number(),
     mes: z.number(),
     dia: z.number()
-  }).optional()
+  }).optional(),
+  fechaTimestamp: z.number().optional(),
+  outputMaquina: z.number().optional(),
+  esMillar: z.boolean().optional()
 }).passthrough(); // Permitir campos extra para no romper si la App de Android añade algo nuevo
 
 export const RecordSchema = ProductionV2Schema;

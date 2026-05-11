@@ -26,12 +26,10 @@ export const useDashboardRecords = () => {
 
     // 1. Date Range Filtering
     if ((timeRange === 'custom' || timeRange === 'day') && startDate && endDate) {
-      const [sYear, sMonth, sDay] = startDate.split('-').map(Number)
-      const [eYear, eMonth, eDay] = endDate.split('-').map(Number)
-      
-      // Aseguramos que cubra todo el día, desde las 00:00 hasta las 23:59
-      const start = new Date(sYear, sMonth - 1, sDay, 0, 0, 0, 0).getTime()
-      const end = new Date(eYear, eMonth - 1, eDay, 23, 59, 59, 999).getTime()
+      const [sY, sM, sD] = startDate.split('-').map(Number);
+      const [eY, eM, eD] = endDate.split('-').map(Number);
+      const start = new Date(sY, sM - 1, sD, 0, 0, 0, 0).getTime();
+      const end = new Date(eY, eM - 1, eD, 23, 59, 59, 999).getTime();
       
       filtered = filtered.filter(r => r.fechaTimestamp >= start && r.fechaTimestamp <= end)
     } else if (timeRange !== 'all' && timeRange !== 'custom') {

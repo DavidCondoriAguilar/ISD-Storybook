@@ -26,9 +26,13 @@ export const calculatePerformance = (records) => {
     
     workerMap[workerName].total += qty;
     
-    if (isResorte(r)) workerMap[workerName].resortes += qty;
-    else if (isProceso(r)) workerMap[workerName].procesos += qty;
-    else if (isPanel(r)) workerMap[workerName].paneles += qty;
+    if (isResorte(r)) {
+      workerMap[workerName].resortes += qty;
+    } else if (isProceso(r)) {
+      workerMap[workerName].procesos += qty;
+    } else if (isPanel(r)) {
+      workerMap[workerName].paneles += qty;
+    }
 
     // Machines
     if (mId !== 'Sin Máquina') {
@@ -46,7 +50,7 @@ export const calculatePerformance = (records) => {
     .filter(w => w.resortes > 0)
     .sort((a, b) => b.resortes - a.resortes)
     .slice(0, 5)
-    .map(w => ({ ...w, total: w.resortes / 1000 })); // Mostrar en millares
+    .map(w => ({ ...w, total: w.resortes })); // Mantener en unidades para precisión
 
   const machineStatsMP = Object.values(machineMap)
     .filter(m => !m.name.toUpperCase().includes('MR'))
@@ -55,11 +59,11 @@ export const calculatePerformance = (records) => {
 
   const machineStatsMR = Object.values(machineMap)
     .filter(m => m.name.toUpperCase().includes('MR'))
-    .map(m => ({ ...m, total: m.total / 1000 }))
+    .map(m => ({ ...m, total: m.total })) // Mantener en unidades
     .sort((a, b) => b.total - a.total)
     .slice(0, 5);
 
-  // Líderes destacados para tarjetas
+  // Líderes destacados para tarjetas (v10.0: mostrar en millares para resortes)
   const leaderPaneles = topPaneleros[0] || null;
   const leaderResortes = topResorteros[0] || null;
 
@@ -72,8 +76,14 @@ export const calculatePerformance = (records) => {
     machineStatsMR,
     allWorkers,
     leaders: {
-      topPanelero: leaderPaneles ? { name: leaderPaneles.name, reason: `${leaderPaneles.total.toLocaleString()} u. producidas` } : null,
-      topResortero: leaderResortes ? { name: leaderResortes.name, reason: `${leaderResortes.total.toLocaleString()} mil. producidos` } : null
+      topPanelero: leaderPaneles ? { 
+        name: leaderPaneles.name, 
+        reason: `${leaderPaneles.paneles.toLocaleString()} u. de Paneles` 
+      } : null,
+      topResortero: leaderResortes ? { 
+        name: leaderResortes.name, 
+        reason: `${(leaderResortes.total / 1000).toLocaleString('es-PE', { maximumFractionDigits: 3 })} mil. de Resortes` 
+      } : null
     }
   };
 };

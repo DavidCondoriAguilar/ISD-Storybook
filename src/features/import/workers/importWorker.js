@@ -30,8 +30,11 @@ self.onmessage = async (e) => {
     }
 
     console.log('[Worker] ✅ Validación exitosa. Normalizando...');
+    console.log('[Worker] Sample validation.data[0]:', JSON.stringify(validation.data[0], null, 2));
     // 2. Normalización masiva
     const normalized = normalizeRecords(validation.data);
+    console.log('[Worker] Normalizados:', normalized.length);
+    console.log('[Worker] Sample normalized[0]:', JSON.stringify(normalized[0], null, 2));
     if (!normalized || normalized.length === 0) {
        self.postMessage({ success: false, error: 'El proceso de normalización no devolvió registros válidos.' });
        return;

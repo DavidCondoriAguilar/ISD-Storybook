@@ -55,8 +55,8 @@ export const aggregateProductionData = (records) => {
       stats.byMachineResortes[maquinaKey].units += unidadesReales;
       
       stats.byProductResortes[producto] = (stats.byProductResortes[producto] || 0) + unidadesReales;
-      // Normalización a millares para el ranking
-      stats.byWorker[trabajador].resortes += unidadesReales / 1000;
+      // Senior Fix: Almacenamos unidades reales. La conversión a millares es solo visual.
+      stats.byWorker[trabajador].resortes += unidadesReales;
     } else if (esProceso) {
       stats.totalProcesos += unidadesReales;
       stats.byDay[dateKey].procesos += unidadesReales;

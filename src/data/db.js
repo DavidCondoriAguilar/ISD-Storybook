@@ -14,7 +14,7 @@ export const db = new Dexie(APP_CONFIG.STORAGE.DB_NAME);
  */
 db.version(APP_CONFIG.STORAGE.DB_VERSION).stores({
   imports: '++id, timestamp, fileName, worker', 
-  records: '++id, idLocal, timestamp, fechaTimestamp, trabajadorNombre, productoNombre, moduloId, area, maquinaId, importId',
+  records: '++id, idLocal, timestamp, fechaTimestamp, trabajadorNombre, productoNombre, moduloId, area, maquinaId, importId, esMillar',
   metadata: 'id, value'
 });
 
@@ -76,9 +76,10 @@ export const dbService = {
    * Clears all data with administrative safety
    */
   async clearAll() {
-    return await db.transaction('rw', db.imports, db.records, async () => {
+    return await db.transaction('rw', db.imports, db.records, db.metadata, async () => {
       await db.imports.clear();
       await db.records.clear();
+      await db.metadata.clear();
     });
   },
 

@@ -34,18 +34,16 @@ export const filterRecords = (records, { moduleId, timeRange, startDate, endDate
       });
     }
 
-    // Filtros Temporales
-    if ((timeRange === 'custom' || timeRange === 'day') && startDate && endDate) {
+    // Filtros Temporales (Refactorizado para estabilidad total)
+    if (timeRange === 'day' && startDate) {
+      // Comparación directa por fecha legible para evitar desfases de horas/timezone
+      filtered = filtered.filter(r => r.fechaLegible === startDate);
+    } else if (timeRange === 'custom' && startDate && endDate) {
       const [sYear, sMonth, sDay] = startDate.split('-').map(Number);
       const [eYear, eMonth, eDay] = endDate.split('-').map(Number);
       const start = new Date(sYear, sMonth - 1, sDay, 0, 0, 0, 0).getTime();
       const end = new Date(eYear, eMonth - 1, eDay, 23, 59, 59, 999).getTime();
-      
-      if (isNaN(start) || isNaN(end)) {
-        console.warn("[Domain Warning] filterRecords: Invalid date range provided.", { startDate, endDate });
-      } else {
-        filtered = filtered.filter(r => r.fechaTimestamp >= start && r.fechaTimestamp <= end);
-      }
+      filtered = filtered.filter(r => r.fechaTimestamp >= start && r.fechaTimestamp <= end);
     } else if (timeRange !== 'all' && timeRange !== 'custom' && timeRange !== 'day') {
       const days = parseInt(timeRange);
       if (!isNaN(days)) {
@@ -83,7 +81,8 @@ export const calculateDailyStats = (records) => {
       // Prioridad Senior: Usamos fechaLegible para la clave de agrupación
       const dateStr = r.fechaLegible || (r.fechaTimestamp ? new Date(r.fechaTimestamp).toISOString().split('T')[0] : '2026-01-01');
       
-      const dateObj = new Date(dateStr + 'T12:00:00'); // Evitar problemas de timezone
+      const [y, m, d] = dateStr.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d, 12, 0, 0);
       const dateKey = dateObj.toLocaleDateString('es-ES', { 
         day: '2-digit', 
         month: 'short' 
@@ -119,7 +118,11 @@ export const calculateDailyStats = (records) => {
 
     return Object.values(dailyMap)
       .sort((a, b) => b.timestamp - a.timestamp)
-      .map(d => ({ ...d, workers: d.workerCount.size }));
+      .map(d => ({ 
+        ...d, 
+        mr: { ...d.mr, total: d.mr.total / 1000 }, // Normalización visual a millares
+        workers: d.workerCount.size 
+      }));
   } catch (error) {
     console.error("[Domain Error] calculateDailyStats failed:", error);
     return [];

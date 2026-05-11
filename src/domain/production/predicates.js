@@ -10,14 +10,19 @@
  */
 export const isResorte = (record) => {
   if (!record) return false;
+  // PRIORIDAD: Usar flag directo del Excel Service (v10.1)
+  if (record.esMillar === true) return true;
+  if (record.esMillar === false) return false;
+  
   const maquina = String(record.maquinaId || record.ubicacion?.maquina || '').toUpperCase();
   const producto = String(record.productoNombre || record.producto?.nombre || record.producto || '').toLowerCase();
   const unidad = String(record.unidad || record.produccion?.unidad || '').toLowerCase();
   
-  return maquina.includes('MR') || 
-         producto.includes('resorte') || 
-         producto.includes('millar') || 
-         unidad.includes('mil');
+  if (maquina.includes('MR')) return true;
+  if (producto.includes('resorte') || producto.includes('millar')) return true;
+  if (unidad.includes('mil')) return true;
+  
+  return false;
 };
 
 export const isProceso = (record) => {
@@ -25,9 +30,9 @@ export const isProceso = (record) => {
   const producto = String(record.productoNombre || record.producto?.nombre || record.producto || '').toLowerCase();
   const area = String(record.moduloId || record.area || record.ubicacion?.modulo || '').toLowerCase();
   
+  // SOLO proceso real si es soporte, telas, quimicos, administrativo (NO producción)
   const keywordsProceso = [
-    'embarillado', 'doblado', 'cortado', 'pegado', 'sellado', 
-    'telas', 'quimicos', 'soporte', 'administrativo'
+    'soporte', 'administrativo', 'telas', 'quimicos'
   ];
   
   return keywordsProceso.some(key => producto.includes(key) || area.includes(key));

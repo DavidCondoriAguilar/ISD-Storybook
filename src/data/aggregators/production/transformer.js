@@ -36,7 +36,9 @@ export const transformProductionData = (rawRecords) => {
       const { anio, mes, dia, Anio, Mes, Dia } = record.metadatosFecha;
       date = new Date(anio || Anio, (mes || Mes) - 1, dia || Dia);
     } else if (record.fechaLegible || record.FechaLegible) {
-      date = new Date(record.fechaLegible || record.FechaLegible);
+      const fl = record.fechaLegible || record.FechaLegible;
+      const parts = fl.split('-').map(Number);
+      date = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0);
     }
     
     if (!isValid(date)) date = new Date();
@@ -59,8 +61,8 @@ export const transformProductionData = (rawRecords) => {
     );
     const minutos = Number(record.tiempo?.minutos || record.Tiempo?.Minutos || record.tiempoMinutos || 525);
 
-    // Predicados de clasificación unificados (Senior Architecture)
-    const esMillar = isResorte({ ...record, productoNombre: productoLabel, unidad, maquinaId: maquina });
+    // Predicados de clasificación - USAR FLAG DEL EXCEL SERVICE SI EXISTE (v10.0)
+    const esMillar = record.esMillar === true || isResorte({ ...record, productoNombre: productoLabel, unidad, maquinaId: maquina });
     const esProceso = isProceso({ ...record, productoNombre: productoLabel, moduloId: modulo });
     const esPanel = !esMillar && !esProceso;
 

@@ -4,6 +4,13 @@ import { isResorte as checkIsResorte } from '../../../domain/production/predicat
  * UTILIDADES DE IMPORTACIÓN (Mapping Exacto para produccion_completa.json)
  */
 
+// Flag global para forzar resorte en importUtils (v10.0 Industrial Fix)
+let forceResorteContext = false;
+
+export function setResorteContext(enabled) {
+  forceResorteContext = enabled;
+}
+
 export function normalizeRecords(records) {
   if (!records || !Array.isArray(records)) return [];
   
@@ -28,8 +35,8 @@ export function normalizeRecords(records) {
     if (fLegible && String(fLegible).includes('-')) {
       const parts = String(fLegible).split('-').map(Number);
       if (parts.length === 3 && !parts.some(isNaN)) {
-        // Forzamos mediodía para evitar saltos de día por Timezone
-        finalTimestamp = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0).getTime();
+        const localDate = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0);
+        finalTimestamp = localDate.getTime();
       }
     } 
     
@@ -39,13 +46,29 @@ export function normalizeRecords(records) {
       if (isNaN(finalTimestamp)) finalTimestamp = Date.now();
     }
 
-    const isRes = checkIsResorte({ maquinaId: maquina, unidad: r.produccion?.unidad || r.unidad || '' });
+    // v10.0: PRIORIDAD AL FLAG DEL EXCEL SERVICE
+    const esMillarFlag = r.esMillar === true ? true : (r.esMillar === false ? false : null);
+    
+    let isRes;
+    if (esMillarFlag !== null) {
+      isRes = esMillarFlag;
+    } else {
+      // Fallback: recalcular con predicado estándar
+      isRes = checkIsResorte({ 
+        maquinaId: maquina, 
+        productoNombre: productoNombre,
+        unidad: r.produccion?.unidad || r.unidad || '' 
+      });
+    }
     
     return {
       idLocal: r.id || `rec_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
       timestamp: finalTimestamp,
       fechaTimestamp: finalTimestamp,
-      fechaLegible: new Date(finalTimestamp).toISOString().split('T')[0],
+      fechaLegible: (() => {
+        const d = new Date(finalTimestamp);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      })(),
       trabajadorNombre,
       productoNombre,
       cantidad,
@@ -55,9 +78,10 @@ export function normalizeRecords(records) {
       maquinaId: maquina,
       outputMaquina: r.outputMaquina ?? r.produccion?.output ?? 0,
       tipoJornada: r.tiempo?.tipo || 'Estándar',
+      esMillar: isRes,
       metadata: {
         originalId: r.id,
-        version: r.version || '1.1-fixed'
+        version: r.version || '10.0-Industrial-Fix'
       }
     };
   });
