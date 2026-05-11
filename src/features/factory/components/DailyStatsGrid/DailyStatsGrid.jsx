@@ -43,7 +43,23 @@ const DailyStatsGrid = ({ stats }) => {
   const [scrollX, setScrollX] = useState(0);
   const containerRef = useRef(null);
 
-  if (!stats || stats.length === 0) return null;
+  // Prevenir CLS (Layout Shift) devolviendo un esqueleto estable si no hay datos aún
+  if (!stats || stats.length === 0) {
+    return (
+      <section className="stats-section-carousel">
+        <div className="section-header-carousel">
+          <div className="skeleton" style={{ width: '120px', height: '14px' }}></div>
+        </div>
+        <div className="stats-scroll-container">
+          <div className="daily-grid-flex">
+            {[1, 2, 3, 4, 5].map(i => (
+              <div key={i} className="stat-card-premium skeleton" style={{ height: '100px' }}></div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   const scroll = (direction) => {
     if (containerRef.current) {
@@ -59,10 +75,22 @@ const DailyStatsGrid = ({ stats }) => {
   return (
     <section className="stats-section-carousel">
       <div className="section-header-carousel">
-        <h3 className="section-label">Resumen de Historial</h3>
+        <h2 className="section-label">Resumen de Historial</h2>
         <div className="carousel-controls">
-          <button className="carousel-btn" onClick={() => scroll('left')}><ChevronLeft size={14} /></button>
-          <button className="carousel-btn" onClick={() => scroll('right')}><ChevronRight size={14} /></button>
+          <button 
+            className="carousel-btn" 
+            onClick={() => scroll('left')}
+            aria-label="Desplazar historial hacia la izquierda"
+          >
+            <ChevronLeft size={14} />
+          </button>
+          <button 
+            className="carousel-btn" 
+            onClick={() => scroll('right')}
+            aria-label="Desplazar historial hacia la derecha"
+          >
+            <ChevronRight size={14} />
+          </button>
         </div>
       </div>
 

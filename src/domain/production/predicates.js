@@ -12,8 +12,9 @@ export const isResorte = (record) => {
   if (!record) return false;
   const mId = String(record.maquinaId || record.ubicacion?.maquina || '').toUpperCase();
   const unidad = String(record.unidad || record.produccion?.unidad || '').toLowerCase();
+  const producto = String(record.productoNombre || record.producto?.nombre || record.producto || '').toLowerCase();
   
-  return mId.includes('MR') || unidad.includes('mil');
+  return mId.includes('MR') || unidad.includes('mil') || producto.includes('resorte');
 };
 
 export const isProceso = (record) => {

@@ -2,52 +2,32 @@
 
 Panel de control de alta precisión para auditoría de producción industrial.
 
+## 🏛️ Arquitectura Senior (Desacoplamiento Estricto)
+
+La aplicación sigue principios de **Clean Architecture** para garantizar escalabilidad y cero errores de auditoría:
+
+-   **📁 Domain Layer (`src/domain`):** El "cerebro". Contiene lógica pura y predicados de negocio independientes de la UI.
+-   **📁 Repository Layer (`src/data/repositories`):** Capa de abstracción de datos. La UI no sabe que existe IndexedDB; solo pide datos al Repository.
+-   **📁 Config-Driven UI (`src/features/.../config`):** El formato de tablas y dashboards se define en archivos de configuración, no en los componentes.
+-   **📁 Hooks Orchestration (`src/features/.../hooks`):** Manejan el estado y coordinan el flujo entre Repository y Vista.
+
 ## 🛠 Stack Tecnológico
-- **Core:** React 19 + Vite 8
-- **Estado:** Zustand + Dexie (IndexedDB)
-- **Estilos:** Vanilla CSS (Modern Design System)
-- **Testing:** Vitest
+-   **Core:** React 19 + Vite 8
+-   **Persistencia:** Dexie (IndexedDB) para manejo de GBs de datos offline.
+-   **Logic:** Custom Hooks + Repository Pattern.
+-   **Styles:** Vanilla CSS con Design System basado en Variables.
 
-## 🧠 Lógica de Negocio (Predicados de Auditoría)
-El sistema aplica reglas estrictas para evitar la inflación de datos y asegurar la precisión en los KPIs de gerencia.
+## 🧠 Reglas de Auditoría (Predicados)
+El sistema aplica filtros estrictos para evitar la inflación de datos:
+-   **Stock Real:** Solo se suman productos terminados (`isPanel`, `isResorte`).
+-   **Procesos:** Las tareas de soporte se trackean pero no afectan el inventario final.
 
-| Categoría | Identificador | Unidad | Definición de Negocio |
-| :--- | :--- | :--- | :--- |
-| **Paneles (MP)** | `MP1`, `MP2`, `MP3`, `MP4` | Unidades (u.) | Producto terminado listo para stock. |
-| **Resortes (MR)** | `MR1`, `MR2` | Millares (mil.) | Producción volumétrica de resortes. |
-| **Procesos** | `N/A`, `Otros` | Unidades (u.) | Tareas de soporte (Embarillado, Doblado, Cortado). |
-
-> [!IMPORTANT]
-> **Regla de Oro:** Solo los registros de máquinas MP se suman al total de producción. Las tareas de procesos se contabilizan por separado para no "ensuciar" el stock real.
-
-## 📊 Estructura de Datos (JSON)
-Para una importación exitosa, el archivo JSON debe seguir este esquema:
-
-```json
-{
-  "trabajador": { "nombre": "Angelo" },
-  "ubicacion": { "modulo": "Paneles", "maquina": "MP3" },
-  "producto": { "nombre": "2 plz pegado" },
-  "produccion": { "cantidad": 60, "unidad": "unidades" },
-  "fechaLegible": "2026-03-31",
-  "outputMaquina": 2626
-}
-```
-
-## 🧪 Guía de Testing
-La integridad de los datos es crítica. Contamos con un **Test de Regresión** que valida que los procesos intermedios no se mezclen con las unidades terminadas.
-
-### Comandos de Ejecución
+## 🚀 Ejecución
 ```bash
-# 1. Instalar dependencias
 npm install
-
-# 2. Ejecutar entorno de desarrollo
 npm run dev
-
-# 3. Correr Auditoría de Pruebas (Vital antes de cada deploy)
-npm test src/tests/domain/production.test.js
+npm test      # Vital para validar integridad de datos
 ```
 
 ---
-*Desarrollado con arquitectura modular y separación estricta de responsabilidades.*
+*Arquitectura modular diseñada para auditoría industrial de alto rendimiento.*

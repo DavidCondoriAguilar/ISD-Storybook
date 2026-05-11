@@ -38,8 +38,10 @@ export const AuditJournal = memo(({
 
           <div className="header-actions">
             <div className="search-wrapper">
-              <Search size={16} className="search-icon" />
+              <label htmlFor="journal-search-input" className="sr-only">Buscar por operador</label>
+              <Search size={16} className="search-icon" aria-hidden="true" />
               <input
+                id="journal-search-input"
                 type="text"
                 className="search-input glass"
                 placeholder="Filtrar operador..."
@@ -49,9 +51,11 @@ export const AuditJournal = memo(({
             </div>
 
             <select
+              id="journal-module-select"
               value={filterModule}
               className="module-select glass"
               onChange={(e) => onFilterModuleChange(e.target.value)}
+              aria-label="Filtrar por planta o área"
             >
               <option value="all">Filtro Planta: Todo</option>
               {areaBreakdown?.map(area => (

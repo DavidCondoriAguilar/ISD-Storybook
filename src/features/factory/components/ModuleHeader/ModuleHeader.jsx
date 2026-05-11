@@ -11,7 +11,7 @@ const ModuleHeader = ({ moduleName }) => {
           <span>Panel General</span>
         </Link>
       </div>
-      
+
       <div className="header-content">
         <div className="title-group">
           <h1 className="exec-title">Área: {moduleName}</h1>
@@ -19,7 +19,7 @@ const ModuleHeader = ({ moduleName }) => {
             Análisis de Producción en Tiempo Real • {new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
           </p>
         </div>
-        
+
         <div className="live-indicator">
           <span className="pulse-dot"></span>
           EN VIVO

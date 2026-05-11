@@ -49,11 +49,13 @@ const Sidebar = memo(function Sidebar({ navItems }) {
           return (
             <div key={item.id} className="nav-item-wrapper">
               {hasSubItems ? (
-                <button
+                  <button
                   className={`nav-item ${isActive ? 'active' : ''} ${isDropdownOpen ? 'dropdown-active' : ''}`}
                   onClick={() => toggleDropdown(item.id)}
                   onMouseEnter={() => setActiveTooltip(item.label)}
                   onMouseLeave={() => setActiveTooltip(null)}
+                  aria-label={`Abrir submenú de ${item.label}`}
+                  aria-expanded={isDropdownOpen}
                 >
                   <div className="nav-icon-wrapper">
                     <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
@@ -66,6 +68,7 @@ const Sidebar = memo(function Sidebar({ navItems }) {
                   className={`nav-item ${isActive ? 'active' : ''}`}
                   onMouseEnter={() => setActiveTooltip(item.label)}
                   onMouseLeave={() => setActiveTooltip(null)}
+                  aria-label={item.label}
                 >
                   <div className="nav-icon-wrapper">
                     <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
@@ -80,6 +83,8 @@ const Sidebar = memo(function Sidebar({ navItems }) {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -10 }}
+                    role="group"
+                    aria-label={`Opciones de ${item.label}`}
                   >
                     <div className="submenu-header">{item.label}</div>
                     {item.subItems.map(sub => (
@@ -115,6 +120,7 @@ const Sidebar = memo(function Sidebar({ navItems }) {
           onClick={toggleTheme}
           onMouseEnter={() => setActiveTooltip(theme === 'light' ? 'Modo Oscuro' : 'Modo Claro')}
           onMouseLeave={() => setActiveTooltip(null)}
+          aria-label={theme === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'}
         >
           <div className="nav-icon-wrapper">
             {theme === 'light' ? <Moon size={20} /> : <Sun size={20} color="#fbbf24" />}

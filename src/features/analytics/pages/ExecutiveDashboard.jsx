@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react'
+import { lazy, Suspense, memo, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { TrendingUp, Users, Award, Star, Activity, Layers, Calendar } from 'lucide-react'
 
@@ -10,8 +10,10 @@ import { formatMetric } from '../../../utils/formatters'
 import { ExecutiveHeader } from '../components/ExecutiveHeader'
 import { KPICard, AdvMetricCard, SuccessScoreCard } from '../components/StatCards'
 import { EmployeeMatrix } from '../components/EmployeeMatrix'
-import { DashboardCharts } from '../components/DashboardCharts'
 import { DateRangePicker } from '../../../shared'
+
+// Lazy loaded heavy component
+const DashboardCharts = lazy(() => import('../components/DashboardCharts').then(m => ({ default: m.DashboardCharts })))
 
 // Styles
 import '../styles/ExecutiveDashboard.css'
@@ -60,9 +62,11 @@ const ExecutiveDashboard = memo(() => {
       >
         {/* Los filtros ahora se inyectan en una sola línea horizontal */}
         <select 
+          id="area-filter-select"
           className="exec-select-v2"
           value={selectedArea}
           onChange={(e) => setSelectedArea(e.target.value)}
+          aria-label="Filtrar por área de producción"
         >
           <option value="all">Todas las Áreas</option>
           <option value="paneles">Paneles</option>
@@ -96,6 +100,7 @@ const ExecutiveDashboard = memo(() => {
       </section> 
       */}
 
+      <h2 className="sr-only">Indicadores de Producción</h2>
       <section className="stats-grid">
         <KPICard 
           title="Producción Paneles" 
@@ -151,13 +156,16 @@ const ExecutiveDashboard = memo(() => {
         />
       </section>
 
-      <DashboardCharts 
-        trendData={trendData}
-        topPaneleros={topPaneleros}
-        topResorteros={topResorteros}
-        machineStatsMP={machineStatsMP}
-        machineStatsMR={machineStatsMR}
-      />
+      <h2 className="section-title-v2">Análisis de Desempeño y Tendencias</h2>
+      <Suspense fallback={<div className="charts-placeholder">Cargando visualizaciones...</div>}>
+        <DashboardCharts 
+          trendData={trendData}
+          topPaneleros={topPaneleros}
+          topResorteros={topResorteros}
+          machineStatsMP={machineStatsMP}
+          machineStatsMR={machineStatsMR}
+        />
+      </Suspense>
 
       <EmployeeMatrix workers={allWorkers} />
       

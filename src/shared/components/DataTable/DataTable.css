@@ -59,6 +59,11 @@
 
 .dt-tr {
   border-bottom: 1px solid var(--border);
+  transition: background-color 0.1s ease;
+}
+
+.dt-row-hover:hover {
+  background: var(--primary-glow) !important;
 }
 
 .dt-td {

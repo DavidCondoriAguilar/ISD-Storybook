@@ -4,23 +4,7 @@
  * Component-specific styles have been moved to their respective component folders.
  */
 
-.module-page-layout {
-  padding: clamp(1rem, 3vw, 2.5rem);
-  background: var(--bg-app);
-  min-height: 100vh;
-  width: 100%;
-  overflow-x: hidden;
-  box-sizing: border-box;
-}
-
-.page-content-restrictor {
-  width: 100%;
-  max-width: 100%; 
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1.5rem, 4vw, 3rem);
-}
+/* Layout Classes moved to index.css for CLS prevention */
 
 /* Herramientas de Auditoría */
 .audit-tools-section {
@@ -130,7 +114,7 @@
 .unit-label {
   font-size: 0.65rem;
   font-weight: 700;
-  opacity: 0.6;
+  color: var(--text-dim);
 }
 
 .output-cell {

@@ -1,10 +1,14 @@
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
+// import { jsPDF } from 'jspdf';
+// import autoTable from 'jspdf-autotable';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 export const reportService = {
   generateExecutiveReport: async (data, dateRange) => {
+    // Dynamic import for heavy PDF libraries (Lighthouse Performance Optimization)
+    const { jsPDF } = await import('jspdf');
+    const { default: autoTable } = await import('jspdf-autotable');
+
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const now = new Date();
@@ -165,6 +169,10 @@ export const reportService = {
   },
 
   generateDailyProductionReport: async (records, dateRange) => {
+    // Dynamic import (Lighthouse Performance Optimization)
+    const { jsPDF } = await import('jspdf');
+    const { default: autoTable } = await import('jspdf-autotable');
+
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const now = new Date();

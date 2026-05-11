@@ -65,10 +65,10 @@ MetricCard.Content = function MetricCardContent({ children, className = '' }) {
 MetricCard.Value = function MetricCardValue({ value, unit, className = '' }) {
   const displayValue = typeof value === 'number' ? value.toLocaleString() : value;
   return (
-    <h3 className={`metric-value ${className}`}>
+    <div className={`metric-value ${className}`}>
       {displayValue}
       {unit && <span className="metric-unit">{unit}</span>}
-    </h3>
+    </div>
   );
 };
 
@@ -85,9 +85,10 @@ MetricCard.Progress = function MetricCardProgress({ value = 0, delay = 0.5, clas
     <div className={`metric-progress-bg ${className}`}>
       <motion.div 
         className="metric-progress-fill"
-        initial={{ width: 0 }}
-        animate={{ width: `${Math.min(100, Math.max(0, value))}%` }}
-        transition={{ duration: 1, delay }}
+        initial={{ scaleX: 0, originX: 0 }}
+        animate={{ scaleX: Math.min(100, Math.max(0, value)) / 100 }}
+        transition={{ duration: 1, delay, ease: "easeOut" }}
+        style={{ width: '100%' }}
       />
     </div>
   );

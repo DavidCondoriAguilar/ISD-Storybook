@@ -39,7 +39,7 @@ export const calculatePerformance = (records) => {
 
   const topPaneleros = Object.values(workerMap)
     .filter(w => w.paneles > 0 || w.procesos > 0)
-    .sort((a, b) => b.total - a.total)
+    .sort((a, b) => (b.paneles + b.procesos) - (a.paneles + a.procesos))
     .slice(0, 5);
 
   const topResorteros = Object.values(workerMap)

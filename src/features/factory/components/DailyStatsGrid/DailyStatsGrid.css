@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-height: 200px;
 }
 
 .section-header-carousel {
@@ -35,7 +36,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .carousel-btn:hover {
@@ -74,7 +75,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .stat-card-premium:hover {

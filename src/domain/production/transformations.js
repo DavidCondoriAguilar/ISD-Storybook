@@ -4,7 +4,7 @@ import { isResorte, isPanel, isProceso } from './predicates';
 /**
  * Filtra registros según criterios de módulo, tiempo y búsqueda.
  */
-export const filterRecords = (records, { moduleId, timeRange, startDate, endDate, searchTerm }) => {
+export const filterRecords = (records, { moduleId, timeRange, startDate, endDate, searchTerm, selectedWorker }) => {
   if (!Array.isArray(records)) {
     console.error("[Domain Error] filterRecords: 'records' must be an array.", { records });
     return [];
@@ -24,6 +24,14 @@ export const filterRecords = (records, { moduleId, timeRange, startDate, endDate
           r.moduloId?.toLowerCase() === moduleId?.toLowerCase()
         );
       }
+    }
+
+    // 2. Filtro por Trabajador (Explícito)
+    if (selectedWorker && selectedWorker !== 'all') {
+      filtered = filtered.filter(r => {
+        const name = r.trabajadorNombre || r.trabajador?.nombre;
+        return name === selectedWorker;
+      });
     }
 
     // Filtros Temporales

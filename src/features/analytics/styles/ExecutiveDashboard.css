@@ -9,14 +9,24 @@
 @import './EmployeeMatrix.css';
 
 :root {
-  --exec-accent: #3b82f6;
-  --exec-success: #10b981;
-  --exec-danger: #ef4444;
-  --exec-warning: #f59e0b;
+  --exec-accent: var(--primary);
+  --exec-success: var(--success);
+  --exec-danger: var(--danger);
+  --exec-warning: var(--warning);
   --exec-bg-card: rgba(255, 255, 255, 0.03);
   --exec-border: rgba(255, 255, 255, 0.08);
-  --text-main: #f8fafc;
-  --text-dim: #94a3b8;
+}
+
+.charts-placeholder {
+  min-height: 600px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  font-weight: 700;
 }
 
 /* 1. Layout Base */

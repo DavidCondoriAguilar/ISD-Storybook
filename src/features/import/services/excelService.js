@@ -1,5 +1,3 @@
-import * as XLSX from 'xlsx';
-
 /**
  * SERVICIO DE EXCEL (Arquitectura Senior)
  * Convierte archivos .xlsx/.xls en registros de producción normalizados.
@@ -9,6 +7,9 @@ export const excelService = {
    * Procesa un archivo Excel y devuelve un array de registros JSON normalizados.
    */
   parseFile: async (file) => {
+    // SENIOR OPTIMIZATION: Dynamic Import for the heavy XLSX library
+    const XLSX = await import('xlsx');
+    
     console.log('[ExcelService] Iniciando parseo de:', file.name);
     return new Promise((resolve, reject) => {
       const reader = new FileReader();

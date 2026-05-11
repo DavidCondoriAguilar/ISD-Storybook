@@ -59,9 +59,11 @@ export const Pagination = ({
           <div className="page-size-control">
             <span className="label">Filas:</span>
             <select 
+              id="pagination-rows-select"
               value={itemsPerPage} 
               onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
               className="elite-select"
+              aria-label="Registros por página"
             >
               <option value={10}>10</option>
               <option value={25}>25</option>

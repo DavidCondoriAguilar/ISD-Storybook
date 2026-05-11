@@ -38,35 +38,37 @@ export function DailyPerformance({ stats, variants }) {
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                    <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 950, color: 'var(--text-main)' }}>Cierre de Operaciones</h3>
-                   <div style={{ padding: '4px 10px', background: '#10b98115', color: '#10b981', borderRadius: '8px', fontSize: '0.6rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', animation: 'pulse 2s infinite' }}></div>
+                   <div style={{ padding: '4px 10px', background: 'var(--success-glow)', color: 'var(--success)', borderRadius: '8px', fontSize: '0.6rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--success)', animation: 'pulse 2s infinite' }}></div>
                       PULSO ACTIVO
                    </div>
                 </div>
                 <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 700 }}>Inteligencia comparativa por jornada laboral</p>
               </div>
            </div>
-
+ 
            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <span style={{ fontSize: '0.75rem', fontWeight: 850, color: 'var(--text-dim)' }}>PERIODO:</span>
-              <select 
-                value={selectedDate} 
-                onChange={(e) => setSelectedDate(e.target.value)}
-                style={{ padding: '12px 24px', borderRadius: '14px', border: '1px solid var(--border-strong)', fontSize: '0.9rem', fontWeight: 800, background: 'var(--bg-app)', color: 'var(--text-main)', outline: 'none', cursor: 'pointer', appearance: 'none', minWidth: '220px', textAlign: 'center' }}
-              >
+               <select 
+                 id="daily-performance-date-select"
+                 value={selectedDate} 
+                 onChange={(e) => setSelectedDate(e.target.value)}
+                 style={{ padding: '12px 24px', borderRadius: '14px', border: '1px solid var(--border-strong)', fontSize: '0.9rem', fontWeight: 800, background: 'var(--bg-app)', color: 'var(--text-main)', outline: 'none', cursor: 'pointer', appearance: 'none', minWidth: '220px', textAlign: 'center' }}
+                 aria-label="Seleccionar fecha para ver rendimiento"
+               >
                 {availableDates.map(date => (
                   <option key={date} value={date}>{new Date(date + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</option>
                 ))}
               </select>
            </div>
         </div>
-
+ 
         <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '40px' }}>
           
           {/* Daily Worker Leaderboard */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-               <Trophy size={20} color="#f59e0b" />
+               <Trophy size={20} color="var(--warning)" />
                <span style={{ fontSize: '0.85rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>Ranking de Productividad Diaria</span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }}>
@@ -114,14 +116,14 @@ export function DailyPerformance({ stats, variants }) {
                        <span style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--text-main)' }}>{module}</span>
                        <span style={{ fontSize: '0.8rem', fontWeight: 850, color: 'var(--primary)' }}>{Math.round((units / currentDayData.total) * 100)}%</span>
                     </div>
-                    <div style={{ height: '10px', background: 'var(--bg-card)', borderRadius: '5px', overflow: 'hidden', border: '1px solid var(--border)' }}>
-                       <motion.div 
-                         initial={{ width: 0 }}
-                         animate={{ width: `${(units / currentDayData.total) * 100}%` }}
-                         transition={{ duration: 1, ease: 'easeOut' }}
-                         style={{ height: '100%', background: 'var(--primary-gradient)' }} 
-                       />
-                    </div>
+                     <div style={{ height: '10px', background: 'var(--bg-card)', borderRadius: '5px', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                        <motion.div 
+                          initial={{ scaleX: 0, originX: 0 }}
+                          animate={{ scaleX: (units / currentDayData.total) }}
+                          transition={{ duration: 1, ease: 'easeOut' }}
+                          style={{ height: '100%', background: 'var(--primary-gradient)', width: '100%' }} 
+                        />
+                     </div>
                     <div style={{ fontSize: '0.65rem', color: 'var(--text-dim)', fontWeight: 800, textAlign: 'right' }}>
                        {units.toLocaleString()} Unidades Netas
                     </div>

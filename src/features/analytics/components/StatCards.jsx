@@ -10,10 +10,10 @@ import '../styles/StatCards.css';
 export const KPICard = ({ title, value, color, progress, trend, periodLabel, icon: Icon }) => {
   const getStatus = () => {
     if (progress === undefined || progress === null) return { label: 'Sincronizando', color: 'var(--text-dim)', icon: <Clock size={12} /> };
-    if (progress >= 100) return { label: 'Meta Superada', color: '#10b981', icon: <CheckCircle size={12} /> };
-    if (progress >= 85) return { label: 'Buen Ritmo', color: '#3b82f6', icon: <Activity size={12} /> };
-    if (progress >= 60) return { label: 'En Riesgo', color: '#f59e0b', icon: <AlertCircle size={12} /> };
-    return { label: 'Crítico', color: '#ef4444', icon: <AlertCircle size={12} /> };
+    if (progress >= 100) return { label: 'Meta Superada', color: 'var(--success)', icon: <CheckCircle size={12} /> };
+    if (progress >= 85) return { label: 'Buen Ritmo', color: 'var(--primary)', icon: <Activity size={12} /> };
+    if (progress >= 60) return { label: 'En Riesgo', color: 'var(--warning)', icon: <AlertCircle size={12} /> };
+    return { label: 'Crítico', color: 'var(--danger)', icon: <AlertCircle size={12} /> };
   };
 
   const status = getStatus();
@@ -23,7 +23,7 @@ export const KPICard = ({ title, value, color, progress, trend, periodLabel, ico
       <MetricCard.Header>
         <div className="kpi-title-box">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {Icon && <Icon size={16} color={color === 'blue' ? '#3b82f6' : color === 'green' ? '#10b981' : 'var(--primary)'} />}
+            {Icon && <Icon size={16} color={color === 'blue' ? 'var(--primary)' : color === 'green' ? 'var(--success)' : 'var(--primary)'} />}
             <span className="kpi-label">{title}</span>
           </div>
           {periodLabel && <span className="kpi-period">{periodLabel}</span>}
@@ -33,11 +33,12 @@ export const KPICard = ({ title, value, color, progress, trend, periodLabel, ico
           style={{ 
             background: `${status.color}15`, 
             color: status.color, 
-            border: `1px solid ${status.color}30` 
+            borderColor: `${status.color}40`,
+            filter: 'brightness(0.9)' /* Oscurece ligeramente el conjunto para mejor contraste */
           }}
         >
           {status.icon}
-          <span>{status.label}</span>
+          <span style={{ fontWeight: 800 }}>{status.label}</span>
         </div>
       </MetricCard.Header>
 
@@ -63,7 +64,7 @@ export const KPICard = ({ title, value, color, progress, trend, periodLabel, ico
  * SuccessScoreCard - Master metric using composition.
  */
 export const SuccessScoreCard = ({ score }) => {
-  const color = score >= 90 ? '#10b981' : score >= 75 ? '#3b82f6' : score >= 50 ? '#f59e0b' : '#ef4444';
+  const color = score >= 90 ? 'var(--success)' : score >= 75 ? 'var(--primary)' : score >= 50 ? 'var(--warning)' : 'var(--danger)';
   
   return (
     <MetricCard color="primary" className="highlight-success" style={{ borderLeft: `4px solid ${color}` }}>

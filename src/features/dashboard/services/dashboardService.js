@@ -1,5 +1,3 @@
-import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable'
 import { format } from 'date-fns'
 
 export const dashboardService = {
@@ -44,6 +42,10 @@ export const dashboardService = {
   },
 
   async exportToPDF(records, totals, notify) {
+    // SENIOR OPTIMIZATION: Dynamic Import to reduce initial bundle size
+    const { default: jsPDF } = await import('jspdf');
+    const { default: autoTable } = await import('jspdf-autotable');
+
     const doc = new jsPDF()
     const COLORS = {
       primary: [99, 102, 241],
