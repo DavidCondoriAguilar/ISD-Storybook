@@ -1,4 +1,5 @@
 import { parse, format, isValid } from 'date-fns';
+import { isResorte, isProceso } from '../../../domain/production/predicates';
 
 /**
  * Normaliza los datos crudos de producción a un esquema estándar.
@@ -47,7 +48,6 @@ export const transformProductionData = (rawRecords) => {
                     
     const productoLabel = record.producto?.nombre || record.Producto?.Nombre || 
                          record.productoNombre || record.producto || record.Producto || 'General';
-    const productoLower = String(productoLabel).toLowerCase();
     
     const modulo = (record.ubicacion?.modulo || record.Ubicacion?.Modulo || record.moduloNombre || record.modulo || '').toLowerCase();
     const trabajador = record.trabajador?.nombre || record.Trabajador?.Nombre || record.trabajadorNombre || record.trabajador || 'Sin Asignar';
@@ -59,20 +59,10 @@ export const transformProductionData = (rawRecords) => {
     );
     const minutos = Number(record.tiempo?.minutos || record.Tiempo?.Minutos || record.tiempoMinutos || 525);
 
-    // Predicados de clasificación rápida
-    const esMillar = unidad.includes('millar') || 
-                     productoLower.includes('millar') || 
-                     productoLower.includes('resorte') ||
-                     maquina.toUpperCase().includes('MR');
-
-    const esTareaSoporte = productoLower.includes('embarillado') || 
-                          productoLower.includes('doblado') || 
-                          productoLower.includes('cortado') ||
-                          productoLower.includes('pegado') ||
-                          modulo.includes('soporte');
-    
-    const esPanel = !esMillar && !esTareaSoporte;
-    const esProceso = esTareaSoporte;
+    // Predicados de clasificación unificados (Senior Architecture)
+    const esMillar = isResorte({ ...record, productoNombre: productoLabel, unidad, maquinaId: maquina });
+    const esProceso = isProceso({ ...record, productoNombre: productoLabel, moduloId: modulo });
+    const esPanel = !esMillar && !esProceso;
 
     const eficiencia = minutos > 0 ? (unidadesReales / minutos) * 60 : 0;
 

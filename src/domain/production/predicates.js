@@ -10,36 +10,35 @@
  */
 export const isResorte = (record) => {
   if (!record) return false;
-  const mId = String(record.maquinaId || record.ubicacion?.maquina || '').toUpperCase();
-  const unidad = String(record.unidad || record.produccion?.unidad || '').toLowerCase();
+  const maquina = String(record.maquinaId || record.ubicacion?.maquina || '').toUpperCase();
   const producto = String(record.productoNombre || record.producto?.nombre || record.producto || '').toLowerCase();
+  const unidad = String(record.unidad || record.produccion?.unidad || '').toLowerCase();
   
-  return mId.includes('MR') || unidad.includes('mil') || producto.includes('resorte');
+  return maquina.includes('MR') || 
+         producto.includes('resorte') || 
+         producto.includes('millar') || 
+         unidad.includes('mil');
 };
 
 export const isProceso = (record) => {
   if (!record) return false;
-  const mId = String(record.maquinaId || record.ubicacion?.maquina || '').toUpperCase();
+  const producto = String(record.productoNombre || record.producto?.nombre || record.producto || '').toLowerCase();
+  const area = String(record.moduloId || record.area || record.ubicacion?.modulo || '').toLowerCase();
   
-  const isRes = isResorte(record);
-  const isPanelMachine = ['MP1', 'MP2', 'MP3', 'MP4'].some(m => mId.includes(m));
-
-  return !isRes && !isPanelMachine;
+  const keywordsProceso = [
+    'embarillado', 'doblado', 'cortado', 'pegado', 'sellado', 
+    'telas', 'quimicos', 'soporte', 'administrativo'
+  ];
+  
+  return keywordsProceso.some(key => producto.includes(key) || area.includes(key));
 };
 
-/**
- * Determina si un registro pertenece a la categoría de Paneles (MP).
- */
 export const isPanel = (record) => {
   if (!record) return false;
-  const mId = String(record.maquinaId || record.ubicacion?.maquina || '').toUpperCase();
-  
-  return ['MP1', 'MP2', 'MP3', 'MP4'].some(m => mId.includes(m));
+  // Un panel es lo que NO es resorte y NO es un proceso intermedio
+  return !isResorte(record) && !isProceso(record);
 };
 
-/**
- * Formatea la unidad según el tipo de producto.
- */
 export const getUnitLabel = (record) => {
   return isResorte(record) ? 'mil.' : 'u.';
 };
