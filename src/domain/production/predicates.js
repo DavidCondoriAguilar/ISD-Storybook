@@ -10,16 +10,17 @@
  */
 export const isResorte = (record) => {
   if (!record) return false;
-  // PRIORIDAD: Usar flag directo del Excel Service (v10.1)
-  if (record.esMillar === true) return true;
-  if (record.esMillar === false) return false;
-  
-  const maquina = String(record.maquinaId || record.ubicacion?.maquina || '').toUpperCase();
+  const maquina = String(record.maquinaId || record.maquina || record.ubicacion?.maquina || '').toUpperCase();
   const producto = String(record.productoNombre || record.producto?.nombre || record.producto || '').toLowerCase();
   const unidad = String(record.unidad || record.produccion?.unidad || '').toLowerCase();
   
+  // PRIORIDAD 1: Máquina MR
   if (maquina.includes('MR')) return true;
+  
+  // PRIORIDAD 2: Producto que contenga 'RESORTE' o 'MILLAR'
   if (producto.includes('resorte') || producto.includes('millar')) return true;
+  
+  // PRIORIDAD 3: Unidad declarada como millares
   if (unidad.includes('mil')) return true;
   
   return false;
@@ -30,12 +31,12 @@ export const isProceso = (record) => {
   const producto = String(record.productoNombre || record.producto?.nombre || record.producto || '').toLowerCase();
   const area = String(record.moduloId || record.area || record.ubicacion?.modulo || '').toLowerCase();
   
-  // SOLO proceso real si es soporte, telas, quimicos, administrativo (NO producción)
-  const keywordsProceso = [
-    'soporte', 'administrativo', 'telas', 'quimicos'
+  // SOLO tareas administrativas, mantenimiento o permisos (NO cuentan como unidades de producto)
+  const keywordsNoProduccion = [
+    'soporte', 'administrativo', 'limpieza', 'permiso', 'mantenimiento', 'no trabajó', 'reunión', 'capacitación'
   ];
   
-  return keywordsProceso.some(key => producto.includes(key) || area.includes(key));
+  return keywordsNoProduccion.some(key => producto.includes(key) || area.includes(key));
 };
 
 export const isPanel = (record) => {

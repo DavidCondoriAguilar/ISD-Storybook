@@ -1,33 +1,41 @@
-import telaSchema from './schemas/tela.json';
-import panelesSchema from './schemas/paneles.json';
-import resortesSchema from './schemas/resortes.json';
-
 /**
  * ISD Schema Registry - Sistema multi-módulo de producción
  * 
- * Auto-detecta el tipo de producción basado en:
- * 1. Nombre del archivo
- * 2. Estructura de los datos
- * 3. Productos encontrados
+ * Refactorizado para evitar archivos JSON externos (Data Trash)
+ * y priorizar la detección basada en patrones reales.
  */
 
+// Schema Base para todos los módulos industriales
+const BASE_SCHEMA = {
+  validation: {
+    required: ["trabajador", "fecha", "producto", "cantidad"],
+    numeric: ["cantidad", "outputMaquina"],
+    dateFormat: "YYYY-MM-DD"
+  },
+  fieldMappings: {
+    trabajador: { aliases: ["trabajador", "worker", "nombre", "operario", "name", "empleado", "trabajadorNombre"] },
+    dni: { aliases: ["dni", "cedula", "ci", "id", "trabajadorDni"] },
+    turno: { aliases: ["turno", "shift", "jornada", "tipoJornada"] },
+    fecha: { aliases: ["fecha", "date", "dia", "timestamp", "fechaLegible"] },
+    producto: { aliases: ["producto", "tipo", "name", "articulo", "item", "productoNombre"] },
+    cantidad: { aliases: ["cantidad", "qty", "units", "cant", "piezas", "total", "cantidadNeta"] },
+    maquina: { aliases: ["maquina", "machine", "equipo", "maq", "maquinaId"] },
+    outputMaquina: { aliases: ["outputMaquina", "lecturaMaquina", "contador", "output"] },
+    observaciones: { aliases: ["obs", "notas", "notes", "comentarios"] }
+  },
+  turnos: ["Mañana", "Tarde", "Noche"]
+};
+
 const SCHEMAS = {
-  telas: telaSchema,
-  paneles: panelesSchema,
-  resortes: resortesSchema,
-  DEFAULT: panelesSchema
+  telas: { ...BASE_SCHEMA, module: "Telas", description: "Producción de Telas y Corte" },
+  paneles: { ...BASE_SCHEMA, module: "Paneles", description: "Producción de Paneles de Espuma" },
+  resortes: { ...BASE_SCHEMA, module: "Resortes", description: "Producción de Resortes y Estructuras" }
 };
 
 const MODULE_NAMES = {
   telas: ['tela', 'telas', 'tejido', 'corte', 'ribete', 'banda', 'pestan', 'pillow', 'funda'],
-  paneles: ['panel', 'paneles', 'espuma', 'visco', 'memory'],
-  resortes: ['resorte', 'resortes', 'bobina', 'bobinado', 'pocket']
-};
-
-const DETECTION_PATTERNS = {
-  telas: ['producto', 'tipo'],
-  paneles: ['producto', 'cantidad', 'maquina', 'outputMaquina'],
-  resortes: ['producto', 'cantidad', 'maquina', 'outputMaquina', 'calidad']
+  paneles: ['panel', 'paneles', 'espuma', 'visco', 'memory', 'mp'],
+  resortes: ['resorte', 'resortes', 'bobina', 'bobinado', 'pocket', 'mr']
 };
 
 /**
@@ -35,7 +43,6 @@ const DETECTION_PATTERNS = {
  */
 const detectByFileName = (fileName) => {
   if (!fileName) return 'paneles';
-  
   const lowerName = fileName.toLowerCase();
   
   for (const [module, keywords] of Object.entries(MODULE_NAMES)) {
@@ -43,49 +50,26 @@ const detectByFileName = (fileName) => {
       return module;
     }
   }
-  
   return 'paneles';
 };
 
 /**
- * Detecta el módulo basado en los productos del registro
+ * Detecta el módulo basado en la estructura de datos y contenido
  */
-const detectByProducts = (records) => {
-  if (!records || records.length === 0) return 'paneles';
-  
-  const firstProducts = records.slice(0, 5).map(r => 
-    (r.producto || r.product || r.tipo || r.name || '').toLowerCase()
-  );
-  
-  const productText = firstProducts.join(' ');
-  
-  for (const [module, keywords] of Object.entries(MODULE_NAMES)) {
-    if (keywords.some(kw => productText.includes(kw))) {
-      return module;
-    }
-  }
-  
-  return 'paneles';
-};
-
-/**
- * Detecta el módulo basado en la estructura de datos
- */
-const detectByStructure = (records) => {
+const detectByContent = (records) => {
   if (!records || records.length === 0) return 'paneles';
   
   const sample = records[0];
   const keys = Object.keys(sample).map(k => k.toLowerCase());
+  const productStr = String(sample.producto || sample.tipo || sample.name || '').toUpperCase();
+  const machineStr = String(sample.maquina || sample.maquinaId || '').toUpperCase();
+
+  // Detección por Máquina (MR = Resortes, MP = Paneles)
+  if (machineStr.includes('MR') || productStr.includes('RESORTE')) return 'resortes';
+  if (machineStr.includes('MP') || productStr.includes('PANEL') || productStr.includes('PLZ')) return 'paneles';
   
-  const hasOutputMaquina = keys.some(k => 
-    ['outputmaquina', 'output', 'lecturamaquina'].includes(k)
-  );
-  
-  const hasCalidad = keys.includes('calidad');
-  const hasMaquina = keys.includes('maquina');
-  
-  if (hasCalidad && hasMaquina) return 'resortes';
-  if (hasOutputMaquina && hasMaquina) return 'paneles';
+  // Detección por Columnas Específicas
+  if (keys.includes('calidad') || keys.includes('alambre')) return 'resortes';
   
   return 'telas';
 };
@@ -102,7 +86,7 @@ export const getSchema = (moduleName) => {
  * Obtiene todos los módulos disponibles
  */
 export const getAvailableModules = () => {
-  return Object.keys(SCHEMAS).filter(k => k !== 'DEFAULT');
+  return Object.keys(SCHEMAS);
 };
 
 /**
@@ -111,38 +95,21 @@ export const getAvailableModules = () => {
 export const detectAndGetSchema = (fileName, records) => {
   let detectedModule = detectByFileName(fileName);
   
-  if (detectedModule === 'paneles' && records?.length > 0) {
-    const byProducts = detectByProducts(records);
-    if (byProducts !== 'paneles') {
-      detectedModule = byProducts;
-    } else {
-      const byStructure = detectByStructure(records);
-      if (byStructure !== 'paneles') {
-        detectedModule = byStructure;
-      }
-    }
+  if (records?.length > 0) {
+    detectedModule = detectByContent(records);
   }
   
   return {
     module: detectedModule,
-    schema: SCHEMAS[detectedModule] || SCHEMAS.paneles
+    schema: getSchema(detectedModule)
   };
 };
 
 /**
- * Obtiene los tipos de productos para un módulo
- */
-export const getProductTypes = (moduleName) => {
-  const schema = getSchema(moduleName);
-  return schema?.allowedProductTypes || [];
-};
-
-/**
- * Obtiene los turnos disponibles para un módulo
+ * Obtiene los turnos disponibles
  */
 export const getTurnos = (moduleName) => {
-  const schema = getSchema(moduleName);
-  return schema?.turnos || ['Mañana', 'Tarde', 'Noche'];
+  return BASE_SCHEMA.turnos;
 };
 
 /**
@@ -150,10 +117,10 @@ export const getTurnos = (moduleName) => {
  */
 export const validateRecord = (record, moduleName) => {
   const schema = getSchema(moduleName);
-  const required = schema?.validation?.required || [];
+  const required = schema.validation.required;
   
   const missing = required.filter(field => {
-    const aliases = schema?.fieldMappings?.[field]?.aliases || [field];
+    const aliases = schema.fieldMappings[field]?.aliases || [field];
     return !aliases.some(alias => 
       record.hasOwnProperty(alias) || record[alias] !== undefined
     );
@@ -171,7 +138,7 @@ export const validateRecord = (record, moduleName) => {
  */
 export const mapFields = (record, moduleName) => {
   const schema = getSchema(moduleName);
-  const mappings = schema?.fieldMappings || {};
+  const mappings = schema.fieldMappings;
   const mapped = {};
   
   for (const [targetField, config] of Object.entries(mappings)) {
@@ -193,10 +160,9 @@ export const mapFields = (record, moduleName) => {
 export const getModuleMetadata = (moduleName) => {
   const schema = getSchema(moduleName);
   return {
-    name: schema?.module,
-    description: schema?.description,
-    productCount: schema?.allowedProductTypes?.length || 0,
-    lastUpdated: schema?.lastUpdated
+    name: schema.module,
+    description: schema.description,
+    lastUpdated: new Date().toISOString().split('T')[0]
   };
 };
 
@@ -204,7 +170,6 @@ export default {
   getSchema,
   getAvailableModules,
   detectAndGetSchema,
-  getProductTypes,
   getTurnos,
   validateRecord,
   mapFields,

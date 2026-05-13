@@ -30,24 +30,29 @@ export const calculateKPIs = (records) => {
   // 2. Procesamiento de registros (Single Pass Architecture)
   records.forEach(r => {
     const date = r.fechaLegible || '2026-01-01';
-    
     if (!dailyTotals[date]) dailyTotals[date] = { p: 0, r: 0, pr: 0 };
 
-    const qty = Number(r.cantidad || r.produccion?.cantidad || 0);
+    const qty = Number(r.cantidad || r.produccion?.cantidad || r.cantidadOriginal || 0);
     const workerName = r.trabajadorNombre || r.trabajador?.nombre;
     
-    if (r.esMillar === true) {
+    // CLASIFICACIÓN POR PREDICADOS DE DOMINIO (Senior Standard)
+    if (isResorte(r)) {
       totalResortesRaw += qty;
       dailyTotals[date].r += qty;
-    } else {
+    } else if (isPanel(r)) {
       totalPaneles += qty;
       dailyTotals[date].p += qty;
+    } else if (isProceso(r)) {
+      totalProcesos += qty;
+      dailyTotals[date].pr += qty;
     }
     
     if (workerName) workers.add(workerName);
-    const mId = r.maquinaId || r.ubicacion?.maquina;
+    const mId = r.maquinaId || r.ubicacion?.maquina || r.maquina;
     if (mId && mId !== 'Sin Máquina') machines.add(mId);
   });
+
+  console.log(`[KPI v13] Agregación: Paneles=${totalPaneles}, Resortes=${totalResortesRaw}, Procesos=${totalProcesos}`);
 
   // 3. Inteligencia Comparativa (Deltas)
   const sortedDates = Object.keys(dailyTotals).sort();
@@ -67,15 +72,15 @@ export const calculateKPIs = (records) => {
 
   // 4. Metas y Cumplimiento (Normalizado)
   const uniqueDays = sortedDates.length || 1;
-  const METAS_DIARIAS = { paneles: 1500, resortes: 1000000, procesos: 2000 }; // Resortes en unidades, no k
+  const METAS_DIARIAS = { paneles: 300, resortes: 35000, procesos: 500 }; 
   
   const totalResortesMil = totalResortesRaw / 1000;
   const metaResortesMil = (METAS_DIARIAS.resortes * uniqueDays) / 1000;
 
   const cumplimiento = {
-    paneles: Math.min((totalPaneles / (METAS_DIARIAS.paneles * uniqueDays)) * 100, 120),
-    resortes: Math.min((totalResortesRaw / (METAS_DIARIAS.resortes * uniqueDays)) * 100, 120),
-    procesos: Math.min((totalProcesos / (METAS_DIARIAS.procesos * uniqueDays)) * 100, 120)
+    paneles: Math.min((totalPaneles / (METAS_DIARIAS.paneles * uniqueDays)) * 100, 100),
+    resortes: Math.min((totalResortesRaw / (METAS_DIARIAS.resortes * uniqueDays)) * 100, 100),
+    procesos: Math.min((totalProcesos / (METAS_DIARIAS.procesos * uniqueDays)) * 100, 100)
   };
 
   // Cumplimiento Global (Media ponderada de éxito)

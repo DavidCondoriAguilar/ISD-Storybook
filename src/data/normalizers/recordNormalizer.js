@@ -7,36 +7,70 @@ export { sanitizarNombre }
  */
 export const normalizeTimestamp = (r) => {
   let normalizedTimestamp;
+  const rawDate = r.fecha || r.fechaLegible || r.date;
+  
+  console.log(`[DATE-DEBUG] Procesando fecha raw:`, rawDate);
+
   try {
-    if (r.fechaTimestamp) {
+    // 1. Prioridad: Objeto Date nativo (Común en Excel/SheetJS)
+    if (rawDate instanceof Date && !isNaN(rawDate.getTime())) {
+      const d = new Date(rawDate);
+      d.setHours(12, 0, 0, 0);
+      normalizedTimestamp = d.getTime();
+    }
+    // 2. Prioridad: Timestamp explícito
+    else if (r.fechaTimestamp) {
       normalizedTimestamp = Number(r.fechaTimestamp);
-    } else if (r.metadatosFecha && r.metadatosFecha.anio) {
-      const { anio, mes, dia } = r.metadatosFecha;
-      const localDate = new Date(anio, (mes || 1) - 1, dia || 1, 12, 0, 0, 0);
-      normalizedTimestamp = localDate.getTime();
-    } else if (r.fechaLegible && String(r.fechaLegible).includes('-')) {
-      const parts = String(r.fechaLegible).split('-').map(Number);
-      if (parts.length === 3 && !parts.some(isNaN)) {
-        const localDate = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0, 0);
+    } 
+    // 3. Prioridad: Metadatos estructurados
+    else {
+      const meta = r.metadatosFecha || r.MetadatosFecha || r.metadatos?.fecha || {};
+      const anio = meta.anio || meta.year || r.anio;
+      const mes = meta.mes || meta.month || r.mes;
+      const dia = meta.dia || meta.day || r.dia;
+
+      if (anio && mes && dia) {
+        const localDate = new Date(Number(anio), Number(mes) - 1, Number(dia), 12, 0, 0, 0);
         normalizedTimestamp = localDate.getTime();
       }
-    } 
-    
-    if (!normalizedTimestamp || isNaN(normalizedTimestamp)) {
-      let dateStr = String(r.fecha || r.fechaLegible || "");
-      const dateObj = new Date(dateStr);
+    }
+
+    // 4. Prioridad: Parseo de String (YYYY-MM-DD o DD/MM/YYYY)
+    if (!normalizedTimestamp && rawDate) {
+      const dateStr = String(rawDate);
       
-      if (isNaN(dateObj.getTime())) {
-        normalizedTimestamp = new Date().setHours(12, 0, 0, 0);
+      // Caso DD/MM/YYYY
+      if (dateStr.includes('/')) {
+        const [d, m, y] = dateStr.split('/').map(Number);
+        if (y > 1000) {
+          normalizedTimestamp = new Date(y, m - 1, d, 12, 0, 0, 0).getTime();
+        }
+      } 
+      // Caso YYYY-MM-DD
+      else if (dateStr.includes('-')) {
+        const parts = dateStr.split('-').map(Number);
+        if (parts.length === 3) {
+          const [y, m, d] = parts[0] > 1000 ? [parts[0], parts[1], parts[2]] : [parts[2], parts[1], parts[0]];
+          normalizedTimestamp = new Date(y, m - 1, d, 12, 0, 0, 0).getTime();
+        }
+      }
+    }
+
+    // Fallback final
+    if (!normalizedTimestamp || isNaN(normalizedTimestamp)) {
+      const fallback = new Date(String(rawDate));
+      if (!isNaN(fallback.getTime())) {
+        fallback.setHours(12, 0, 0, 0);
+        normalizedTimestamp = fallback.getTime();
       } else {
-        dateObj.setHours(12, 0, 0, 0);
-        normalizedTimestamp = dateObj.getTime();
+        console.warn("[DATE-WARN] No se pudo parsear fecha, usando HOY:", rawDate);
+        normalizedTimestamp = new Date().setHours(12, 0, 0, 0);
       }
     }
   } catch (e) {
     normalizedTimestamp = new Date().setHours(12, 0, 0, 0);
   }
-  return normalizedTimestamp
+  return normalizedTimestamp;
 }
 
 export const normalizeWorker = (r) => {
@@ -50,6 +84,7 @@ export const normalizeWorker = (r) => {
 
 /**
  * NORMALIZADOR DE UBICACIÓN (Detección Inteligente de Área)
+ * Prioriza Máquina/Producto sobre la columna 'ÁREA' del Excel (Data Trash).
  */
 export const normalizeLocation = (r) => {
   const maquina = r.maquinaId || r.ubicacion?.maquina || r.maquina || 'Sin Máquina';
@@ -57,20 +92,24 @@ export const normalizeLocation = (r) => {
   const productoStr = (typeof p === 'string' ? p : (p?.nombre || r.productoNombre || '')).toUpperCase();
   const mId = maquina.toUpperCase();
 
-  let modulo = r.area || r.ubicacion?.modulo || r.modulo;
+  // 1. Detección por Máquina (Lo más confiable)
+  if (mId.includes('MR')) return { modulo: 'Resortes', maquina };
+  if (mId.includes('MP')) return { modulo: 'Paneles', maquina };
 
-  // Lógica Senior: Solo deducimos el área si viene vacía o como 'General'
-  if (!modulo || modulo === 'General') {
-    if (mId.includes('MR') || productoStr.includes('RESORTE')) {
-      modulo = 'Resortes';
-    } else if (mId.includes('MP') || productoStr.includes('PANEL') || productoStr.includes('PLZ')) {
-      modulo = 'Paneles';
-    } else {
-      modulo = 'Paneles'; // Fallback por defecto
-    }
+  // 2. Detección por Producto
+  if (productoStr.includes('RESORTE')) return { modulo: 'Resortes', maquina };
+  if (productoStr.includes('PANEL') || productoStr.includes('PLZ')) return { modulo: 'Paneles', maquina };
+
+  // 3. Fallback a la columna del Excel si existe y no es basura
+  let modulo = r.area || r.ubicacion?.modulo || r.modulo;
+  if (!modulo || modulo === 'General' || modulo === 'Paneles') { 
+    // Si dice 'Paneles' pero no detectamos MP/PLZ arriba, mantenemos Paneles como default seguro
+    modulo = 'Paneles';
   }
 
-  return { modulo, maquina };
+  const result = { modulo, maquina };
+  console.log(`[DEBUG] normalizeLocation: ${productoStr.slice(0,20)}... | MId: ${mId} -> ${modulo}`);
+  return result;
 }
 
 export const normalizeProduct = (r) => {
@@ -84,11 +123,21 @@ export const normalizeProduct = (r) => {
 /**
  * NORMALIZADOR DE PRODUCCIÓN (Detecta Millares/Unidades)
  */
-export const normalizeProduction = (r) => {
-  const unidadDetectada = r.unidad || r.produccion?.unidad || r.unidadOriginal || 'u.';
+export const normalizeProduction = (r, modulo) => {
+  // Si es Resortes y no tiene unidad definida, asumimos millares
+  const defaultUnidad = (modulo === 'Resortes') ? 'mil.' : 'u.';
+  const unidadDetectada = r.unidad || r.produccion?.unidad || r.unidadOriginal || defaultUnidad;
+  
+  // LÓGICA DE PRODUCCIÓN NETA (Senior Fallback)
+  const total = Number(r.cantidad ?? r.produccion?.cantidad ?? r.total ?? 0);
+  const output = Number(r.outputMaquina ?? r.produccion?.output ?? r.output ?? 0);
+  
+  // Si el total es 0 pero hay lectura de máquina, usamos la lectura
+  const cantidadNeta = total > 0 ? total : output;
+
   return {
-    cantidadNeta: Number(r.cantidad ?? r.produccion?.cantidad ?? r.total ?? 0),
-    lecturaMaquina: Number(r.outputMaquina ?? r.produccion?.output ?? 0),
+    cantidadNeta,
+    lecturaMaquina: output,
     unidadOriginal: unidadDetectada.toLowerCase().includes('mil') ? 'mil.' : 'u.'
   }
 }

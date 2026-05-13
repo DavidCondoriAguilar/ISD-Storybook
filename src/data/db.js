@@ -14,7 +14,7 @@ export const db = new Dexie(APP_CONFIG.STORAGE.DB_NAME);
  */
 db.version(APP_CONFIG.STORAGE.DB_VERSION).stores({
   imports: '++id, timestamp, fileName, worker', 
-  records: '++id, idLocal, timestamp, fechaTimestamp, trabajadorNombre, productoNombre, moduloId, area, maquinaId, importId, esMillar',
+  records: '++id, idLocal, timestamp, fechaTimestamp, fechaLegible, trabajadorNombre, productoNombre, moduloId, area, maquinaId, importId, esMillar',
   metadata: 'id, value'
 });
 

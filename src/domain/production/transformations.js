@@ -63,6 +63,7 @@ export const filterRecords = (records, { moduleId, timeRange, startDate, endDate
       );
     }
 
+    console.log(`[DEBUG] filterRecords: Input=${records.length} | Range=${timeRange} | Search='${searchTerm}' | Worker='${selectedWorker}' -> Output=${filtered.length}`);
     return filtered;
   } catch (error) {
     console.error("[Domain Error] filterRecords failed:", error);

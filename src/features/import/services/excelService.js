@@ -52,17 +52,18 @@ export const excelService = {
         const productoRaw = String(row[mapping.producto] || '').trim();
         const maquinaRaw = String(row[mapping.maquina] || '').trim();
         
-        // v12.1: Extraer cantidad y output según mapeo de columnas
-        // El primer número es TOTAL (cantidad produced), el segundo es Output de máquina
+        // v12.2: Extraer cantidad y output según mapeo de columnas
+        // El SEGUNDO número es el output/cumulative, el primero es daily output
+        // Para datos industriales, usamos el SEGUNDO número (cumulative/total)
         const numbers = row.filter(c => typeof c === 'number' && c > 0 && c < 1000000);
         let cantidad = 0;
         let output = 0;
         
         if (numbers.length >= 2) {
-          cantidad = numbers[0]; // Primer número = Total (producción total)
-          output = numbers[1];   // Segundo número = Output de máquina
+          cantidad = numbers[1]; // Segundo número = cumulative total
+          output = numbers[0];    // Primer número = daily output
         } else if (numbers.length === 1) {
-          cantidad = numbers[0]; // Solo 1 número = cantidad total (sin output de máquina)
+          cantidad = numbers[0];
         }
 
         let trabajadorFinal = trabajadorRaw;

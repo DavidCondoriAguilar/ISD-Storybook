@@ -8,12 +8,21 @@ import { isResorte, isProceso } from '../../../domain/production/predicates';
 export const transformProductionData = (rawRecords) => {
   if (!Array.isArray(rawRecords)) return [];
 
-  // FILTRO GLOBAL DE INTEGRIDAD: Eliminar ruidos, leyendas y notas de texto del Excel
+  // 1. FILTRO GLOBAL DE RUIDO (Senior Edition)
+  // Eliminamos cualquier fila que no tenga trabajador o sea una nota administrativa
   const cleanRecords = rawRecords.filter(record => {
-    const p = String(record.productoNombre || record.producto?.nombre || record.producto || '').toUpperCase();
-    const a = String(record.moduloId || record.area || record.ubicacion?.modulo || '').toUpperCase();
-    const noise = ['LO QUE ESTA', 'RESALTADO', 'FORMA PARTE', 'PRODUCTO TERMINADO', 'PANELES DE PT'];
-    return !noise.some(key => p.includes(key) || a.includes(key));
+    const p = String(record.productoNombre || record.producto || record.Producto || '').toUpperCase();
+    const t = String(record.trabajadorNombre || record.trabajador || '').toUpperCase();
+    
+    const isNoise = [
+      'LO QUE ESTA', 'RESALTADO', 'FORMA PARTE', 'PRODUCTO TERMINADO', 
+      'PANELES DE PT', 'TOTALES', 'MES', 'PLANTA', 'CENTRAL'
+    ].some(key => p.includes(key));
+
+    const hasWorker = t.length > 0 && !t.includes('SIN ASIGNAR') && !t.includes('TRABAJADOR');
+    const hasData = Number(record.total || record.Total || record.output || record.Output || 0) > 0;
+
+    return !isNoise && hasWorker && hasData;
   });
 
   return cleanRecords.map((record) => {
@@ -54,27 +63,37 @@ export const transformProductionData = (rawRecords) => {
     const modulo = (record.ubicacion?.modulo || record.Ubicacion?.Modulo || record.moduloNombre || record.modulo || '').toLowerCase();
     const trabajador = record.trabajador?.nombre || record.Trabajador?.Nombre || record.trabajadorNombre || record.trabajador || 'Sin Asignar';
     
-    const unidadesReales = Number(
-      record.produccion?.cantidad || record.Produccion?.Cantidad || 
-      record.cantidad || record.Cantidad || 
-      record.total || record.Total || 0
-    );
+    // 2. LÓGICA DE PRODUCCIÓN NETA (Detección de Odométricos)
+    // Si 'total' existe, es la verdad absoluta. Si no, intentamos deducir por Output.
+    const totalRaw = Number(record.total || record.Total || record.TOTAL || 0);
+    const outputRaw = Number(record.output || record.Output || record.OutputMaquina || 0);
+    
+    // Si el total es 0 pero el output es masivo, probablemente el total está en la columna output (común en Resortes)
+    const unidadesReales = totalRaw > 0 ? totalRaw : outputRaw;
     const minutos = Number(record.tiempo?.minutos || record.Tiempo?.Minutos || record.tiempoMinutos || 525);
 
-    // Predicados de clasificación - USAR FLAG DEL EXCEL SERVICE SI EXISTE (v10.0)
-    const esMillar = record.esMillar === true || isResorte({ ...record, productoNombre: productoLabel, unidad, maquinaId: maquina });
-    const esProceso = isProceso({ ...record, productoNombre: productoLabel, moduloId: modulo });
+    // Predicados de clasificación - USAR DOMAIN PREDICATES (v11.0)
+    const normalizedRecord = { 
+      ...record, 
+      productoNombre: productoLabel, 
+      unidad, 
+      maquinaId: maquina,
+      moduloId: modulo 
+    };
+
+    const esMillar = isResorte(normalizedRecord);
+    const esProceso = isProceso(normalizedRecord);
     const esPanel = !esMillar && !esProceso;
 
     const eficiencia = minutos > 0 ? (unidadesReales / minutos) * 60 : 0;
 
-    return {
+    const result = {
       ...record,
       date,
       dateKey: format(date, 'yyyy-MM-dd'),
       tipo: esMillar ? 'resorte' : esPanel ? 'panel' : 'proceso',
       unidadesReales,
-      unidadFisica: esMillar ? 'millares' : unidad,
+      unidadFisica: esMillar ? 'millares' : (unidad.includes('mil') ? 'millares' : 'u.'),
       esMillar,
       esPanel,
       esProceso,
@@ -84,5 +103,8 @@ export const transformProductionData = (rawRecords) => {
       producto: productoLabel,
       minutos
     };
+
+    if (index === 0) console.log(`[DEBUG] First Record Transformed:`, { trabajador, tipo: result.tipo, qty: unidadesReales });
+    return result;
   });
 };

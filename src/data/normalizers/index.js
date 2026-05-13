@@ -43,17 +43,32 @@ const filterUniqueRecords = (records, existingKeys, moduleName) => {
  * Normaliza un registro según el tipo de módulo
  */
 const normalizeRecord = (record, index, moduleName, fileName) => {
-  const schema = getSchema(moduleName)
   const mapped = mapFields(record, moduleName)
   
-  const normalizedTimestamp = mapped.fechaTimestamp || normalizeTimestamp(mapped)
-  const { workerKey, workerName } = normalizeWorker(mapped)
-  const { modulo, maquina } = normalizeLocation(mapped)
-  const { name: prodName, code: prodCode } = normalizeProduct(mapped)
-  const { cantidadNeta, lecturaMaquina, unidadOriginal } = normalizeProduction(mapped)
-  const { jornadaHoras, minutos, horasExtra, tipoJornada } = normalizeTime(mapped)
+  // RESCATE DE DATA ANIDADA (Deep Mapping Senior)
+  // Si el mapeo plano falló, buscamos en estructuras conocidas del JSON de exportación
+  const deepMapped = {
+    ...mapped,
+    cantidad: mapped.cantidad || record.produccion?.cantidad || record.cantidad || 0,
+    outputMaquina: mapped.outputMaquina || record.produccion?.output || record.output || 0,
+    trabajador: mapped.trabajador || record.trabajador?.nombre || record.trabajador,
+    maquina: mapped.maquina || record.ubicacion?.maquina || record.maquina,
+    fecha: mapped.fecha || record.fechaLegible || record.fecha,
+    // CRITICAL: Preservar metadatos de fecha para reconstrucción de timestamp
+    metadatosFecha: record.metadatosFecha || record.MetadatosFecha || mapped.metadatosFecha,
+    metadatos: record.metadatos || mapped.metadatos
+  };
+
+  const normalizedTimestamp = deepMapped.fechaTimestamp || normalizeTimestamp(deepMapped)
+  const { workerKey, workerName } = normalizeWorker(deepMapped)
+  const { modulo, maquina } = normalizeLocation(deepMapped)
+  const { name: prodName, code: prodCode } = normalizeProduct(deepMapped)
+  const { cantidadNeta, lecturaMaquina, unidadOriginal } = normalizeProduction(deepMapped, modulo)
+  const { jornadaHoras, minutos, horasExtra, tipoJornada } = normalizeTime(deepMapped)
   
   const generatedId = generateRecordId(workerKey, normalizedTimestamp, index, record)
+  
+  const esMillarOriginal = record.esMillar;
   
   return {
     idLocal: generatedId,
@@ -71,7 +86,7 @@ const normalizeRecord = (record, index, moduleName, fileName) => {
     outputMaquina: lecturaMaquina,
     tiempoMinutos: minutos,
     fechaTimestamp: normalizedTimestamp,
-    fechaLegible: mapped.fecha || new Date(normalizedTimestamp).toISOString().split('T')[0],
+    fechaLegible: new Date(normalizedTimestamp).toISOString().split('T')[0],
     esHoraExtra: horasExtra > 0,
     horasExtraCantidad: horasExtra,
     jornadaTotalHoras: jornadaHoras,
@@ -79,7 +94,8 @@ const normalizeRecord = (record, index, moduleName, fileName) => {
     tipoJornada: tipoJornada,
     module: moduleName,
     fileName: fileName,
-    importTimestamp: new Date().toISOString()
+    importTimestamp: new Date().toISOString(),
+    esMillar: esMillarOriginal
   }
 }
 
@@ -95,8 +111,8 @@ export const normalizeImportPayload = (importPayload) => {
 }
 
 export const normalizeRecords = (validatedPayload, existingRecords = [], moduleName = 'paneles') => {
-  const { schema, detected } = detectAndGetSchema(validatedPayload.fileName, validatedPayload.rawRecords)
-  const activeModule = moduleName || detected || 'paneles'
+  const { schema, module: detectedModule } = detectAndGetSchema(validatedPayload.fileName, validatedPayload.rawRecords)
+  const activeModule = moduleName || detectedModule || 'paneles'
   
   const normalizedRecords = (validatedPayload.rawRecords || []).map((r, i) => 
     normalizeRecord(r, i, activeModule, validatedPayload.fileName)
