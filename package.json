@@ -11,8 +11,9 @@
     "test:run": "vitest run",
     "test:ui": "vitest --ui",
     "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "build:gh": "VITE_BASE=/ISD-Storybook/ npm run build",
+    "build:netlify": "npm run build",
+    "deploy:gh": "npm run build:gh && gh-pages -d dist"
   },
   "dependencies": {
     "date-fns": "^4.1.0",
