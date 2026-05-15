@@ -7,7 +7,7 @@ import '../styles/StatCards.css';
  * KPICard - Refactored using MetricCard Composition Pattern.
  * Pattern: architecture-compound-components
  */
-export const KPICard = ({ title, value, color, progress, trend, periodLabel, icon: Icon }) => {
+export const KPICard = ({ title, value, color, progress, trend, periodLabel, description, icon: Icon }) => {
   const getStatus = () => {
     if (progress === undefined || progress === null) return { label: 'Sincronizando', color: 'var(--text-dim)', icon: <Clock size={12} /> };
     if (progress >= 100) return { label: 'Meta Superada', color: 'var(--success)', icon: <CheckCircle size={12} /> };
@@ -26,6 +26,7 @@ export const KPICard = ({ title, value, color, progress, trend, periodLabel, ico
             {Icon && <Icon size={16} color={color === 'blue' ? 'var(--primary)' : color === 'green' ? 'var(--success)' : 'var(--primary)'} />}
             <span className="kpi-label">{title}</span>
           </div>
+          {description && <div className="kpi-description">{description}</div>}
           {periodLabel && <span className="kpi-period">{periodLabel}</span>}
         </div>
       </MetricCard.Header>

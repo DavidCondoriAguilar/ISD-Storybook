@@ -2,14 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './ModuleHeader.css';
 
-const ModuleHeader = ({ moduleName }) => {
+const ModuleHeader = ({ moduleName, children }) => {
   return (
     <header className="module-header-modern">
       <div className="header-nav">
-        <Link to="/factory" className="back-link-glass">
+        <Link to="/" className="back-link-glass">
           <span className="icon">←</span>
           <span>Panel General</span>
         </Link>
+        <div className="header-filters-area">
+          {children}
+        </div>
       </div>
 
       <div className="header-content">

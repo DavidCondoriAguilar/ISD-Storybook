@@ -4,9 +4,6 @@ import { filterRecords, calculateDailyStats } from '../../../domain/production/t
 export const useModuleLogic = (records, moduleId) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedWorker, setSelectedWorker] = useState('all');
-  const [timeRange, setTimeRange] = useState('all');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: 'fechaTimestamp', direction: 'desc' });
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,13 +23,10 @@ export const useModuleLogic = (records, moduleId) => {
   const filteredData = useMemo(() => {
     return filterRecords(records, { 
       moduleId, 
-      timeRange, 
-      startDate, 
-      endDate, 
       searchTerm,
       selectedWorker 
     });
-  }, [records, moduleId, searchTerm, selectedWorker, timeRange, startDate, endDate]);
+  }, [records, moduleId, searchTerm, selectedWorker]);
 
   // 2. Estadísticas (Solo se recalculan si cambia el filtro, no el orden)
   const dailyStats = useMemo(() => {
@@ -59,15 +53,12 @@ export const useModuleLogic = (records, moduleId) => {
 
   useEffect(() => { 
     setCurrentPage(1); 
-  }, [searchTerm, selectedWorker, moduleId, timeRange, processedData.length, sortConfig]);
+  }, [searchTerm, selectedWorker, moduleId, processedData.length, sortConfig]);
 
   return {
     searchTerm, setSearchTerm,
     selectedWorker, setSelectedWorker,
     uniqueWorkers,
-    timeRange, setTimeRange,
-    startDate, setStartDate,
-    endDate, setEndDate,
     isFilterOpen, setIsFilterOpen,
     sortConfig, handleSort,
     currentPage, setCurrentPage,

@@ -12,24 +12,47 @@ const DateRangeContext = createContext(null);
 export const DateRangePicker = memo(({ 
   timeRange, 
   setTimeRange, 
-  startDate,
-  setStartDate,
-  endDate,
-  setEndDate,
+  startDate: initialStartDate,
+  endDate: initialEndDate,
+  onApply,
   isFilterOpen, 
   setIsFilterOpen 
 }) => {
+  // Estado local para "borrador" de selección
+  const [localRange, setLocalRange] = React.useState(timeRange);
+  const [localStart, setLocalStart] = React.useState(initialStartDate);
+  const [localEnd, setLocalEnd] = React.useState(initialEndDate);
+
+  // Sincronizar cuando se abre
+  React.useEffect(() => {
+    if (isFilterOpen) {
+      setLocalRange(timeRange);
+      setLocalStart(initialStartDate);
+      setLocalEnd(initialEndDate);
+    }
+  }, [isFilterOpen, timeRange, initialStartDate, initialEndDate]);
+
   const value = {
-    timeRange, setTimeRange,
-    startDate, setStartDate,
-    endDate, setEndDate,
-    isFilterOpen, setIsFilterOpen
+    timeRange: localRange, 
+    setTimeRange: setLocalRange,
+    startDate: localStart, 
+    setStartDate: setLocalStart,
+    endDate: localEnd, 
+    setEndDate: setLocalEnd,
+    executeApply: () => {
+      if (typeof onApply === 'function') {
+        onApply(localRange, localStart, localEnd);
+      }
+      setIsFilterOpen(false);
+    },
+    isFilterOpen, 
+    setIsFilterOpen
   };
 
   return (
     <DateRangeContext.Provider value={value}>
       <div className="filter-dropdown">
-        <DateRangePicker.Trigger />
+        <DateRangePicker.Trigger initialRange={timeRange} initialStart={initialStartDate} />
         <AnimatePresence>
           {isFilterOpen && (
             <DateRangePicker.Menu />
@@ -40,17 +63,14 @@ export const DateRangePicker = memo(({
   );
 });
 
-DateRangePicker.Trigger = function DateRangeTrigger() {
-  const { timeRange, startDate, endDate, isFilterOpen, setIsFilterOpen } = use(DateRangeContext);
+DateRangePicker.Trigger = function DateRangeTrigger({ initialRange, initialStart }) {
+  const { isFilterOpen, setIsFilterOpen } = use(DateRangeContext);
   
   const getRangeLabel = () => {
-    if (timeRange === 'all') return 'Historial Completo';
-    if (timeRange === 'day') return startDate ? `Día: ${startDate}` : 'Seleccionar Día';
-    if (timeRange === 'custom') {
-      if (startDate && endDate) return `${startDate} → ${endDate}`;
-      return 'Rango Personalizado';
-    }
-    return `Últimos ${timeRange || '7'} días`;
+    if (initialRange === 'all') return 'Historial Completo';
+    if (initialRange === 'day') return initialStart ? `Día: ${initialStart}` : 'Seleccionar Día';
+    if (initialRange === 'custom') return 'Rango Personalizado';
+    return `Últimos ${initialRange || '7'} días`;
   };
 
   return (
@@ -101,7 +121,7 @@ DateRangePicker.Menu = function DateRangeMenu() {
 };
 
 DateRangePicker.CustomSelectors = function DateRangeCustomSelectors() {
-  const { timeRange, startDate, setStartDate, endDate, setEndDate, setIsFilterOpen } = use(DateRangeContext);
+  const { timeRange, setTimeRange, startDate, setStartDate, endDate, setEndDate, executeApply } = use(DateRangeContext);
 
   if (timeRange !== 'day' && timeRange !== 'custom') return null;
 
@@ -109,31 +129,38 @@ DateRangePicker.CustomSelectors = function DateRangeCustomSelectors() {
     <div className="custom-range-selector" onClick={(e) => e.stopPropagation()}>
       <div className="date-input-group">
         <label>{timeRange === 'day' ? 'Seleccionar Fecha:' : 'Desde:'}</label>
-        <input 
-          type="date" 
-          value={startDate} 
-          onChange={(e) => {
-            setStartDate(e.target.value);
-            if (timeRange === 'day') setEndDate(e.target.value);
-          }} 
-        />
+        <div className="input-with-icon">
+          <Calendar size={14} className="input-icon" />
+          <input 
+            type="date" 
+            value={startDate} 
+            onChange={(e) => {
+              const val = e.target.value;
+              setStartDate(val);
+              if (timeRange === 'day') setEndDate(val);
+            }} 
+          />
+        </div>
       </div>
       
       {timeRange === 'custom' && (
         <div className="date-input-group">
           <label>Hasta:</label>
-          <input 
-            type="date" 
-            value={endDate} 
-            onChange={(e) => setEndDate(e.target.value)} 
-          />
+          <div className="input-with-icon">
+            <Calendar size={14} className="input-icon" />
+            <input 
+              type="date" 
+              value={endDate} 
+              onChange={(e) => setEndDate(e.target.value)} 
+            />
+          </div>
         </div>
       )}
 
       <button 
         className="apply-btn"
-        onClick={() => setIsFilterOpen(false)}
-        disabled={!startDate || (timeRange === 'custom' && !endDate)}
+        onClick={executeApply}
+        style={{ opacity: 1 }}
       >
         {timeRange === 'day' ? 'Ver este día' : 'Aplicar Rango'}
       </button>

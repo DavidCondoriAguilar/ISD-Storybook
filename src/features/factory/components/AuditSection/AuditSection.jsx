@@ -3,8 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import { DataTable } from '../../../../shared/components/DataTable/index';
 
 // Sub-componentes Atómicos para Arquitectura Senior
-import AuditHeader from './components/AuditHeader/AuditHeader';
-import AuditFilters from './components/AuditFilters/AuditFilters';
+import AuditHeader from './AuditHeader';
 
 import styles from './AuditSection.module.css';
 
@@ -18,18 +17,8 @@ const AuditSection = ({
   return (
     <section className={styles.auditSection}>
       <div className={styles.auditCard}>
-        {/* 1. Header Modularizado */}
-        <AuditHeader 
-          searchTerm={logic.searchTerm}
-          setSearchTerm={logic.setSearchTerm}
-          isFilterOpen={logic.isFilterOpen}
-          setIsFilterOpen={logic.setIsFilterOpen}
-        />
-
-        {/* 2. Panel de Filtros Modularizado */}
-        <AnimatePresence>
-          {logic.isFilterOpen && <AuditFilters logic={logic} />}
-        </AnimatePresence>
+        {/* 1. Barra Maestra de Control Unificada */}
+        <AuditHeader logic={logic} />
 
         {/* 3. Tabla de Datos (Contenedor Orchestrator) */}
         <div className={styles.tableWrapper}>

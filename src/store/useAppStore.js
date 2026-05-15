@@ -16,6 +16,14 @@ export const useAppStore = create(
         return { theme: newTheme };
       }),
 
+      // --- ESTADO: FILTROS DE TIEMPO (Compartido) ---
+      globalTimeRange: 'all',
+      globalStartDate: '',
+      globalEndDate: '',
+      setGlobalDateFilter: (range, start, end) => {
+        set({ globalTimeRange: range, globalStartDate: start, globalEndDate: end });
+      },
+
       // --- ESTADO: UI ---
       isSettingsOpen: false,
       setSettingsOpen: (isOpen) => set({ isSettingsOpen: isOpen }),
@@ -28,8 +36,13 @@ export const useAppStore = create(
       triggerRefresh: () => set({ lastRefresh: new Date().toISOString() })
     }),
     {
-      name: 'isd-app-storage', // Nombre para el localStorage automático
-      partialize: (state) => ({ theme: state.theme }) // Solo persistimos el tema
+      name: 'isd-app-storage',
+      partialize: (state) => ({ 
+        theme: state.theme,
+        globalTimeRange: state.globalTimeRange,
+        globalStartDate: state.globalStartDate,
+        globalEndDate: state.globalEndDate
+      })
     }
   )
 );

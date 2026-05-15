@@ -46,5 +46,5 @@ export const isPanel = (record) => {
 };
 
 export const getUnitLabel = (record) => {
-  return isResorte(record) ? 'mil.' : 'u.';
+  return isResorte(record) ? 'mill.' : 'u.';
 };

@@ -1,107 +1,105 @@
-.auditCardHeader {
+.masterControlBar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
+  gap: 1.25rem;
+  padding: 1rem 1.5rem;
+  background: var(--bg-card);
   border-bottom: 1px solid var(--border);
-  background: rgba(var(--primary-rgb), 0.005);
-  gap: 2rem;
+  min-height: 70px;
 }
 
-.headerLeft {
-  flex: 1;
+.controlGroup {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.cardTitle {
-  font-size: 1.35rem;
-  font-weight: 800;
-  margin: 0;
-  color: var(--text-main);
-  letter-spacing: -0.02em;
-}
-
-.cardDesc {
-  font-size: 0.85rem;
-  color: var(--text-dim);
-}
-
-.headerCenter {
-  flex: 2;
-  display: flex;
-  justify-content: center;
-}
-
+/* SEARCH */
 .searchBox {
   position: relative;
-  width: 100%;
-  max-width: 450px;
+  width: 320px;
 }
 
-.searchIcon {
+.icon {
   position: absolute;
-  left: 1rem;
+  left: 0.85rem;
   top: 50%;
   transform: translateY(-50%);
   color: var(--primary);
-  opacity: 0.7;
+  opacity: 0.8;
+  pointer-events: none;
 }
 
-.searchInput {
+.input {
   width: 100%;
-  padding: 0.75rem 1rem 0.75rem 2.8rem;
-  border-radius: var(--radius-md);
+  padding: 0.6rem 1rem 0.6rem 2.5rem;
+  border-radius: 12px;
   background: var(--bg-app);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   color: var(--text-main);
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.85rem;
+  font-weight: 600;
   transition: all 0.2s ease;
 }
 
-.headerRight {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-glow);
 }
 
-.filterBtn {
+/* SELECT */
+.selectWrapper {
+  position: relative;
+  width: 220px;
+}
+
+.select {
+  width: 100%;
+  padding: 0.6rem 1rem 0.6rem 2.5rem;
+  border-radius: 12px;
+  background: var(--bg-app);
+  border: 1.5px solid var(--border);
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  appearance: none;
+}
+
+.select:focus {
+  border-color: var(--primary);
+}
+
+/* CLEAR BTN */
+.clearAllBtn {
+  margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0.75rem 1.5rem;
-  background: var(--bg-card);
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: var(--bg-app);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 12px;
   color: var(--text-dim);
-  font-weight: 700;
-  font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.filterBtn:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-  background: var(--primary-glow);
+.clearAllBtn:hover {
+  background: #fee2e2;
+  color: #ef4444;
+  border-color: #fca5a5;
+  transform: rotate(90deg);
 }
 
-.filterBtn.active {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-}
-
-@media (max-width: 1024px) {
-  .auditCardHeader {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
+@media (max-width: 1200px) {
+  .masterControlBar {
+    flex-wrap: wrap;
+    padding: 1.5rem;
   }
-  .headerCenter, .headerRight {
+  .searchBox, .selectWrapper {
     width: 100%;
-    justify-content: center;
+    max-width: none;
   }
 }

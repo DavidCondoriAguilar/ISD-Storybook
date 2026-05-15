@@ -28,23 +28,32 @@ export const calculateKPIs = (records) => {
   const dailyTotals = {};
 
   // 2. Procesamiento de registros (Single Pass Architecture)
-  records.forEach(r => {
+  records.forEach((r, i) => {
     const date = r.fechaLegible || '2026-01-01';
     if (!dailyTotals[date]) dailyTotals[date] = { p: 0, r: 0, pr: 0 };
 
     const qty = Number(r.cantidad || r.produccion?.cantidad || r.cantidadOriginal || 0);
     const workerName = r.trabajadorNombre || r.trabajador?.nombre;
     
-    // CLASIFICACIÓN POR PREDICADOS DE DOMINIO (Senior Standard)
-    if (isResorte(r)) {
+    // CLASIFICACIÓN CON LOGS DE AUDITORÍA
+    const res = isResorte(r);
+    const proc = isProceso(r);
+    const pan = isPanel(r);
+
+    if (i < 5) {
+      console.log(`[KPI-AUDIT] Registro ${i}: Qty=${qty} | R=${res} | P=${pan} | Proc=${proc} | Prod=${r.productoNombre}`);
+    }
+
+    if (res) {
       totalResortesRaw += qty;
       dailyTotals[date].r += qty;
-    } else if (isPanel(r)) {
-      totalPaneles += qty;
-      dailyTotals[date].p += qty;
-    } else if (isProceso(r)) {
+    } else if (proc) {
       totalProcesos += qty;
       dailyTotals[date].pr += qty;
+    } else {
+      // Por defecto, si no es resorte ni proceso explícito, es PANEL (Rescate Senior)
+      totalPaneles += qty;
+      dailyTotals[date].p += qty;
     }
     
     if (workerName) workers.add(workerName);

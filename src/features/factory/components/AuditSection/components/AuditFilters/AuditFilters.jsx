@@ -28,52 +28,10 @@ const AuditFilters = ({ logic }) => {
           </select>
         </div>
 
-        <div className={styles.filterGroup}>
-          <label htmlFor="period-filter"><Calendar size={14} /> Periodo</label>
-          <select 
-            id="period-filter"
-            value={logic.timeRange}
-            onChange={(e) => logic.setTimeRange(e.target.value)}
-            className={styles.filterSelect}
-          >
-            <option value="all">Historial Completo</option>
-            <option value="7">Últimos 7 días</option>
-            <option value="30">Últimos 30 días</option>
-            <option value="day">Día específico</option>
-            <option value="custom">Rango personalizado</option>
-          </select>
-        </div>
-
-        { (logic.timeRange === 'custom' || logic.timeRange === 'day') && (
-          <div className={styles.dateInputs}>
-            <div className={styles.filterGroup}>
-              <label>Desde</label>
-              <input 
-                type="date" 
-                value={logic.startDate} 
-                onChange={(e) => logic.setStartDate(e.target.value)}
-                className={styles.dateInput}
-              />
-            </div>
-            { logic.timeRange === 'custom' && (
-              <div className={styles.filterGroup}>
-                <label>Hasta</label>
-                <input 
-                  type="date" 
-                  value={logic.endDate} 
-                  onChange={(e) => logic.setEndDate(e.target.value)}
-                  className={styles.dateInput}
-                />
-              </div>
-            )}
-          </div>
-        )}
-
         <button 
           className={styles.clearBtn}
           onClick={() => {
             logic.setSelectedWorker('all');
-            logic.setTimeRange('all');
             logic.setSearchTerm('');
           }}
         >

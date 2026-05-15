@@ -26,6 +26,7 @@ const ExecutiveDashboard = memo(() => {
     timeRange, setTimeRange,
     startDate, setStartDate,
     endDate, setEndDate,
+    setGlobalDateFilter,
     searchTerm, setSearchTerm,
     selectedArea, setSelectedArea,
     isFilterOpen, setIsFilterOpen,
@@ -58,7 +59,7 @@ const ExecutiveDashboard = memo(() => {
           machineStats: [...(machineStatsMP || []), ...(machineStatsMR || [])],
           productMix: productMix
         }}
-        dateRange={startDate && endDate ? { start: startDate, end: endDate } : null}
+        dateRange={startDate ? { start: startDate, end: endDate || startDate } : null}
       >
         {/* Los filtros ahora se inyectan en una sola línea horizontal */}
         <select 
@@ -69,20 +70,18 @@ const ExecutiveDashboard = memo(() => {
           aria-label="Filtrar por área de producción"
         >
           <option value="all">Todas las Áreas</option>
-          <option value="paneles">Paneles</option>
-          <option value="telas">Telas</option>
+          <option value="paneles_resortes">Paneles & Resortes (Planta)</option>
+          <option value="paneles">Módulo Paneles</option>
+          <option value="resortes">Módulo Resortes</option>
+          <option value="telas">Módulo Telas</option>
           <option value="pegado">Pegado</option>
-          <option value="sellado">Sellado</option>
-          <option value="quimicos">Químicos</option>
         </select>
 
         <DateRangePicker 
           timeRange={timeRange} 
-          setTimeRange={setTimeRange}
           startDate={startDate} 
-          setStartDate={setStartDate}
           endDate={endDate} 
-          setEndDate={setEndDate}
+          onApply={(range, start, end) => setGlobalDateFilter(range, start, end)}
           isFilterOpen={isFilterOpen} 
           setIsFilterOpen={setIsFilterOpen}
         />
@@ -103,21 +102,21 @@ const ExecutiveDashboard = memo(() => {
       <h2 className="sr-only">Indicadores de Producción</h2>
       <section className="stats-grid">
         <KPICard 
-          title="Producción Paneles" 
+          title="Producción Paneles (MP)" 
+          description="MÁQUINA PANELERA • UNIDADES"
           value={`${formatMetric(stats.totalPaneles)} u.`} 
           color="blue" 
           icon={Layers}
-          trend={stats.variations?.paneles}
           progress={stats.cumplimiento?.paneles}
           goalUnits={stats.metas?.paneles}
           periodLabel={periodLabel}
         />
         <KPICard 
-          title="Producción Resortes" 
-          value={`${formatMetric(stats.totalResortes)} mil.`} 
+          title="Producción Resortes (MR)" 
+          description="MÁQUINA RESORTERA • MILLARES"
+          value={`${formatMetric(stats.totalResortes)} mill.`} 
           color="green" 
           icon={Activity}
-          trend={stats.variations?.resortes}
           progress={stats.cumplimiento?.resortes}
           goalUnits={stats.metas?.resortes}
           periodLabel={periodLabel}
@@ -168,6 +167,37 @@ const ExecutiveDashboard = memo(() => {
       </Suspense>
 
       <EmployeeMatrix workers={allWorkers} />
+
+      {/* PROTOCOLO DE INTEGRIDAD DE DATOS (Senior Audit Section) */}
+      <section className="data-integrity-section glass">
+        <div className="integrity-header">
+          <Activity size={20} className="blue-text" />
+          <h3>Protocolo de Veracidad e Integridad de Datos</h3>
+        </div>
+        <div className="integrity-grid">
+          <div className="integrity-item">
+            <Layers size={16} />
+            <div>
+              <strong>Deduplicación Inteligente</strong>
+              <p>Cada registro genera un hash único para evitar doble conteo por re-importación.</p>
+            </div>
+          </div>
+          <div className="integrity-item">
+            <Activity size={16} />
+            <div>
+              <strong>Lógica de Conteo Neta</strong>
+              <p>Fórmula: <code>MAX(Manual_Total, Machine_Output)</code>. Garantiza veracidad ante fallos de registro.</p>
+            </div>
+          </div>
+          <div className="integrity-item">
+            <Star size={16} />
+            <div>
+              <strong>Normalización de Unidades</strong>
+              <p>Detección automática de escala (Millares vs Unidades) basada en el ID del Activo (MP/MR).</p>
+            </div>
+          </div>
+        </div>
+      </section>
       
     </motion.div>
   )

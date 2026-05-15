@@ -2,59 +2,49 @@ import { useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { subDays, startOfDay, endOfDay } from 'date-fns'
 import { db } from '../../../data/db'
+import { productionRepository } from '../../../data/repositories/productionRepository'
 import { analyticsService } from '../services/analyticsService'
 
-export const useExecutiveData = () => {
-  const [timeRange, setTimeRange] = useState('all')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedArea, setSelectedArea] = useState('all')
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
+console.log('%c[AUDIT-HEADER] Componente cargado', 'background: #4f46e5; color: white; padding: 2px 5px;');
 
-  const rawRecords = useLiveQuery(async () => {
+import { useAppStore } from '../../../store/useAppStore'
+ 
+ export const useExecutiveData = () => {
+   const { 
+     globalTimeRange: timeRange, 
+     globalStartDate: startDate, 
+     globalEndDate: endDate,
+     setGlobalDateFilter 
+   } = useAppStore();
+   
+   const setTimeRange = (val) => setGlobalDateFilter(val, startDate, endDate);
+   const setStartDate = (val) => setGlobalDateFilter(timeRange, val, endDate);
+   const setEndDate = (val) => setGlobalDateFilter(timeRange, startDate, val);
+
+   const [searchTerm, setSearchTerm] = useState('')
+   const [selectedArea, setSelectedArea] = useState('all')
+   const [isFilterOpen, setIsFilterOpen] = useState(false)
+
+   const rawRecords = useLiveQuery(async () => {
     try {
+      if (!db.isOpen()) await db.open();
+      
       const totalInDb = await db.records.count();
-      console.log(`[AUDIT] Registros en disco: ${totalInDb}`);
+      let records = await productionRepository.getFilteredRecords({ 
+        moduleId: 'all', 
+        timeRange, 
+        startDate, 
+        endDate 
+      });
 
-      if (totalInDb === 0) return [];
-
-      let records = [];
-
-      // MODO 1: Rango de Fechas (Día o Custom)
-      if ((timeRange === 'custom' || timeRange === 'day') && startDate) {
-        const [sY, sM, sD] = startDate.split('-').map(Number);
-        const [eY, eM, eD] = (endDate || startDate).split('-').map(Number);
-        
-        const startTs = new Date(sY, sM - 1, sD, 0, 0, 0, 0).getTime();
-        const endTs = new Date(eY, eM - 1, eD, 23, 59, 59, 999).getTime();
-
-        console.log(`[QUERY] Buscando entre ${startDate} y ${endDate || startDate}`);
-        
-        // Intento A: Por Timestamp (Optimizado)
-        records = await db.records.where('fechaTimestamp').between(startTs, endTs, true, true).toArray();
-        
-        // Intento B: Fallback por Fecha Legible (Zero-Fail)
-        if (records.length === 0 && timeRange === 'day') {
-          console.warn(`[QUERY] Fallback: No se halló data por timestamp. Intentando por fecha legible: ${startDate}`);
-          records = await db.records.where('fechaLegible').equals(startDate).toArray();
-        }
-      } 
-      // MODO 2: Últimos X días
-      else if (timeRange !== 'all' && !isNaN(parseInt(timeRange))) {
-        const cutoff = subDays(new Date(), parseInt(timeRange)).getTime();
-        records = await db.records.where('fechaTimestamp').aboveOrEqual(cutoff).toArray();
-      } 
-      // MODO 3: Todo
-      else {
+      // Fallback Senior: Si el filtro nos deja en 0 pero hay data en el disco, mostrar todo
+      if (records.length === 0 && totalInDb > 0) {
+        console.warn("[AUDIT] No hay data en el rango seleccionado, mostrando historial completo.");
         records = await db.records.toArray();
       }
 
-      console.log(`[QUERY] Resultado Final: ${records.length} registros encontrados.`);
       return records;
-
-    } catch (error) {
-      console.error("[CRITICAL] useExecutiveData query failed:", error);
+    } catch (e) {
       return [];
     }
   }, [timeRange, startDate, endDate]) || [];
@@ -64,9 +54,17 @@ export const useExecutiveData = () => {
 
     if (selectedArea !== 'all') {
       const area = selectedArea.toLowerCase();
-      filtered = filtered.filter(r => 
-        (r.area || r.moduloId || '').toLowerCase() === area
-      );
+      filtered = filtered.filter(r => {
+        const recordArea = (r.area || r.moduloId || '').toLowerCase();
+        
+        // Opción 1: Planta Unificada (Paneles + Resortes)
+        if (area === 'paneles_resortes') {
+          return recordArea === 'paneles' || recordArea === 'resortes';
+        }
+        
+        // Opción 2: Filtro Estricto por Módulo
+        return recordArea === area;
+      });
     }
 
     if (searchTerm) {
@@ -82,8 +80,9 @@ export const useExecutiveData = () => {
   }, [rawRecords, searchTerm, selectedArea]);
 
   const dashboardData = useMemo(() => analyticsService.getExecutiveDashboardData(filteredRecords), [filteredRecords])
+  console.log(`%c[DASHBOARD-STEP 3] Stats calculadas:`, 'color: #3b82f6', dashboardData.stats?.totalRecords);
 
-  // Blindaje de Nulos (Senior Null-Safety)
+
   const stats = dashboardData.stats || {
     totalUnits: 0, totalPaneles: 0, totalResortes: 0, totalProcesos: 0,
     uniqueWorkers: 0, activeMachines: 0, totalRecords: 0,
@@ -97,16 +96,29 @@ export const useExecutiveData = () => {
     topResortero: { name: 'N/A', reason: 'Sin Datos' } 
   };
 
+  const trendData = dashboardData.trendData || [];
+  const topPaneleros = dashboardData.topPaneleros || [];
+  const topResorteros = dashboardData.topResorteros || [];
+  const allWorkers = dashboardData.allWorkers || [];
+  const machineStatsMP = dashboardData.machineStatsMP || [];
+  const machineStatsMR = dashboardData.machineStatsMR || [];
+  const productMix = dashboardData.productMix || [];
+
   return {
-    timeRange, setTimeRange,
-    startDate, setStartDate,
-    endDate, setEndDate,
+    timeRange, setGlobalDateFilter,
+    startDate,
+    endDate,
     searchTerm, setSearchTerm,
     selectedArea, setSelectedArea,
     isFilterOpen, setIsFilterOpen,
-    ...dashboardData,
     stats,
     advStats,
-    filteredRecords
-  }
-}
+    trendData,
+    topPaneleros,
+    topResorteros,
+    allWorkers,
+    machineStatsMP,
+    machineStatsMR,
+    productMix
+  };
+};

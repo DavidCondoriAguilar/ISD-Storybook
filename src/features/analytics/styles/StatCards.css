@@ -63,6 +63,14 @@
   align-self: flex-start;
 }
 
+.kpi-description {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: -2px;
+}
+
 .kpi-status-badge {
   display: flex;
   align-items: center;

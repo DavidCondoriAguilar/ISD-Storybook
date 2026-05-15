@@ -4,6 +4,8 @@ import App from './App.jsx'
 import { storageService } from './data/storageService'
 import './index.css'
 
+console.log('%c🚀 ISD SYSTEM RELOADED - VERSION 12.7 🚀', 'background: #000; color: #0f0; font-size: 20px; padding: 10px; border: 2px solid #0f0;');
+
 // Initialize storage and migrate legacy data
 storageService.init().then(() => {
   createRoot(document.getElementById('root')).render(

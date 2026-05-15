@@ -8,7 +8,7 @@ export { sanitizarNombre }
 export const normalizeTimestamp = (r) => {
   let normalizedTimestamp;
   const rawDate = r.fecha || r.fechaLegible || r.date;
-  
+
   console.log(`[DATE-DEBUG] Procesando fecha raw:`, rawDate);
 
   try {
@@ -28,7 +28,7 @@ export const normalizeTimestamp = (r) => {
     // 2. Prioridad: Timestamp explícito (ms)
     else if (r.fechaTimestamp || (typeof rawDate === 'number' && rawDate > 1000000000000)) {
       normalizedTimestamp = Number(r.fechaTimestamp || rawDate);
-    } 
+    }
     // 3. Prioridad: Metadatos estructurados
     else {
       const meta = r.metadatosFecha || r.MetadatosFecha || r.metadatos?.fecha || {};
@@ -45,7 +45,7 @@ export const normalizeTimestamp = (r) => {
     // 4. Prioridad: Parseo de String (YYYY-MM-DD o DD/MM/YYYY)
     if (!normalizedTimestamp && rawDate) {
       const dateStr = String(rawDate).trim();
-      
+
       // Caso DD/MM/YYYY
       if (dateStr.includes('/')) {
         const parts = dateStr.split('/').map(s => s.trim()).map(Number);
@@ -55,7 +55,7 @@ export const normalizeTimestamp = (r) => {
             normalizedTimestamp = new Date(y, m - 1, d, 12, 0, 0, 0).getTime();
           }
         }
-      } 
+      }
       // Caso YYYY-MM-DD
       else if (dateStr.includes('-')) {
         const parts = dateStr.split('-').map(s => s.trim()).map(Number);
@@ -88,13 +88,13 @@ export const normalizeWorker = (r) => {
   const t = r.trabajador;
   const workerName = (typeof t === 'string' ? t.trim() : (t?.nombre?.trim() || r.trabajadorNombre?.trim())) || 'Sin Nombre';
   const workerKey = (typeof t === 'string' ? t.trim() : (t?.dni || t?.nombre?.trim() || r.trabajadorNombre?.trim())) || 'UNKNOWN';
-  
+
   return { workerKey, workerName };
 }
 
 /**
  * NORMALIZADOR DE UBICACIÓN (Detección Inteligente de Área)
- * Prioriza Máquina/Producto sobre la columna 'ÁREA' del Excel (Data Trash).
+ * Respeta el área explícita del Excel. Usa Máquina/Producto solo como fallback.
  */
 export const normalizeLocation = (r) => {
   const maquina = r.maquinaId || r.ubicacion?.maquina || r.maquina || 'Sin Máquina';
@@ -102,31 +102,29 @@ export const normalizeLocation = (r) => {
   const productoStr = (typeof p === 'string' ? p : (p?.nombre || r.productoNombre || '')).toUpperCase();
   const mId = maquina.toUpperCase();
 
-  // 1. Detección por Máquina (Lo más confiable)
+  // 0. Respetar área explícita del Excel si fue proporcionada
+  const excelArea = r.area || r.ubicacion?.modulo || r.modulo;
+  if (excelArea && excelArea !== 'General') {
+    return { modulo: excelArea, maquina };
+  }
+
+  // 1. Fallback: Detección por Máquina
   if (mId.includes('MR')) return { modulo: 'Resortes', maquina };
   if (mId.includes('MP')) return { modulo: 'Paneles', maquina };
 
-  // 2. Detección por Producto
+  // 2. Fallback: Detección por Producto
   if (productoStr.includes('RESORTE')) return { modulo: 'Resortes', maquina };
   if (productoStr.includes('PANEL') || productoStr.includes('PLZ')) return { modulo: 'Paneles', maquina };
 
-  // 3. Fallback a la columna del Excel si existe y no es basura
-  let modulo = r.area || r.ubicacion?.modulo || r.modulo;
-  if (!modulo || modulo === 'General' || modulo === 'Paneles') { 
-    // Si dice 'Paneles' pero no detectamos MP/PLZ arriba, mantenemos Paneles como default seguro
-    modulo = 'Paneles';
-  }
-
-  const result = { modulo, maquina };
-  console.log(`[DEBUG] normalizeLocation: ${productoStr.slice(0,20)}... | MId: ${mId} -> ${modulo}`);
-  return result;
+  // 3. Fallback final a Paneles
+  return { modulo: 'Paneles', maquina };
 }
 
 export const normalizeProduct = (r) => {
   const p = r.producto;
   const name = (typeof p === 'string' ? p.trim() : (p?.nombre?.trim() || r.productoNombre?.trim())) || 'Sin Producto';
   const code = (typeof p === 'object' ? (p?.codigo || r.productoId) : 'N/A') || 'N/A';
-  
+
   return { name, code };
 }
 
@@ -135,20 +133,20 @@ export const normalizeProduct = (r) => {
  */
 export const normalizeProduction = (r, modulo) => {
   // Si es Resortes y no tiene unidad definida, asumimos millares
-  const defaultUnidad = (modulo === 'Resortes') ? 'mil.' : 'u.';
+  const defaultUnidad = (modulo === 'Resortes') ? 'mill.' : 'u.';
   const unidadDetectada = r.unidad || r.produccion?.unidad || r.unidadOriginal || defaultUnidad;
-  
+
   // LÓGICA DE PRODUCCIÓN NETA (Senior Fallback)
   const total = Number(r.cantidad ?? r.produccion?.cantidad ?? r.total ?? 0);
   const output = Number(r.outputMaquina ?? r.produccion?.output ?? r.output ?? 0);
-  
+
   // Si el total es 0 pero hay lectura de máquina, usamos la lectura
   const cantidadNeta = total > 0 ? total : output;
 
   return {
     cantidadNeta,
     lecturaMaquina: output,
-    unidadOriginal: unidadDetectada.toLowerCase().includes('mil') ? 'mil.' : 'u.'
+    unidadOriginal: unidadDetectada.toLowerCase().includes('mil') ? 'mill.' : 'u.'
   }
 }
 

@@ -73,3 +73,71 @@
   .stats-grid { grid-template-columns: 1fr; }
   .exec-dashboard { padding: 1.5rem; }
 }
+/* 4. Protocolo de Integridad (Audit Section) */
+.data-integrity-section {
+  padding: 2.5rem;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border);
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.02) 0%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.integrity-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.integrity-header h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.integrity-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+}
+
+.integrity-item {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.integrity-item svg {
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.integrity-item strong {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.integrity-item p {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.integrity-item code {
+  background: rgba(var(--primary-rgb), 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.85em;
+}
+
+@media (max-width: 1024px) {
+  .integrity-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+}
