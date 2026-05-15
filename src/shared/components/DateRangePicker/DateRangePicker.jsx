@@ -102,14 +102,15 @@ DateRangePicker.Menu = function DateRangeMenu() {
             <input
               type="date"
               value={localDate}
-              onChange={(e) => {
-                const val = e.target.value;
-                setLocalDate(val);
-                if (val) apply('day', val, val);
-              }}
+              onChange={(e) => setLocalDate(e.target.value)}
             />
           </div>
         </div>
+        {localDate && (
+          <button className="apply-btn" onClick={() => apply('day', localDate, localDate)}>
+            Ver día
+          </button>
+        )}
       </div>
     </motion.div>
   );

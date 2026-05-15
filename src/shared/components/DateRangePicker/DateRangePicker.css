@@ -139,3 +139,21 @@
   background: var(--bg-card);
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
+
+.apply-btn {
+  margin-top: 6px;
+  padding: 8px;
+  border: none;
+  background: var(--primary-gradient);
+  color: white;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.apply-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}

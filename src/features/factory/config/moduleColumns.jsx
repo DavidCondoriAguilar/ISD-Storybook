@@ -41,14 +41,17 @@ export const getProductionColumns = () => [
     label: 'TOTAL',      
     width: '95px', 
     align: 'right',
-    render: (v, r) => (
-      <div className="production-cell">
-        <span className={`production-value ${r.moduloId?.toLowerCase() === 'resortes' ? 'resorte' : 'panel'}`}>
-          {r.moduloId?.toLowerCase() === 'resortes' ? (v / 1000).toFixed(3) : v}
-        </span>
-        <span className="unit-label">{r.moduloId?.toLowerCase() === 'resortes' ? 'mil.' : 'u.'}</span>
-      </div>
-    )
+    render: (v, r) => {
+      const isMillar = r.maquinaId?.toUpperCase().includes('MR') || r.esMillar;
+      return (
+        <div className="production-cell">
+          <span className={`production-value ${isMillar ? 'resorte' : 'panel'}`}>
+            {isMillar ? (v / 1000).toFixed(3) : v}
+          </span>
+          <span className="unit-label">{isMillar ? 'mil.' : 'u.'}</span>
+        </div>
+      );
+    }
   },
   { 
     key: 'maquinaId', 

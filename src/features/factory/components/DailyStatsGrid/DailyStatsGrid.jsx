@@ -31,7 +31,7 @@ const DailyStatCard = ({ day }) => (
           <span className="label">RESORTES</span>
         </div>
         <div className="metric-value">
-          <span className="num">{((day.mr?.total ?? 0) / 1000).toFixed(1)}</span>
+          <span className="num">{(day.mr?.total ?? 0).toFixed(1)}</span>
           <span className="unit">mil.</span>
         </div>
       </div>
