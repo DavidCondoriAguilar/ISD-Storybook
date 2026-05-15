@@ -86,7 +86,10 @@ const normalizeRecord = (record, index, moduleName, fileName) => {
     outputMaquina: lecturaMaquina,
     tiempoMinutos: minutos,
     fechaTimestamp: normalizedTimestamp,
-    fechaLegible: new Date(normalizedTimestamp).toISOString().split('T')[0],
+    fechaLegible: (() => {
+      const d = new Date(normalizedTimestamp);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    })(),
     esHoraExtra: horasExtra > 0,
     horasExtraCantidad: horasExtra,
     jornadaTotalHoras: jornadaHoras,

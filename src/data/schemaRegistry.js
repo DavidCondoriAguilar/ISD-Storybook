@@ -17,10 +17,11 @@ const BASE_SCHEMA = {
     dni: { aliases: ["dni", "cedula", "ci", "id", "trabajadorDni"] },
     turno: { aliases: ["turno", "shift", "jornada", "tipoJornada"] },
     fecha: { aliases: ["fecha", "date", "dia", "timestamp", "fechaLegible"] },
-    producto: { aliases: ["producto", "tipo", "name", "articulo", "item", "productoNombre"] },
-    cantidad: { aliases: ["cantidad", "qty", "units", "cant", "piezas", "total", "cantidadNeta"] },
-    maquina: { aliases: ["maquina", "machine", "equipo", "maq", "maquinaId"] },
-    outputMaquina: { aliases: ["outputMaquina", "lecturaMaquina", "contador", "output"] },
+    producto: { aliases: ["producto", "tipo", "name", "articulo", "item", "productoNombre", "PRODUCTO"] },
+    cantidad: { aliases: ["cantidad", "qty", "units", "cant", "piezas", "total", "cantidadNeta", "TOTAL"] },
+    maquina: { aliases: ["maquina", "machine", "equipo", "maq", "maquinaId", "MÁQUINA"] },
+    outputMaquina: { aliases: ["outputMaquina", "lecturaMaquina", "contador", "output", "Output"] },
+    area: { aliases: ["area", "modulo", "área", "ubicacion", "ÁREA"] },
     observaciones: { aliases: ["obs", "notas", "notes", "comentarios"] }
   },
   turnos: ["Mañana", "Tarde", "Noche"]
@@ -141,13 +142,39 @@ export const mapFields = (record, moduleName) => {
   const mappings = schema.fieldMappings;
   const mapped = {};
   
+  // 1. Crear versión normalizada de las keys del registro (lowercase + sin acentos)
+  const normalizedRecord = {};
+  const normalizeStr = (str) => String(str || '')
+    .toLowerCase()
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  for (const key in record) {
+    normalizedRecord[normalizeStr(key)] = record[key];
+  }
+
   for (const [targetField, config] of Object.entries(mappings)) {
     const aliases = config.aliases || [targetField];
+    let foundValue = undefined;
+
     for (const alias of aliases) {
+      // Prioridad 1: Match Exacto
       if (record[alias] !== undefined) {
-        mapped[targetField] = record[alias];
+        foundValue = record[alias];
         break;
       }
+      
+      // Prioridad 2: Match Normalizado (Case insensitive + Accents)
+      const normAlias = normalizeStr(alias);
+      if (normalizedRecord[normAlias] !== undefined) {
+        foundValue = normalizedRecord[normAlias];
+        break;
+      }
+    }
+
+    if (foundValue !== undefined) {
+      mapped[targetField] = foundValue;
     }
   }
   

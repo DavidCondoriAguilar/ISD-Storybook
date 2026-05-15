@@ -12,15 +12,22 @@ export const normalizeTimestamp = (r) => {
   console.log(`[DATE-DEBUG] Procesando fecha raw:`, rawDate);
 
   try {
-    // 1. Prioridad: Objeto Date nativo (Común en Excel/SheetJS)
-    if (rawDate instanceof Date && !isNaN(rawDate.getTime())) {
+    // 0. Prioridad: Número (Excel Serial Date)
+    if (typeof rawDate === 'number' && rawDate > 30000 && rawDate < 60000) {
+      const d = new Date(Math.round((rawDate - 25569) * 86400 * 1000));
+      d.setHours(12, 0, 0, 0);
+      normalizedTimestamp = d.getTime();
+      console.log(`[DATE-DEBUG] Excel Serial detected: ${rawDate} -> ${new Date(normalizedTimestamp).toISOString()}`);
+    }
+    // 1. Prioridad: Objeto Date nativo
+    else if (rawDate instanceof Date && !isNaN(rawDate.getTime())) {
       const d = new Date(rawDate);
       d.setHours(12, 0, 0, 0);
       normalizedTimestamp = d.getTime();
     }
-    // 2. Prioridad: Timestamp explícito
-    else if (r.fechaTimestamp) {
-      normalizedTimestamp = Number(r.fechaTimestamp);
+    // 2. Prioridad: Timestamp explícito (ms)
+    else if (r.fechaTimestamp || (typeof rawDate === 'number' && rawDate > 1000000000000)) {
+      normalizedTimestamp = Number(r.fechaTimestamp || rawDate);
     } 
     // 3. Prioridad: Metadatos estructurados
     else {
@@ -37,18 +44,21 @@ export const normalizeTimestamp = (r) => {
 
     // 4. Prioridad: Parseo de String (YYYY-MM-DD o DD/MM/YYYY)
     if (!normalizedTimestamp && rawDate) {
-      const dateStr = String(rawDate);
+      const dateStr = String(rawDate).trim();
       
       // Caso DD/MM/YYYY
       if (dateStr.includes('/')) {
-        const [d, m, y] = dateStr.split('/').map(Number);
-        if (y > 1000) {
-          normalizedTimestamp = new Date(y, m - 1, d, 12, 0, 0, 0).getTime();
+        const parts = dateStr.split('/').map(s => s.trim()).map(Number);
+        if (parts.length === 3) {
+          const [d, m, y] = parts;
+          if (y > 1000) {
+            normalizedTimestamp = new Date(y, m - 1, d, 12, 0, 0, 0).getTime();
+          }
         }
       } 
       // Caso YYYY-MM-DD
       else if (dateStr.includes('-')) {
-        const parts = dateStr.split('-').map(Number);
+        const parts = dateStr.split('-').map(s => s.trim()).map(Number);
         if (parts.length === 3) {
           const [y, m, d] = parts[0] > 1000 ? [parts[0], parts[1], parts[2]] : [parts[2], parts[1], parts[0]];
           normalizedTimestamp = new Date(y, m - 1, d, 12, 0, 0, 0).getTime();
@@ -76,8 +86,8 @@ export const normalizeTimestamp = (r) => {
 export const normalizeWorker = (r) => {
   // Soporte para objeto {nombre} o string directo (mapeado desde schema)
   const t = r.trabajador;
-  const workerName = (typeof t === 'string' ? t : (t?.nombre || r.trabajadorNombre)) || 'Sin Nombre';
-  const workerKey = (typeof t === 'string' ? t : (t?.dni || t?.nombre || r.trabajadorNombre)) || 'UNKNOWN';
+  const workerName = (typeof t === 'string' ? t.trim() : (t?.nombre?.trim() || r.trabajadorNombre?.trim())) || 'Sin Nombre';
+  const workerKey = (typeof t === 'string' ? t.trim() : (t?.dni || t?.nombre?.trim() || r.trabajadorNombre?.trim())) || 'UNKNOWN';
   
   return { workerKey, workerName };
 }
@@ -114,7 +124,7 @@ export const normalizeLocation = (r) => {
 
 export const normalizeProduct = (r) => {
   const p = r.producto;
-  const name = (typeof p === 'string' ? p : (p?.nombre || r.productoNombre)) || 'Sin Producto';
+  const name = (typeof p === 'string' ? p.trim() : (p?.nombre?.trim() || r.productoNombre?.trim())) || 'Sin Producto';
   const code = (typeof p === 'object' ? (p?.codigo || r.productoId) : 'N/A') || 'N/A';
   
   return { name, code };
