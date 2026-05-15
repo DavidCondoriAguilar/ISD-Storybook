@@ -61,7 +61,7 @@
 
 .daily-grid-flex {
   display: flex;
-  flex-wrap: nowrap; /* Volvemos a scroll horizontal */
+  flex-wrap: nowrap;
   gap: 0.75rem;
   padding: 0.2rem 0.5rem;
 }

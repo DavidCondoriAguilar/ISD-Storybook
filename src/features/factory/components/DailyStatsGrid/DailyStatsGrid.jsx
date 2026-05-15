@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import './DailyStatsGrid.css';
@@ -40,10 +40,20 @@ const DailyStatCard = ({ day }) => (
 );
 
 const DailyStatsGrid = ({ stats }) => {
-  const [scrollX, setScrollX] = useState(0);
-  const containerRef = useRef(null);
+  const scrollRef = useRef(null);
 
-  // Prevenir CLS (Layout Shift) devolviendo un esqueleto estable si no hay datos aún
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ left: 999999, behavior: 'auto' });
+    }
+  }, [stats]);
+
+  const scroll = (dir) => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ left: dir === 'right' ? 999999 : 0, behavior: 'smooth' });
+    }
+  };
+
   if (!stats || stats.length === 0) {
     return (
       <section className="stats-section-carousel">
@@ -61,17 +71,6 @@ const DailyStatsGrid = ({ stats }) => {
     );
   }
 
-  const scroll = (direction) => {
-    if (containerRef.current) {
-      const { scrollLeft, clientWidth } = containerRef.current;
-      const scrollTo = direction === 'left' 
-        ? scrollLeft - clientWidth * 0.5 
-        : scrollLeft + clientWidth * 0.5;
-      
-      containerRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
-    }
-  };
-
   return (
     <section className="stats-section-carousel">
       <div className="section-header-carousel">
@@ -80,21 +79,19 @@ const DailyStatsGrid = ({ stats }) => {
           <button 
             className="carousel-btn" 
             onClick={() => scroll('left')}
-            aria-label="Desplazar historial hacia la izquierda"
           >
             <ChevronLeft size={14} />
           </button>
           <button 
             className="carousel-btn" 
             onClick={() => scroll('right')}
-            aria-label="Desplazar historial hacia la derecha"
           >
             <ChevronRight size={14} />
           </button>
         </div>
       </div>
 
-      <div className="stats-scroll-container" ref={containerRef}>
+      <div className="stats-scroll-container" ref={scrollRef}>
         <motion.div 
           className="daily-grid-flex"
           initial={{ opacity: 0, x: 20 }}

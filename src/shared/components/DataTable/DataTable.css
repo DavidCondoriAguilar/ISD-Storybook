@@ -45,6 +45,14 @@
   top: 0;
   z-index: 10;
   overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.dt-th:hover {
+  background: var(--primary-glow);
+  color: var(--primary);
 }
 
 .dt-th:last-child { border-right: none; }
@@ -55,7 +63,8 @@
   gap: 4px;
 }
 
-.dt-sort-wrapper { opacity: 0.4; }
+.dt-sort-wrapper { opacity: 0.5; }
+.dt-th:hover .dt-sort-wrapper { opacity: 1; }
 
 .dt-tr {
   border-bottom: 1px solid var(--border);
