@@ -63,13 +63,15 @@ const normalizeRecord = (record, index, moduleName, fileName) => {
   const { workerKey, workerName } = normalizeWorker(deepMapped)
   const { modulo, maquina } = normalizeLocation(deepMapped)
   const { name: prodName, code: prodCode } = normalizeProduct(deepMapped)
-  const { cantidadNeta, lecturaMaquina, unidadOriginal } = normalizeProduction(deepMapped, modulo)
+  const { cantidadNeta, lecturaMaquina, unidadOriginal } = normalizeProduction(deepMapped)
   const { jornadaHoras, minutos, horasExtra, tipoJornada } = normalizeTime(deepMapped)
   
   const generatedId = generateRecordId(workerKey, normalizedTimestamp, index, record)
-  
-  const esMillarOriginal = record.esMillar;
-  
+
+  const mId = (maquina || '').toUpperCase();
+  const prod = (deepMapped.productoNombre || '').toLowerCase();
+  const esMillar = mId.includes('MR') || prod.includes('resorte') || prod.includes('millar');
+
   return {
     idLocal: generatedId,
     trabajadorDni: workerKey,
@@ -98,7 +100,7 @@ const normalizeRecord = (record, index, moduleName, fileName) => {
     module: moduleName,
     fileName: fileName,
     importTimestamp: new Date().toISOString(),
-    esMillar: esMillarOriginal
+    esMillar
   }
 }
 

@@ -130,24 +130,19 @@ export const normalizeProduct = (r) => {
 
 /**
  * NORMALIZADOR DE PRODUCCIÓN (Detecta Millares/Unidades)
+ * Unidad determinada por máquina (MR→mill.) o producto, no por datos heredados.
  */
-export const normalizeProduction = (r, modulo) => {
-  // Si es Resortes y no tiene unidad definida, asumimos millares
-  const defaultUnidad = (modulo === 'Resortes') ? 'mill.' : 'u.';
-  const unidadDetectada = r.unidad || r.produccion?.unidad || r.unidadOriginal || defaultUnidad;
+export const normalizeProduction = (r) => {
+  const mId = (r.maquinaId || r.maquina || '').toUpperCase();
+  const prod = (r.productoNombre || r.producto?.nombre || '').toLowerCase();
+  const esMillar = mId.includes('MR') || prod.includes('resorte') || prod.includes('millar');
+  const unidadFinal = esMillar ? 'mill.' : 'u.';
 
-  // LÓGICA DE PRODUCCIÓN NETA (Senior Fallback)
   const total = Number(r.cantidad ?? r.produccion?.cantidad ?? r.total ?? 0);
   const output = Number(r.outputMaquina ?? r.produccion?.output ?? r.output ?? 0);
-
-  // Si el total es 0 pero hay lectura de máquina, usamos la lectura
   const cantidadNeta = total > 0 ? total : output;
 
-  return {
-    cantidadNeta,
-    lecturaMaquina: output,
-    unidadOriginal: unidadDetectada.toLowerCase().includes('mil') ? 'mill.' : 'u.'
-  }
+  return { cantidadNeta, lecturaMaquina: output, unidadOriginal: unidadFinal }
 }
 
 export const normalizeTime = (r) => {
