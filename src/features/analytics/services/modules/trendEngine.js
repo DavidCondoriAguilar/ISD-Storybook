@@ -27,11 +27,9 @@ export const calculateTrends = (records) => {
 
     const qty = Number(r.cantidad || r.produccion?.cantidad || 0);
 
-    // Predicados en línea para velocidad máxima
-    const modulo = (r.moduloId || r.ubicacion?.modulo || '').toLowerCase();
-    if (modulo === 'resortes') trendMap[dayStart].resortes += qty;
-    else if (modulo === 'paneles') trendMap[dayStart].paneles += qty;
-    else trendMap[dayStart].procesos += qty;
+    if (isResorte(r)) trendMap[dayStart].resortes += qty;
+    else if (isProceso(r)) trendMap[dayStart].procesos += qty;
+    else trendMap[dayStart].paneles += qty;
   });
 
   return Object.values(trendMap).sort((a, b) => a.timestamp - b.timestamp)
